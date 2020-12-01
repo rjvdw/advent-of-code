@@ -10,23 +10,32 @@ fn main() {
         values.push(line);
     }
 
-    println!("Part 1:");
-    for (i, v1) in values.iter().enumerate() {
-        for v2 in values.iter().skip(i + 1) {
-            if v1 + v2 == 2020 {
-                println!("  {0} + {1} = 2020, {0} * {1} = {2}", v1, v2, v1 * v2);
+    match solve(&values, 0, 2, 2020) {
+        Some(v) => println!("Part 1: {}", v),
+        None => println!("Part 1: No solution")
+    }
+
+    match solve(&values, 0, 3, 2020) {
+        Some(v) => println!("Part 2: {}", v),
+        None => println!("Part 2: No solution")
+    }
+}
+
+fn solve(values: &Vec<i32>, from: usize, level: usize, sum: i32) -> Option<i32> {
+    if level <= 1 {
+        for &v in values.iter().skip(from + 1) {
+            if v == sum {
+                return Some(v);
+            }
+        }
+    } else {
+        for (pos, &v) in values.iter().skip(from + 1).enumerate() {
+            match solve(values, pos, level - 1, sum - v) {
+                Some(r) => return Some(r * v),
+                None => {}
             }
         }
     }
 
-    println!("Part 2:");
-    for (i, v1) in values.iter().enumerate() {
-        for (j, v2) in values.iter().skip(i + 1).enumerate() {
-            for v3 in values.iter().skip(j + 1) {
-                if v1 + v2 + v3 == 2020 {
-                    println!("  {0} + {1} + {2} = 2020, {0} * {1} * {2} = {3}", v1, v2, v3, v1 * v2 * v3);
-                }
-            }
-        }
-    }
+    return None;
 }
