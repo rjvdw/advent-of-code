@@ -12,8 +12,8 @@ fn main() {
     }
 
     let path = &args[1];
-    let count = *&args[2].parse::<usize>().expect("Invalid count");
-    let sum = *&args[3].parse::<i32>().expect("Invalid sum");
+    let count = args[2].parse::<usize>().expect("Invalid count");
+    let sum = args[3].parse::<i32>().expect("Invalid sum");
     let values = read_input(path);
 
     match solve(&values, 0, count, sum) {
