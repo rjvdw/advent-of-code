@@ -26,18 +26,14 @@ fn main() {
 fn solve(values: &Vec<i32>, skip: usize, count: usize, sum: i32) -> Option<i32> {
     assert_ne!(count, 0);
     if count == 1 {
-        for &v in values.iter().skip(skip) {
-            if v == sum {
-                return Some(v);
-            }
+        for &v in values.iter().skip(skip).filter(|&&v| v == sum) {
+            return Some(v);
         }
     } else {
-        for (pos, &v) in values.iter().skip(skip).enumerate() {
-            if sum > v {
-                match solve(values, pos + 1, count - 1, sum - v) {
-                    Some(r) => return Some(r * v),
-                    None => {}
-                }
+        for (pos, &v) in values.iter().skip(skip).filter(|&&v| v < sum).enumerate() {
+            match solve(values, pos + 1, count - 1, sum - v) {
+                Some(r) => return Some(r * v),
+                None => {}
             }
         }
     }
