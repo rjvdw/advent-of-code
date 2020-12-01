@@ -14,7 +14,7 @@ fn main() {
     for (i, v1) in values.iter().enumerate() {
         for v2 in values.iter().skip(i + 1) {
             if v1 + v2 == 2020 {
-                println!("  {} + {} = 2020, {} * {} = {}", v1, v2, v1, v2, v1 * v2);
+                println!("  {0} + {1} = 2020, {0} * {1} = {2}", v1, v2, v1 * v2);
             }
         }
     }
@@ -24,7 +24,7 @@ fn main() {
         for (j, v2) in values.iter().skip(i + 1).enumerate() {
             for v3 in values.iter().skip(j + 1) {
                 if v1 + v2 + v3 == 2020 {
-                    println!("  {} + {} + {} = 2020, {} * {} * {} = {}", v1, v2, v3, v1, v2, v3, v1 * v2 * v3);
+                    println!("  {0} + {1} + {2} = 2020, {0} * {1} * {2} = {3}", v1, v2, v3, v1 * v2 * v3);
                 }
             }
         }
