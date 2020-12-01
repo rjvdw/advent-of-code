@@ -33,9 +33,11 @@ fn solve(values: &Vec<i32>, skip: usize, count: usize, sum: i32) -> Option<i32> 
         }
     } else {
         for (pos, &v) in values.iter().skip(skip).enumerate() {
-            match solve(values, pos + 1, count - 1, sum - v) {
-                Some(r) => return Some(r * v),
-                None => {}
+            if sum > v {
+                match solve(values, pos + 1, count - 1, sum - v) {
+                    Some(r) => return Some(r * v),
+                    None => {}
+                }
             }
         }
     }
