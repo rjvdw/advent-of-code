@@ -21,16 +21,19 @@ fn main() {
     }
 }
 
-fn solve(values: &Vec<i32>, from: usize, level: usize, sum: i32) -> Option<i32> {
-    if level <= 1 {
-        for &v in values.iter().skip(from + 1) {
+/// Solves the problem: Does there exist a subset of `count` numbers in `values`, such that they sum
+/// to `sum`. If so, return the product of these numbers.
+fn solve(values: &Vec<i32>, skip: usize, count: usize, sum: i32) -> Option<i32> {
+    assert_ne!(count, 0);
+    if count == 1 {
+        for &v in values.iter().skip(skip) {
             if v == sum {
                 return Some(v);
             }
         }
     } else {
-        for (pos, &v) in values.iter().skip(from + 1).enumerate() {
-            match solve(values, pos, level - 1, sum - v) {
+        for (pos, &v) in values.iter().skip(skip).enumerate() {
+            match solve(values, pos + 1, count - 1, sum - v) {
                 Some(r) => return Some(r * v),
                 None => {}
             }
