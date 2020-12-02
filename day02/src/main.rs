@@ -3,7 +3,8 @@ extern crate helpers;
 use std::env;
 use std::process::exit;
 use std::str::FromStr;
-use helpers::read_input;
+use helpers::{read_input, handle_result};
+use std::fmt;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -14,7 +15,7 @@ fn main() {
     }
 
     let path = &args[1];
-    let values: Vec<InputRecord> = read_input(path).expect("Unable to parse input");
+    let values: Vec<InputRecord> = handle_result(read_input(path));
 
     println!("Number of valid passwords according to old job: {}", values.iter()
         .filter(|v| v.valid_according_to_old_job()).count());
@@ -45,17 +46,46 @@ impl InputRecord {
     }
 }
 
+#[derive(Debug)]
+struct InputRecordError {
+    msg: String,
+}
+
+impl fmt::Display for InputRecordError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.msg)
+    }
+}
+
 impl FromStr for InputRecord {
-    type Err = ();
+    type Err = InputRecordError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let p1 = s.chars().position(|c| c == '-').expect(format!("Invalid input string: {}", s).as_str());
-        let p2 = p1 + s.chars().skip(p1).position(|c| c == ' ').expect(format!("Invalid input string: {}", s).as_str());
-        let p3 = p2 + s.chars().skip(p2).position(|c| c == ':').expect(format!("Invalid input string: {}", s).as_str());
+        let p1 = match s.chars().position(|c| c == '-') {
+            Some(pos) => pos,
+            None => return Err(InputRecordError { msg: format!("Input file has invalid format in line {}", s) })
+        };
+        let p2 = p1 + match s.chars().skip(p1).position(|c| c == ' ') {
+            Some(pos) => pos,
+            None => return Err(InputRecordError { msg: format!("Input file has invalid format in line {}", s) })
+        };
+        let p3 = p2 + match s.chars().skip(p2).position(|c| c == ':') {
+            Some(pos) => pos,
+            None => return Err(InputRecordError { msg: format!("Input file has invalid format in line {}", s) })
+        };
 
-        let idx1 = s[..p1].parse::<usize>().expect(format!("Invalid lower bound: {}", s).as_str());
-        let idx2 = s[p1 + 1..p2].parse::<usize>().expect(format!("Invalid upper bound: {}", s).as_str());
-        let character = s.chars().nth(p2 + 1).expect(format!("Invalid character: {}", s).as_str());
+        let idx1 = match s[..p1].parse::<usize>() {
+            Ok(val) => val,
+            Err(_) => return Err(InputRecordError { msg: format!("Invalid lower bound in line {}", s) })
+        };
+        let idx2 = match s[p1 + 1..p2].parse::<usize>() {
+            Ok(val) => val,
+            Err(_) => return Err(InputRecordError { msg: format!("Invalid upper bound in line {}", s) })
+        };
+        let character = match s.chars().nth(p2 + 1) {
+            Some(val) => val,
+            None => return Err(InputRecordError { msg: format!("Invalid character in line {}", s) })
+        };
         let password = s.chars().skip(p3 + 2).collect();
 
         Ok(InputRecord { idx1, idx2, character, password })

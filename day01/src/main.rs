@@ -2,7 +2,7 @@ extern crate helpers;
 
 use std::env;
 use std::process::exit;
-use helpers::read_input;
+use helpers::{read_input, handle_result};
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -13,9 +13,9 @@ fn main() {
     }
 
     let path = &args[1];
-    let count = args[2].parse::<usize>().expect("Invalid count");
-    let sum = args[3].parse::<i32>().expect("Invalid sum");
-    let values: Vec<i32> = read_input(path).expect("Unable to parse input");
+    let count = handle_result(args[2].parse::<usize>());
+    let sum = handle_result(args[3].parse::<i32>());
+    let values: Vec<i32> = handle_result(read_input(path));
 
     match solve(&values, 0, count, sum) {
         Some(v) => println!("{}", v),

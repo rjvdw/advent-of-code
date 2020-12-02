@@ -1,6 +1,8 @@
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::str::FromStr;
+use std::process::exit;
+use std::fmt::Display;
 
 pub fn read_input<T: FromStr>(path: &str) -> Result<Vec<T>, <T as FromStr>::Err> {
     let file = File::open(path).expect("Failed to open file");
@@ -12,4 +14,14 @@ pub fn read_input<T: FromStr>(path: &str) -> Result<Vec<T>, <T as FromStr>::Err>
     }
 
     return Ok(values);
+}
+
+pub fn handle_result<T, E: Display>(res: Result<T, E>) -> T {
+    match res {
+        Ok(v) => v,
+        Err(e) => {
+            eprintln!("{}", e);
+            exit(1);
+        }
+    }
 }
