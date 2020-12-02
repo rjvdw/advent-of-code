@@ -1,8 +1,9 @@
+extern crate helpers;
+
 use std::env;
-use std::fs::File;
-use std::io::{BufRead, BufReader};
 use std::process::exit;
 use std::str::FromStr;
+use helpers::read_input;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -13,24 +14,12 @@ fn main() {
     }
 
     let path = &args[1];
-    let values = read_input(path);
+    let values: Vec<InputRecord> = read_input(path).expect("Unable to parse input");
 
     println!("Number of valid passwords according to old job: {}", values.iter()
         .filter(|v| v.valid_according_to_old_job()).count());
     println!("Number of valid passwords according to corporate policy: {}", values.iter()
         .filter(|v| v.valid_according_to_corporate_policy()).count());
-}
-
-fn read_input(path: &String) -> Vec<InputRecord> {
-    let file = File::open(path).expect("Cannot read input");
-    let mut values = Vec::new();
-    for line in BufReader::new(file).lines() {
-        let line = line.expect("Unable to read line");
-        let line = line.parse::<InputRecord>().expect("Unable to parse value");
-        values.push(line);
-    }
-
-    return values;
 }
 
 #[derive(Debug)]
@@ -65,8 +54,8 @@ impl FromStr for InputRecord {
         let p3 = p2 + s.chars().skip(p2).position(|c| c == ':').expect(format!("Invalid input string: {}", s).as_str());
 
         let idx1 = s[..p1].parse::<usize>().expect(format!("Invalid lower bound: {}", s).as_str());
-        let idx2 = s[p1+1..p2].parse::<usize>().expect(format!("Invalid upper bound: {}", s).as_str());
-        let character = s.chars().nth(p2+1).expect(format!("Invalid character: {}", s).as_str());
+        let idx2 = s[p1 + 1..p2].parse::<usize>().expect(format!("Invalid upper bound: {}", s).as_str());
+        let character = s.chars().nth(p2 + 1).expect(format!("Invalid character: {}", s).as_str());
         let password = s.chars().skip(p3 + 2).collect();
 
         Ok(InputRecord { idx1, idx2, character, password })

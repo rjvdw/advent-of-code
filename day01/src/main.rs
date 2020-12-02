@@ -1,7 +1,8 @@
+extern crate helpers;
+
 use std::env;
-use std::fs::File;
-use std::io::{BufRead, BufReader};
 use std::process::exit;
+use helpers::read_input;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -14,24 +15,12 @@ fn main() {
     let path = &args[1];
     let count = args[2].parse::<usize>().expect("Invalid count");
     let sum = args[3].parse::<i32>().expect("Invalid sum");
-    let values = read_input(path);
+    let values: Vec<i32> = read_input(path).expect("Unable to parse input");
 
     match solve(&values, 0, count, sum) {
         Some(v) => println!("{}", v),
         None => println!("No solution")
     }
-}
-
-fn read_input(path: &String) -> Vec<i32> {
-    let file = File::open(path).expect("Cannot read input");
-    let mut values = Vec::new();
-    for line in BufReader::new(file).lines() {
-        let line = line.expect("Unable to read line");
-        let line = line.parse::<i32>().expect("Unable to parse value");
-        values.push(line);
-    }
-
-    return values;
 }
 
 /// Solves the problem: Does there exist a subset of `count` numbers in `values`, such that they sum
