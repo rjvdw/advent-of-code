@@ -4,6 +4,7 @@ use std::env;
 use std::process::exit;
 use helpers::{read_input, handle_result};
 
+/// https://adventofcode.com/2020/day/1
 fn main() {
     let args: Vec<String> = env::args().collect();
 
