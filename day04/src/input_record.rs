@@ -1,7 +1,6 @@
 use std::fmt;
 use helpers::FromMultilineStr;
 use crate::validators::{valid_year, valid_height, valid_color, valid_eye_color, valid_passport_id};
-use std::fmt::Formatter;
 
 struct InputRecordField {
     value: Option<String>,
@@ -31,13 +30,13 @@ impl InputRecordField {
 }
 
 impl fmt::Display for InputRecordField {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{:?}", self.value)
     }
 }
 
 impl fmt::Debug for InputRecordField {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{:?}", self.value)
     }
 }
