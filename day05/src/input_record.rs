@@ -23,8 +23,8 @@ pub struct InputRecord {
 }
 
 impl InputRecord {
-    pub fn get_seat_id(&self) -> u32 {
-        (self.row as u32) * 8 + (self.col as u32)
+    pub fn get_seat_id(&self) -> u16 {
+        (self.row as u16) * 8 + (self.col as u16)
     }
 }
 
