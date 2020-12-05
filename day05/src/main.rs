@@ -4,8 +4,8 @@ extern crate helpers;
 
 use std::env;
 use std::process::exit;
-use crate::input_record::InputRecord;
-use helpers::{handle_result, read_input};
+use input_record::InputRecord;
+use helpers::read_input;
 
 /// https://adventofcode.com/2020/day/5
 fn main() {
@@ -17,7 +17,7 @@ fn main() {
     }
 
     let path = &args[1];
-    let values: Vec<InputRecord> = handle_result(read_input(path));
+    let values: Vec<InputRecord> = read_input(path).unwrap();
 
     if values.is_empty() {
         eprintln!("No seats found");
