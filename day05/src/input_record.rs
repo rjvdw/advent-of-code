@@ -1,5 +1,21 @@
 use std::str::FromStr;
 
+const ROW_BIT_FLAGS: [u8; 7] = [
+    0b01000000,
+    0b00100000,
+    0b00010000,
+    0b00001000,
+    0b00000100,
+    0b00000010,
+    0b00000001,
+];
+
+const COL_BIT_FLAGS: [u8; 3] = [
+    0b00000100,
+    0b00000010,
+    0b00000001,
+];
+
 #[derive(Debug)]
 pub struct InputRecord {
     pub row: u8,
@@ -20,9 +36,9 @@ impl FromStr for InputRecord {
         let mut col = 0;
         for (i, c) in s.chars().enumerate() {
             if c == 'B' {
-                row |= 2u8.pow((6 - i) as u32);
+                row |= ROW_BIT_FLAGS[i];
             } else if c == 'R' {
-                col |= 2u8.pow((9 - i) as u32);
+                col |= COL_BIT_FLAGS[i - 7];
             }
         }
 
