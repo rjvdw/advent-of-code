@@ -1,8 +1,8 @@
+use std::fmt::Display;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
-use std::str::FromStr;
 use std::process::exit;
-use std::fmt::Display;
+use std::str::FromStr;
 
 pub fn read_input<T: FromStr>(path: &str) -> Result<Vec<T>, <T as FromStr>::Err> {
     let file = File::open(path).expect("Failed to open file");

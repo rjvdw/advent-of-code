@@ -1,11 +1,12 @@
-mod input_record;
-
 extern crate helpers;
 
 use std::env;
 use std::process::exit;
-use input_record::InputRecord;
+
 use helpers::read_input;
+use input_record::InputRecord;
+
+mod input_record;
 
 /// https://adventofcode.com/2020/day/5
 fn main() {
@@ -41,8 +42,9 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use std::str::FromStr;
+
+    use super::*;
 
     #[test]
     fn test_1() {

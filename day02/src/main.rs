@@ -1,11 +1,12 @@
-mod input_record;
-
 extern crate helpers;
 
 use std::env;
 use std::process::exit;
-use helpers::{read_input, handle_result};
+
+use helpers::{handle_result, read_input};
 use input_record::InputRecord;
+
+mod input_record;
 
 /// https://adventofcode.com/2020/day/2
 fn main() {

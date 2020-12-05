@@ -1,6 +1,8 @@
 use std::fmt;
+
 use helpers::FromMultilineStr;
-use crate::validators::{valid_year, valid_height, valid_color, valid_eye_color, valid_passport_id};
+
+use crate::validators::{valid_color, valid_eye_color, valid_height, valid_passport_id, valid_year};
 
 struct InputRecordField {
     value: Option<String>,

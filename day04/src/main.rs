@@ -1,12 +1,13 @@
-mod input_record;
-mod validators;
-
 extern crate helpers;
 
 use std::env;
 use std::process::exit;
-use helpers::{read_multiline_input, handle_result};
+
+use helpers::{handle_result, read_multiline_input};
 use input_record::InputRecord;
+
+mod input_record;
+mod validators;
 
 /// https://adventofcode.com/2020/day/4
 fn main() {
@@ -26,8 +27,9 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use helpers::FromMultilineStr;
+
+    use super::*;
 
     #[test]
     fn test_part_1() {
