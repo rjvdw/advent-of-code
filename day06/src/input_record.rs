@@ -48,13 +48,7 @@ impl FromMultilineStr for InputRecord {
         if !line.is_empty() {
             self.nr_of_people_in_group += 1;
             for c in line.chars() {
-                self.answered_with_yes.insert(
-                    c,
-                    match self.answered_with_yes.get(&c) {
-                        Some(i) => i + 1,
-                        None => 1,
-                    },
-                );
+                *self.answered_with_yes.entry(c).or_insert(0) += 1;
             }
         }
 
