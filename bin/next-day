@@ -12,6 +12,6 @@ fi
 day_nr_padded=$( printf %02d $day_nr )
 dir_name="day${day_nr_padded}"
 
-cp -r _tmp/template "${dir_name}"
+cp -r bin/template "${dir_name}"
 sed -i '' 's/name = "day##"/name = "day'$day_nr_padded'"/g' "${dir_name}/Cargo.toml"
 sed -i '' 's/2020\/day\/#/2020\/day\/'$day_nr'/g' "${dir_name}/src/main.rs"
