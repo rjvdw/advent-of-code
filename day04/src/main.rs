@@ -27,13 +27,13 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
-    use helpers::parse_input_lines;
+    use helpers::parse_multiline_input;
 
     use super::*;
 
     #[test]
     fn test_part_1() {
-        let values = parse_input_lines::<InputRecord>(vec![
+        let values = parse_multiline_input::<InputRecord>(vec![
             "ecl:gry pid:860033327 eyr:2020 hcl:#fffffd",
             "byr:1937 iyr:2017 cid:147 hgt:183cm",
             "",
@@ -57,7 +57,7 @@ mod tests {
 
     #[test]
     fn test_part_2_invalid_passports() {
-        let values = parse_input_lines::<InputRecord>(vec![
+        let values = parse_multiline_input::<InputRecord>(vec![
             "eyr:1972 cid:100",
             "hcl:#18171d ecl:amb hgt:170 pid:186cm iyr:2018 byr:1926",
             "",
@@ -81,7 +81,7 @@ mod tests {
 
     #[test]
     fn test_part_2_valid_passports() {
-        let values = parse_input_lines::<InputRecord>(vec![
+        let values = parse_multiline_input::<InputRecord>(vec![
             "pid:087499704 hgt:74in ecl:grn iyr:2012 eyr:2030 byr:1980",
             "hcl:#623a2f",
             "",

@@ -32,13 +32,13 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
-    use helpers::parse_input_lines;
+    use helpers::parse_multiline_input;
 
     use super::*;
 
     #[test]
     fn test_part_1() {
-        let values = parse_input_lines::<InputRecord>(vec![
+        let values = parse_multiline_input::<InputRecord>(vec![
             "abc",
             "",
             "a",
@@ -65,7 +65,7 @@ mod tests {
 
     #[test]
     fn test_part_2() {
-        let values = parse_input_lines::<InputRecord>(vec![
+        let values = parse_multiline_input::<InputRecord>(vec![
             "abc",
             "",
             "a",

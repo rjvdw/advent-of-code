@@ -63,9 +63,17 @@ pub fn handle_result<T, E: Display>(res: Result<T, E>) -> T {
     }
 }
 
+pub fn parse_input<I: FromStr>(input_lines: Vec<&str>) -> Result<Vec<I>, <I as FromStr>::Err> {
+    let mut values: Vec<I> = Vec::with_capacity(input_lines.len());
+    for line in input_lines {
+        values.push(line.parse::<I>()?);
+    }
+    Ok(values)
+}
+
 /// Helper method for parsing input using FromMultilineStr. This method is mostly useful for unit
 /// tests.
-pub fn parse_input_lines<I: FromMultilineStr>(input_lines: Vec<&str>) -> Result<Vec<I>, <I as FromMultilineStr>::Err> {
+pub fn parse_multiline_input<I: FromMultilineStr>(input_lines: Vec<&str>) -> Result<Vec<I>, <I as FromMultilineStr>::Err> {
     let mut values = Vec::new();
     let mut record = I::new();
     for line in input_lines {
