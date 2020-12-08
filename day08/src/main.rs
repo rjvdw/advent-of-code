@@ -7,8 +7,10 @@ use helpers::{handle_result, read_input};
 use input_record::InputRecord;
 
 use crate::input_record::Operation;
+use crate::program_fixer::ProgramFixer;
 
 mod input_record;
+mod program_fixer;
 
 /// https://adventofcode.com/2020/day/8
 fn main() {
@@ -23,11 +25,14 @@ fn main() {
     let instructions: Vec<InputRecord> = handle_result(read_input(path));
 
     let (terminated, acc) = solve(&instructions);
-    println!("Terminated correctly: {}, final value: {}", terminated, acc);
-
-    match fix_program(&instructions) {
-        Some((i, acc)) => println!("Terminated correctly by altering instruction at {}, final value: {}", i, acc),
-        None => println!("Unable to fix program"),
+    if terminated {
+        println!("Program terminated correctly. Final value is {}", acc);
+    } else {
+        println!("Program did not terminate correctly. Final value is {}", acc);
+        let fixer = ProgramFixer::new(&instructions, solve);
+        for (i, acc) in fixer {
+            println!("Terminated correctly by altering instruction at line {}, final value is {}", i + 1, acc);
+        }
     }
 }
 
@@ -63,30 +68,6 @@ fn solve(instructions: &Vec<InputRecord>) -> (bool, i32) {
     }
 
     (true, acc)
-}
-
-fn fix_program(instructions: &Vec<InputRecord>) -> Option<(usize, i32)> {
-    for (i, instruction) in instructions.iter().enumerate() {
-        let (terminated, acc) = match instruction.op {
-            Operation::NOP => {
-                let mut altered = instructions.clone();
-                altered[i] = InputRecord { op: Operation::JMP, value: instruction.value };
-                solve(&altered)
-            }
-            Operation::JMP => {
-                let mut altered = instructions.clone();
-                altered[i] = InputRecord { op: Operation::NOP, value: instruction.value };
-                solve(&altered)
-            }
-            _ => (false, 0),
-        };
-
-        if terminated {
-            return Some((i, acc));
-        }
-    }
-
-    None
 }
 
 fn jump(idx: usize, value: i32) -> usize {
@@ -134,6 +115,10 @@ mod tests {
             "acc +6",
         ]).unwrap();
 
-        assert_eq!(fix_program(&values), Some((7, 8)));
+        let fixer = ProgramFixer::new(&values, solve);
+        let fixes: Vec<(usize, i32)> = fixer.collect();
+
+        assert_eq!(fixes.len(), 1);
+        assert_eq!(fixes[0], (7, 8));
     }
 }
