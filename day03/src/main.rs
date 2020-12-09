@@ -38,7 +38,7 @@ fn main() {
     println!("{}", result);
 }
 
-fn solve(values: &Vec<InputRecord>, step_x: usize, step_y: usize) -> u64 {
+fn solve(values: &[InputRecord], step_x: usize, step_y: usize) -> u64 {
     let mut nr_trees = 0;
     let mut pos = 0;
 
@@ -55,10 +55,11 @@ fn solve(values: &Vec<InputRecord>, step_x: usize, step_y: usize) -> u64 {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use helpers::parse_input;
 
     #[test]
     fn test() {
-        let input = vec![
+        let input = parse_input::<InputRecord>(vec![
             "..##.......",
             "#...#...#..",
             ".#....#..#.",
@@ -70,10 +71,8 @@ mod tests {
             "#.##...#...",
             "#...##....#",
             ".#..#...#.#",
-        ]
-        .iter()
-        .map(|l| l.parse::<InputRecord>().unwrap())
-        .collect();
+        ])
+        .unwrap();
 
         assert_eq!(solve(&input, 1, 1), 2);
         assert_eq!(solve(&input, 3, 1), 7);

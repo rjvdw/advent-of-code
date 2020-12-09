@@ -47,10 +47,10 @@ pub trait FromMultilineStr {
     fn new() -> Self;
 
     /// Test for whether a line indicates that a new record starts.
-    fn indicates_new_record(line: &String) -> bool;
+    fn indicates_new_record(line: &str) -> bool;
 
     /// Parses a line.
-    fn parse(&mut self, line: &String) -> Result<(), Self::Err>;
+    fn parse(&mut self, line: &str) -> Result<(), Self::Err>;
 }
 
 /// Helper method for dealing with results. If a result is an Err, it will print an error message

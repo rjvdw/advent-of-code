@@ -30,6 +30,12 @@ Format your code:
 cargo fmt
 ```
 
+Check your code for common mistakes/code smells:
+
+```bash
+cargo clippy
+```
+
 Create a folder for the next day:
 
 ```bash

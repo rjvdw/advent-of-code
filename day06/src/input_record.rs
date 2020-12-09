@@ -43,11 +43,11 @@ impl FromMultilineStr for InputRecord {
         }
     }
 
-    fn indicates_new_record(line: &String) -> bool {
+    fn indicates_new_record(line: &str) -> bool {
         line.is_empty()
     }
 
-    fn parse(&mut self, line: &String) -> Result<(), Self::Err> {
+    fn parse(&mut self, line: &str) -> Result<(), Self::Err> {
         if !line.is_empty() {
             self.nr_of_people_in_group += 1;
             for c in line.chars() {

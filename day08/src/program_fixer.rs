@@ -1,15 +1,15 @@
 use crate::input_record::{InputRecord, Operation};
 
 pub struct ProgramFixer<'a> {
-    instructions: &'a Vec<InputRecord>,
-    solve: fn(&Vec<InputRecord>) -> (bool, i32),
+    instructions: &'a [InputRecord],
+    solve: fn(&[InputRecord]) -> (bool, i32),
     idx: usize,
 }
 
 impl ProgramFixer<'_> {
     pub fn new(
-        instructions: &Vec<InputRecord>,
-        solve: fn(&Vec<InputRecord>) -> (bool, i32),
+        instructions: &[InputRecord],
+        solve: fn(&[InputRecord]) -> (bool, i32),
     ) -> ProgramFixer {
         ProgramFixer {
             instructions,
@@ -30,7 +30,7 @@ impl Iterator for ProgramFixer<'_> {
                     if -instruction.value > (i as i32) {
                         (false, 0)
                     } else {
-                        let mut altered = self.instructions.clone();
+                        let mut altered = self.instructions.to_vec();
                         altered[i] = InputRecord {
                             op: Operation::JMP,
                             value: instruction.value,
@@ -39,7 +39,7 @@ impl Iterator for ProgramFixer<'_> {
                     }
                 }
                 Operation::JMP => {
-                    let mut altered = self.instructions.clone();
+                    let mut altered = self.instructions.to_vec();
                     altered[i] = InputRecord {
                         op: Operation::NOP,
                         value: instruction.value,

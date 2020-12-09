@@ -1,5 +1,6 @@
 extern crate helpers;
 
+use std::cmp::Ordering;
 use std::collections::VecDeque;
 use std::env;
 use std::process::exit;
@@ -43,7 +44,7 @@ fn main() {
     };
 }
 
-fn find_first_invalid_number(values: &Vec<u64>, preamble_size: usize) -> Option<(u64, usize)> {
+fn find_first_invalid_number(values: &[u64], preamble_size: usize) -> Option<(u64, usize)> {
     let mut current_slice: VecDeque<u64> = VecDeque::with_capacity(preamble_size);
     for &value in values.iter().take(preamble_size) {
         current_slice.push_back(value);
@@ -76,16 +77,16 @@ fn is_valid_number(values: &VecDeque<u64>, next: u64) -> bool {
     false
 }
 
-fn find_contiguous_numbers_that_sum_to(values: &Vec<u64>, target: u64) -> Option<(usize, usize)> {
+fn find_contiguous_numbers_that_sum_to(values: &[u64], target: u64) -> Option<(usize, usize)> {
     for (i, _) in values.iter().enumerate() {
         let mut sum = 0;
         for (j, y) in values.iter().skip(i).enumerate() {
             let j = i + j;
             sum += y;
-            if sum == target {
-                return Some((i, j));
-            } else if sum > target {
-                break;
+            match sum.cmp(&target) {
+                Ordering::Equal => return Some((i, j)),
+                Ordering::Greater => break,
+                _ => {}
             }
         }
     }
@@ -93,7 +94,7 @@ fn find_contiguous_numbers_that_sum_to(values: &Vec<u64>, target: u64) -> Option
     None
 }
 
-fn get_sum_of_smallest_and_largest_values_from(values: &Vec<u64>, start: usize, end: usize) -> u64 {
+fn get_sum_of_smallest_and_largest_values_from(values: &[u64], start: usize, end: usize) -> u64 {
     let mut min = values[start];
     let mut max = values[start];
 

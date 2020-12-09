@@ -43,14 +43,11 @@ fn main() {
     }
 }
 
-fn solve(instructions: &Vec<InputRecord>) -> (bool, i32) {
+fn solve(instructions: &[InputRecord]) -> (bool, i32) {
     let mut seen: Vec<bool> = Vec::with_capacity(instructions.len());
     let mut acc = 0;
     let mut idx = 0;
-
-    for _ in instructions {
-        seen.push(false);
-    }
+    seen.resize(instructions.len(), false);
 
     while idx < instructions.len() {
         if seen[idx] {

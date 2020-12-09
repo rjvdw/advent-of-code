@@ -35,7 +35,7 @@ impl FromStr for InputRecord {
                 let color = s[..pos].to_string();
                 let mut contains = HashMap::new();
 
-                for ss in s[pos + INPUT_SEPARATOR.len()..].split(",") {
+                for ss in s[pos + INPUT_SEPARATOR.len()..].split(',') {
                     let ss = ss.trim();
                     if ss != "no other bags." {
                         let idx1 = ss.find(' ');

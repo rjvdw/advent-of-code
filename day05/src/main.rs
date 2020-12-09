@@ -26,7 +26,7 @@ fn main() {
     }
 
     let mut seat_ids = values.iter().map(|r| r.get_seat_id()).collect::<Vec<u16>>();
-    seat_ids.sort();
+    seat_ids.sort_unstable();
 
     println!("highest seat ID: {}", seat_ids.last().unwrap());
 

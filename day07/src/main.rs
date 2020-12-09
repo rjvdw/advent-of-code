@@ -28,7 +28,7 @@ fn main() {
     println!("Solution to part 2: {}", solve_part_2(&values, &args[2]));
 }
 
-fn solve_part_1(values: &Vec<InputRecord>, needle: &String) -> HashSet<String> {
+fn solve_part_1(values: &[InputRecord], needle: &str) -> HashSet<String> {
     values
         .iter()
         .filter(|v| v.contains.contains_key(needle))
@@ -39,7 +39,7 @@ fn solve_part_1(values: &Vec<InputRecord>, needle: &String) -> HashSet<String> {
         })
 }
 
-fn solve_part_2(values: &Vec<InputRecord>, needle: &String) -> u32 {
+fn solve_part_2(values: &[InputRecord], needle: &str) -> u32 {
     let mut count = 0;
     let mut values_map: HashMap<String, HashMap<String, u32>> = HashMap::new();
 
@@ -47,7 +47,7 @@ fn solve_part_2(values: &Vec<InputRecord>, needle: &String) -> u32 {
         values_map.insert(record.color.clone(), record.contains.clone());
     }
 
-    while values_map[needle].len() > 0 {
+    while !values_map[needle].is_empty() {
         let mut new_value: HashMap<String, u32> = HashMap::new();
 
         for (key1, value1) in values_map[needle].iter() {
@@ -58,7 +58,7 @@ fn solve_part_2(values: &Vec<InputRecord>, needle: &String) -> u32 {
             }
         }
 
-        values_map.insert(needle.clone(), new_value);
+        values_map.insert(needle.to_string(), new_value);
     }
 
     count

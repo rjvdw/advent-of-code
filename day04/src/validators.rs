@@ -1,6 +1,6 @@
 use regex::Regex;
 
-pub fn valid_year(v: &String, lower_bound: i32, upper_bound: i32) -> bool {
+pub fn valid_year(v: &str, lower_bound: i32, upper_bound: i32) -> bool {
     match v.parse::<i32>() {
         Ok(value) => lower_bound <= value && value <= upper_bound,
         Err(_) => false,
@@ -8,7 +8,7 @@ pub fn valid_year(v: &String, lower_bound: i32, upper_bound: i32) -> bool {
 }
 
 pub fn valid_height(
-    v: &String,
+    v: &str,
     lower_bound_in: i32,
     upper_bound_in: i32,
     lower_bound_cm: i32,
@@ -29,16 +29,16 @@ pub fn valid_height(
     }
 }
 
-pub fn valid_color(v: &String) -> bool {
-    Regex::new(r"^#[0-9a-f]{6}$").unwrap().is_match(v.as_str())
+pub fn valid_color(v: &str) -> bool {
+    Regex::new(r"^#[0-9a-f]{6}$").unwrap().is_match(v)
 }
 
-pub fn valid_eye_color(v: &String) -> bool {
+pub fn valid_eye_color(v: &str) -> bool {
     v == "amb" || v == "blu" || v == "brn" || v == "gry" || v == "grn" || v == "hzl" || v == "oth"
 }
 
-pub fn valid_passport_id(v: &String) -> bool {
-    Regex::new(r"^\d{9}$").unwrap().is_match(v.as_str())
+pub fn valid_passport_id(v: &str) -> bool {
+    Regex::new(r"^\d{9}$").unwrap().is_match(v)
 }
 
 #[cfg(test)]

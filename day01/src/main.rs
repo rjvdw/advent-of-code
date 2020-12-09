@@ -27,24 +27,23 @@ fn main() {
 
 /// Solves the problem: Does there exist a subset of `count` numbers in `values`, such that they sum
 /// to `sum`. If so, return the product of these numbers.
-fn solve(values: &Vec<i32>, skip: usize, count: usize, sum: i32) -> Option<i32> {
+fn solve(values: &[i32], skip: usize, count: usize, sum: i32) -> Option<i32> {
     assert_ne!(count, 0);
     assert!(sum > 0);
 
     if count == 1 {
-        for &v in values.iter().skip(skip).filter(|&&v| v == sum) {
+        if let Some(&v) = values.iter().skip(skip).find(|&&v| v == sum) {
             return Some(v);
         }
     } else {
         for (pos, &v) in values.iter().skip(skip).filter(|&&v| v < sum).enumerate() {
-            match solve(values, pos + 1, count - 1, sum - v) {
-                Some(r) => return Some(r * v),
-                None => {}
+            if let Some(r) = solve(values, pos + 1, count - 1, sum - v) {
+                return Some(r * v);
             }
         }
     }
 
-    return None;
+    None
 }
 
 #[cfg(test)]
