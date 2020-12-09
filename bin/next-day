@@ -1,17 +1,14 @@
 #!/bin/bash
 
+set -e
+
 pushd $( dirname $( dirname $( readlink -f $0 ) ) )
 
-day_nr=$1
-
-if [ -z "${1}" ]; then
-  echo "Usage: $0 <DAY_NR>"
-  exit 1
-fi
-
+day_nr=$(( $(\ls -d day* | \tail -n1 | \grep -oP '[1-9]\d*$') + 1 ))
 day_nr_padded=$( printf %02d $day_nr )
 dir_name="day${day_nr_padded}"
 
 cp -r bin/template "${dir_name}"
 sed -i '' 's/name = "day##"/name = "day'$day_nr_padded'"/g' "${dir_name}/Cargo.toml"
-sed -i '' 's/2020\/day\/#/2020\/day\/'$day_nr'/g' "${dir_name}/src/main.rs"
+sed -i '' 's/day # of/day '$day_nr' of/g' "${dir_name}/Cargo.toml"
+sed -i '' 's/2020\/day\/#/2020\/day\/'$day_nr'/g' "${dir_name}/Cargo.toml" "${dir_name}/src/main.rs"

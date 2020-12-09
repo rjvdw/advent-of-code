@@ -27,7 +27,7 @@ cargo test --package day04
 Create a folder for the next day:
 
 ```bash
-bin/next-day $day_number
+bin/next-day
 ```
 
 
