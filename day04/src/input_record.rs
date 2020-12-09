@@ -2,7 +2,9 @@ use std::fmt;
 
 use helpers::FromMultilineStr;
 
-use crate::validators::{valid_color, valid_eye_color, valid_height, valid_passport_id, valid_year};
+use crate::validators::{
+    valid_color, valid_eye_color, valid_height, valid_passport_id, valid_year,
+};
 
 struct InputRecordField {
     value: Option<String>,
@@ -11,7 +13,10 @@ struct InputRecordField {
 
 impl InputRecordField {
     fn none(validator: fn(&String) -> bool) -> Self {
-        InputRecordField { value: None, validator }
+        InputRecordField {
+            value: None,
+            validator,
+        }
     }
 
     fn set_value(&mut self, value: String) {
@@ -57,24 +62,24 @@ pub struct InputRecord {
 
 impl InputRecord {
     pub fn has_required_fields(&self) -> bool {
-        self.byr.is_present() &&
-            self.iyr.is_present() &&
-            self.eyr.is_present() &&
-            self.hgt.is_present() &&
-            self.hcl.is_present() &&
-            self.ecl.is_present() &&
-            self.pid.is_present()
+        self.byr.is_present()
+            && self.iyr.is_present()
+            && self.eyr.is_present()
+            && self.hgt.is_present()
+            && self.hcl.is_present()
+            && self.ecl.is_present()
+            && self.pid.is_present()
     }
 
     pub fn is_valid(&self) -> bool {
-        self.byr.is_present_and_valid() &&
-            self.iyr.is_present_and_valid() &&
-            self.eyr.is_present_and_valid() &&
-            self.hgt.is_present_and_valid() &&
-            self.hcl.is_present_and_valid() &&
-            self.ecl.is_present_and_valid() &&
-            self.pid.is_present_and_valid() &&
-            self.cid.is_valid()
+        self.byr.is_present_and_valid()
+            && self.iyr.is_present_and_valid()
+            && self.eyr.is_present_and_valid()
+            && self.hgt.is_present_and_valid()
+            && self.hcl.is_present_and_valid()
+            && self.ecl.is_present_and_valid()
+            && self.pid.is_present_and_valid()
+            && self.cid.is_valid()
     }
 }
 
@@ -126,10 +131,18 @@ impl FromMultilineStr for InputRecord {
                             "ecl" => self.ecl.set_value(value),
                             "pid" => self.pid.set_value(value),
                             "cid" => self.cid.set_value(value),
-                            _ => return Err(InputRecordError { msg: format!("Invalid key '{}' in line '{}'", key, line) })
+                            _ => {
+                                return Err(InputRecordError {
+                                    msg: format!("Invalid key '{}' in line '{}'", key, line),
+                                })
+                            }
                         }
                     }
-                    None => return Err(InputRecordError { msg: format!("Invalid tuple '{}' in line '{}'", tuple, line) })
+                    None => {
+                        return Err(InputRecordError {
+                            msg: format!("Invalid tuple '{}' in line '{}'", tuple, line),
+                        })
+                    }
                 }
             }
         }

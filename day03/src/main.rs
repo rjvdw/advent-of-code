@@ -22,7 +22,8 @@ fn main() {
 
     let mut result = 1;
     for entry in args.iter().skip(2) {
-        let vec = entry.split(',')
+        let vec = entry
+            .split(',')
             .map(|c| handle_result(c.parse::<usize>()))
             .collect::<Vec<usize>>();
 
@@ -69,7 +70,10 @@ mod tests {
             "#.##...#...",
             "#...##....#",
             ".#..#...#.#",
-        ].iter().map(|l| l.parse::<InputRecord>().unwrap()).collect();
+        ]
+        .iter()
+        .map(|l| l.parse::<InputRecord>().unwrap())
+        .collect();
 
         assert_eq!(solve(&input, 1, 1), 2);
         assert_eq!(solve(&input, 3, 1), 7);

@@ -18,7 +18,9 @@ pub fn read_input<T: FromStr>(path: &str) -> Result<Vec<T>, <T as FromStr>::Err>
 }
 
 /// Reads input from a file, and parses each line using `FromMultilineStr`.
-pub fn read_multiline_input<T: FromMultilineStr>(path: &str) -> Result<Vec<T>, <T as FromMultilineStr>::Err> {
+pub fn read_multiline_input<T: FromMultilineStr>(
+    path: &str,
+) -> Result<Vec<T>, <T as FromMultilineStr>::Err> {
     let file = File::open(path).expect("Failed to open file");
     let mut values = Vec::new();
     let mut record = T::new();
@@ -73,7 +75,9 @@ pub fn parse_input<I: FromStr>(input_lines: Vec<&str>) -> Result<Vec<I>, <I as F
 
 /// Helper method for parsing input using FromMultilineStr. This method is mostly useful for unit
 /// tests.
-pub fn parse_multiline_input<I: FromMultilineStr>(input_lines: Vec<&str>) -> Result<Vec<I>, <I as FromMultilineStr>::Err> {
+pub fn parse_multiline_input<I: FromMultilineStr>(
+    input_lines: Vec<&str>,
+) -> Result<Vec<I>, <I as FromMultilineStr>::Err> {
     let mut values = Vec::new();
     let mut record = I::new();
     for line in input_lines {

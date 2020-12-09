@@ -28,10 +28,17 @@ fn main() {
     if terminated {
         println!("Program terminated correctly. Final value is {}", acc);
     } else {
-        println!("Program did not terminate correctly. Final value is {}", acc);
+        println!(
+            "Program did not terminate correctly. Final value is {}",
+            acc
+        );
         let fixer = ProgramFixer::new(&instructions, solve);
         for (i, acc) in fixer {
-            println!("Terminated correctly by altering instruction at line {}, final value is {}", i + 1, acc);
+            println!(
+                "Terminated correctly by altering instruction at line {}, final value is {}",
+                i + 1,
+                acc
+            );
         }
     }
 }
@@ -87,16 +94,10 @@ mod tests {
     #[test]
     fn test_part_1() {
         let values = parse_input::<InputRecord>(vec![
-            "nop +0",
-            "acc +1",
-            "jmp +4",
-            "acc +3",
-            "jmp -3",
-            "acc -99",
-            "acc +1",
-            "jmp -4",
+            "nop +0", "acc +1", "jmp +4", "acc +3", "jmp -3", "acc -99", "acc +1", "jmp -4",
             "acc +6",
-        ]).unwrap();
+        ])
+        .unwrap();
 
         assert_eq!(solve(&values), (false, 5));
     }
@@ -104,16 +105,10 @@ mod tests {
     #[test]
     fn test_part_2() {
         let values = parse_input::<InputRecord>(vec![
-            "nop +0",
-            "acc +1",
-            "jmp +4",
-            "acc +3",
-            "jmp -3",
-            "acc -99",
-            "acc +1",
-            "jmp -4",
+            "nop +0", "acc +1", "jmp +4", "acc +3", "jmp -3", "acc -99", "acc +1", "jmp -4",
             "acc +6",
-        ]).unwrap();
+        ])
+        .unwrap();
 
         let fixer = ProgramFixer::new(&values, solve);
         let fixes: Vec<(usize, i32)> = fixer.collect();

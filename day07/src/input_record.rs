@@ -25,7 +25,11 @@ impl FromStr for InputRecord {
     type Err = InputRecordError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let error = || Err(InputRecordError { msg: format!("Invalid input line: '{}'", s) });
+        let error = || {
+            Err(InputRecordError {
+                msg: format!("Invalid input line: '{}'", s),
+            })
+        };
         match s.find(INPUT_SEPARATOR) {
             Some(pos) => {
                 let color = s[..pos].to_string();
@@ -81,7 +85,8 @@ mod tests {
             "vibrant plum bags contain 5 faded blue bags, 6 dotted black bags.",
             "faded blue bags contain no other bags.",
             "dotted black bags contain no other bags.",
-        ]).unwrap();
+        ])
+        .unwrap();
 
         assert_eq!(values[0].color, "light red");
         assert_eq!(values[0].contains.len(), 2);

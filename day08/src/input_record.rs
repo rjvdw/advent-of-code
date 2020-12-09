@@ -29,7 +29,11 @@ impl FromStr for InputRecord {
     type Err = InputRecordError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let error = || Err(InputRecordError { msg: format!("Invalid input line: '{}'", s) });
+        let error = || {
+            Err(InputRecordError {
+                msg: format!("Invalid input line: '{}'", s),
+            })
+        };
         match s.find(' ') {
             Some(pos) => {
                 let op: Operation = match &s[..pos] {

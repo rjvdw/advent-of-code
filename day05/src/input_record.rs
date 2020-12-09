@@ -1,5 +1,6 @@
 use std::str::FromStr;
 
+#[rustfmt::skip]
 const BIT_FLAGS: [u8; 10] = [
     // rows
     0b01000000,

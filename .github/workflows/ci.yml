@@ -17,3 +17,5 @@ jobs:
           key: ${{ runner.os }}-targets
       - name: test
         run: cargo test
+      - name: fmt
+        run: cargo fmt -- --check

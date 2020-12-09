@@ -21,7 +21,7 @@ fn main() {
 
     match solve(&values, 0, count, sum) {
         Some(v) => println!("{}", v),
-        None => println!("No solution")
+        None => println!("No solution"),
     }
 }
 

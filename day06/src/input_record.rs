@@ -15,7 +15,10 @@ impl InputRecord {
     }
 
     pub fn nr_of_questions_everyone_answered_with_yes(&self) -> usize {
-        self.answered_with_yes.values().filter(|&&v| v == self.nr_of_people_in_group).count()
+        self.answered_with_yes
+            .values()
+            .filter(|&&v| v == self.nr_of_people_in_group)
+            .count()
     }
 }
 

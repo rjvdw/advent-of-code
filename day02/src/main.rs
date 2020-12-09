@@ -20,10 +20,20 @@ fn main() {
     let path = &args[1];
     let values: Vec<InputRecord> = handle_result(read_input(path));
 
-    println!("Number of valid passwords according to old job: {}", values.iter()
-        .filter(|v| v.valid_according_to_old_job()).count());
-    println!("Number of valid passwords according to corporate policy: {}", values.iter()
-        .filter(|v| v.valid_according_to_corporate_policy()).count());
+    println!(
+        "Number of valid passwords according to old job: {}",
+        values
+            .iter()
+            .filter(|v| v.valid_according_to_old_job())
+            .count()
+    );
+    println!(
+        "Number of valid passwords according to corporate policy: {}",
+        values
+            .iter()
+            .filter(|v| v.valid_according_to_corporate_policy())
+            .count()
+    );
 }
 
 #[cfg(test)]

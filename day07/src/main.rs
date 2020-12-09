@@ -21,12 +21,16 @@ fn main() {
     let path = &args[1];
     let values: Vec<InputRecord> = handle_result(read_input(path));
 
-    println!("Solution to part 1: {}", solve_part_1(&values, &args[2]).len());
+    println!(
+        "Solution to part 1: {}",
+        solve_part_1(&values, &args[2]).len()
+    );
     println!("Solution to part 2: {}", solve_part_2(&values, &args[2]));
 }
 
 fn solve_part_1(values: &Vec<InputRecord>, needle: &String) -> HashSet<String> {
-    values.iter()
+    values
+        .iter()
         .filter(|v| v.contains.contains_key(needle))
         .fold(HashSet::new(), |mut acc, x| {
             acc.insert(x.color.clone());
@@ -78,7 +82,8 @@ mod tests {
             "vibrant plum bags contain 5 faded blue bags, 6 dotted black bags.",
             "faded blue bags contain no other bags.",
             "dotted black bags contain no other bags.",
-        ]).unwrap();
+        ])
+        .unwrap();
 
         let matching_bags = solve_part_1(&values, &"shiny gold".to_string());
         assert_eq!(matching_bags.len(), 4);
@@ -98,7 +103,8 @@ mod tests {
             "dark green bags contain 2 dark blue bags.",
             "dark blue bags contain 2 dark violet bags.",
             "dark violet bags contain no other bags.",
-        ]).unwrap();
+        ])
+        .unwrap();
 
         assert_eq!(solve_part_2(&values, &"shiny gold".to_string()), 126);
     }
@@ -110,7 +116,8 @@ mod tests {
             "BBB bags contain 2 CCC bags, 2 DDD bags.",
             "CCC bags contain 2 DDD bags.",
             "DDD bags contain no other bags.",
-        ]).unwrap();
+        ])
+        .unwrap();
 
         assert_eq!(solve_part_2(&values, &"AAA".to_string()), 24);
     }

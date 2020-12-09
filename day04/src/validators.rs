@@ -7,7 +7,13 @@ pub fn valid_year(v: &String, lower_bound: i32, upper_bound: i32) -> bool {
     }
 }
 
-pub fn valid_height(v: &String, lower_bound_in: i32, upper_bound_in: i32, lower_bound_cm: i32, upper_bound_cm: i32) -> bool {
+pub fn valid_height(
+    v: &String,
+    lower_bound_in: i32,
+    upper_bound_in: i32,
+    lower_bound_cm: i32,
+    upper_bound_cm: i32,
+) -> bool {
     let unit_idx = v.len() - 2;
     match v[..unit_idx].parse::<i32>() {
         Ok(value) => {
@@ -19,7 +25,7 @@ pub fn valid_height(v: &String, lower_bound_in: i32, upper_bound_in: i32, lower_
                 _ => false,
             }
         }
-        Err(_) => false
+        Err(_) => false,
     }
 }
 

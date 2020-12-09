@@ -21,8 +21,14 @@ fn main() {
     let path = &args[1];
     let values: Vec<InputRecord> = handle_result(read_multiline_input(path));
 
-    println!("number of records with required fields: {}", values.iter().filter(|v| v.has_required_fields()).count());
-    println!("number of valid records: {}", values.iter().filter(|v| v.is_valid()).count());
+    println!(
+        "number of records with required fields: {}",
+        values.iter().filter(|v| v.has_required_fields()).count()
+    );
+    println!(
+        "number of valid records: {}",
+        values.iter().filter(|v| v.is_valid()).count()
+    );
 }
 
 #[cfg(test)]
@@ -47,7 +53,8 @@ mod tests {
             "",
             "hcl:#cfa07d eyr:2025 pid:166559648",
             "iyr:2011 ecl:brn hgt:59in",
-        ]).unwrap();
+        ])
+        .unwrap();
 
         assert!(values[0].has_required_fields());
         assert!(!values[1].has_required_fields());
@@ -71,7 +78,8 @@ mod tests {
             "hgt:59cm ecl:zzz",
             "eyr:2038 hcl:74454a iyr:2023",
             "pid:3556412378 byr:2007",
-        ]).unwrap();
+        ])
+        .unwrap();
 
         assert!(!values[0].is_valid());
         assert!(!values[1].is_valid());
@@ -94,7 +102,8 @@ mod tests {
             "eyr:2022",
             "",
             "iyr:2010 hgt:158cm hcl:#b6652a ecl:blu byr:1944 eyr:2021 pid:093154719",
-        ]).unwrap();
+        ])
+        .unwrap();
 
         assert!(values[0].is_valid());
         assert!(values[1].is_valid());

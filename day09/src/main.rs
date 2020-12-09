@@ -25,9 +25,16 @@ fn main() {
 
             match find_contiguous_numbers_that_sum_to(&values, v) {
                 Some((start, end)) => {
-                    println!("Found a set of contiguous numbers, starting at line {}, and ending at line {}.", start + 1, end + 1);
+                    println!(
+                        "Found a set of contiguous numbers, starting at line {}, and ending at line {}.",
+                        start + 1,
+                        end + 1
+                    );
                     let sum = get_sum_of_smallest_and_largest_values_from(&values, start, end);
-                    println!("The sum of the smallest and the largest number in this range is: {}", sum);
+                    println!(
+                        "The sum of the smallest and the largest number in this range is: {}",
+                        sum
+                    );
                 }
                 None => println!("No set of contiguous numbers sum to this value."),
             };
@@ -108,16 +115,28 @@ mod tests {
 
     #[test]
     fn test_part_1() {
-        let values = vec![35, 20, 15, 25, 47, 40, 62, 55, 65, 95, 102, 117, 150, 182, 127, 219, 299, 277, 309, 576];
+        let values = vec![
+            35, 20, 15, 25, 47, 40, 62, 55, 65, 95, 102, 117, 150, 182, 127, 219, 299, 277, 309,
+            576,
+        ];
 
         assert_eq!(find_first_invalid_number(&values, 5), Some((127, 14)));
     }
 
     #[test]
     fn test_part_2() {
-        let values = vec![35, 20, 15, 25, 47, 40, 62, 55, 65, 95, 102, 117, 150, 182, 127, 219, 299, 277, 309, 576];
+        let values = vec![
+            35, 20, 15, 25, 47, 40, 62, 55, 65, 95, 102, 117, 150, 182, 127, 219, 299, 277, 309,
+            576,
+        ];
 
-        assert_eq!(find_contiguous_numbers_that_sum_to(&values, 127), Some((2, 5)));
-        assert_eq!(get_sum_of_smallest_and_largest_values_from(&values, 2, 5), 62);
+        assert_eq!(
+            find_contiguous_numbers_that_sum_to(&values, 127),
+            Some((2, 5))
+        );
+        assert_eq!(
+            get_sum_of_smallest_and_largest_values_from(&values, 2, 5),
+            62
+        );
     }
 }

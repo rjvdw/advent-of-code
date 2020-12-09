@@ -7,8 +7,15 @@ pub struct ProgramFixer<'a> {
 }
 
 impl ProgramFixer<'_> {
-    pub fn new(instructions: &Vec<InputRecord>, solve: fn(&Vec<InputRecord>) -> (bool, i32)) -> ProgramFixer {
-        ProgramFixer { instructions, solve, idx: 0 }
+    pub fn new(
+        instructions: &Vec<InputRecord>,
+        solve: fn(&Vec<InputRecord>) -> (bool, i32),
+    ) -> ProgramFixer {
+        ProgramFixer {
+            instructions,
+            solve,
+            idx: 0,
+        }
     }
 }
 
@@ -24,13 +31,19 @@ impl Iterator for ProgramFixer<'_> {
                         (false, 0)
                     } else {
                         let mut altered = self.instructions.clone();
-                        altered[i] = InputRecord { op: Operation::JMP, value: instruction.value };
+                        altered[i] = InputRecord {
+                            op: Operation::JMP,
+                            value: instruction.value,
+                        };
                         (self.solve)(&altered)
                     }
                 }
                 Operation::JMP => {
                     let mut altered = self.instructions.clone();
-                    altered[i] = InputRecord { op: Operation::NOP, value: instruction.value };
+                    altered[i] = InputRecord {
+                        op: Operation::NOP,
+                        value: instruction.value,
+                    };
                     (self.solve)(&altered)
                 }
                 _ => (false, 0),

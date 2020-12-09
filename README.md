@@ -24,6 +24,12 @@ Run the tests for a specific day:
 cargo test --package day04
 ```
 
+Format your code:
+
+```bash
+cargo fmt
+```
+
 Create a folder for the next day:
 
 ```bash
