@@ -10,11 +10,67 @@ dependencies = [
 ]
 
 [[package]]
+name = "day01"
+version = "0.1.0"
+dependencies = [
+ "helpers",
+]
+
+[[package]]
+name = "day02"
+version = "0.1.0"
+dependencies = [
+ "helpers",
+]
+
+[[package]]
+name = "day03"
+version = "0.1.0"
+dependencies = [
+ "helpers",
+]
+
+[[package]]
 name = "day04"
 version = "0.1.0"
 dependencies = [
  "helpers",
  "regex",
+]
+
+[[package]]
+name = "day05"
+version = "0.1.0"
+dependencies = [
+ "helpers",
+]
+
+[[package]]
+name = "day06"
+version = "0.1.0"
+dependencies = [
+ "helpers",
+]
+
+[[package]]
+name = "day07"
+version = "0.1.0"
+dependencies = [
+ "helpers",
+]
+
+[[package]]
+name = "day08"
+version = "0.1.0"
+dependencies = [
+ "helpers",
+]
+
+[[package]]
+name = "day09"
+version = "0.1.0"
+dependencies = [
+ "helpers",
 ]
 
 [[package]]

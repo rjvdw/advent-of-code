@@ -1,9 +1,0 @@
-#!/bin/bash
-
-root_dir="$( dirname $( dirname $( readlink -f $0 ) ) )"
-day_nr=$( printf %02d $1 )
-shift 1
-
-pushd "$root_dir/day$day_nr"
-
-cargo test $@

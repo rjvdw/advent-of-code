@@ -16,9 +16,4 @@ jobs:
             ~/.cargo/git
           key: ${{ runner.os }}-targets
       - name: test
-        run: |
-          for i in "$PWD/day"*; do
-            pushd "$i"
-            cargo test
-            popd
-          done
+        run: cargo test
