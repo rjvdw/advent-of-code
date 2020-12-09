@@ -87,8 +87,19 @@ fn find_contiguous_numbers_that_sum_to(values: &Vec<u64>, target: u64) -> Option
 }
 
 fn get_sum_of_smallest_and_largest_values_from(values: &Vec<u64>, start: usize, end: usize) -> u64 {
-    values.iter().skip(start).take(end - start).min().unwrap() +
-        values.iter().skip(start).take(end - start).max().unwrap()
+    let mut min = values[start];
+    let mut max = values[start];
+
+    for &value in values.iter().skip(start).take(end - start) {
+        if value < min {
+            min = value;
+        }
+        if value > max {
+            max = value;
+        }
+    }
+
+    min + max
 }
 
 #[cfg(test)]
