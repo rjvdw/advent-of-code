@@ -5,10 +5,6 @@ use std::process::exit;
 
 use helpers::{handle_result, read_input};
 
-/// We assume the answer `u64::MAX` will never occur, so we can use this value to mark "empty"
-/// values in the cache.
-const CACHE_EMPTY_VALUE: u64 = u64::MAX;
-
 /// https://adventofcode.com/2020/day/10
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -59,58 +55,28 @@ fn solve_part_1(values: &[u32], max_jolt_difference: u32) -> Option<u32> {
 fn solve_part_2(values: &[u32], max_jolt_difference: u32) -> u64 {
     let mut values = values.to_vec();
     values.sort_unstable();
-    let mut cache: Vec<u64> = Vec::with_capacity(values.len());
-    cache.resize(values.len(), CACHE_EMPTY_VALUE);
-    match values.last() {
-        Some(v) => solve_part_2_rec(
-            &values,
-            max_jolt_difference,
-            0,
-            0,
-            v + max_jolt_difference,
-            &mut cache,
-        ),
-        None => 0,
-    }
-}
+    values.push(values[values.len() - 1] + max_jolt_difference);
+    let values = values;
 
-fn solve_part_2_rec(
-    values: &[u32],
-    max_jolt_difference: u32,
-    offset: usize,
-    prev: u32,
-    target: u32,
-    cache: &mut [u64],
-) -> u64 {
-    let upper_bound = prev + max_jolt_difference + 1;
-    if offset < values.len() {
-        if cache[offset] == CACHE_EMPTY_VALUE {
-            let sum = values
-                .iter()
-                .skip(offset)
-                .take_while(|&&value| value < upper_bound)
-                .enumerate()
-                .map(|(idx, &value)| {
-                    solve_part_2_rec(
-                        values,
-                        max_jolt_difference,
-                        offset + idx + 1,
-                        value,
-                        target,
-                        cache,
-                    )
-                })
-                .sum();
-            cache[offset] = sum;
-            sum
-        } else {
-            cache[offset]
-        }
-    } else if target < upper_bound {
-        1
-    } else {
-        0
+    let mut result: Vec<u64> = vec![0; values.len()];
+    result[values.len() - 1] = 1;
+
+    for (idx, value) in values.iter().enumerate().rev().skip(1) {
+        result[idx] = values
+            .iter()
+            .skip(idx + 1)
+            .take_while(|&&v| v - value <= max_jolt_difference)
+            .enumerate()
+            .map(|(pos, _)| result[pos + idx + 1])
+            .sum();
     }
+
+    values
+        .iter()
+        .take_while(|&&v| v <= max_jolt_difference)
+        .enumerate()
+        .map(|(pos, _)| result[pos])
+        .sum()
 }
 
 #[cfg(test)]
