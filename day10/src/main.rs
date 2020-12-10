@@ -37,7 +37,7 @@ fn solve_part_1(values: &[u32], max_jolt_difference: u32) -> Option<u32> {
     let mut diff_upper = 1; // always at least 1, because of the final step
     let mut prev = 0;
 
-    for &value in values.iter() {
+    for value in values {
         if value - prev == 1 {
             diff_lower += 1;
         } else if value - prev == max_jolt_difference {
