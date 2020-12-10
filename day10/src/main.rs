@@ -13,66 +13,77 @@ const CACHE_EMPTY_VALUE: u64 = u64::MAX;
 fn main() {
     let args: Vec<String> = env::args().collect();
 
-    if args.len() != 2 {
-        eprintln!("Usage: {} <input file>", &args[0]);
+    if args.len() != 3 {
+        eprintln!("Usage: {} <input file> <max jolt difference>", &args[0]);
         exit(1);
     }
 
     let path = &args[1];
     let values: Vec<u32> = handle_result(read_input(path));
+    let max_jolt_difference = handle_result(args[2].parse::<u32>());
 
-    match solve_part_1(&values) {
+    match solve_part_1(&values, max_jolt_difference) {
         Some(v) => println!("The solution to part 1 is: {}", v),
         None => println!("Could not find a solution for part 1"),
     };
 
-    println!("The solution to part 2 is: {}", solve_part_2(&values));
+    println!(
+        "The solution to part 2 is: {}",
+        solve_part_2(&values, max_jolt_difference)
+    );
 }
 
-fn solve_part_1(values: &[u32]) -> Option<u32> {
+fn solve_part_1(values: &[u32], max_jolt_difference: u32) -> Option<u32> {
     let mut values = values.to_vec();
     values.sort_unstable();
 
-    let mut diff_1 = 0;
-    let mut diff_3 = 1; // always at least 1, because of the final step
+    let mut diff_lower = 0;
+    let mut diff_upper = 1; // always at least 1, because of the final step
     let mut prev = 0;
 
     for &value in values.iter() {
         if value - prev == 1 {
-            diff_1 += 1;
-        } else if value - prev == 3 {
-            diff_3 += 1;
-        } else if value - prev > 3 {
+            diff_lower += 1;
+        } else if value - prev == max_jolt_difference {
+            diff_upper += 1;
+        } else if value - prev > max_jolt_difference {
             return None;
         }
 
         prev = value;
     }
 
-    Some(diff_1 * diff_3)
+    Some(diff_lower * diff_upper)
 }
 
-fn solve_part_2(values: &[u32]) -> u64 {
+fn solve_part_2(values: &[u32], max_jolt_difference: u32) -> u64 {
     let mut values = values.to_vec();
     values.sort_unstable();
     let mut cache: Vec<u64> = Vec::with_capacity(values.len());
     cache.resize(values.len(), CACHE_EMPTY_VALUE);
     match values.last() {
-        Some(v) => solve_part_2_rec(&values, values.len(), 0, 0, v + 3, &mut cache),
+        Some(v) => solve_part_2_rec(
+            &values,
+            max_jolt_difference,
+            0,
+            0,
+            v + max_jolt_difference,
+            &mut cache,
+        ),
         None => 0,
     }
 }
 
 fn solve_part_2_rec(
     values: &[u32],
-    len: usize,
+    max_jolt_difference: u32,
     offset: usize,
     prev: u32,
     target: u32,
     cache: &mut [u64],
 ) -> u64 {
-    let upper_bound = prev + 4;
-    if offset < len {
+    let upper_bound = prev + max_jolt_difference + 1;
+    if offset < values.len() {
         if cache[offset] == CACHE_EMPTY_VALUE {
             let sum = values
                 .iter()
@@ -80,7 +91,14 @@ fn solve_part_2_rec(
                 .take_while(|&&value| value < upper_bound)
                 .enumerate()
                 .map(|(idx, &value)| {
-                    solve_part_2_rec(values, len, offset + idx + 1, value, target, cache)
+                    solve_part_2_rec(
+                        values,
+                        max_jolt_difference,
+                        offset + idx + 1,
+                        value,
+                        target,
+                        cache,
+                    )
                 })
                 .sum();
             cache[offset] = sum;
@@ -103,7 +121,7 @@ mod tests {
     fn test_part_1_1() {
         let values = vec![16, 10, 15, 5, 1, 11, 7, 19, 6, 12, 4];
 
-        assert_eq!(solve_part_1(&values), Some(35));
+        assert_eq!(solve_part_1(&values, 3), Some(35));
     }
 
     #[test]
@@ -113,28 +131,28 @@ mod tests {
             8, 17, 7, 9, 4, 2, 34, 10, 3,
         ];
 
-        assert_eq!(solve_part_1(&values), Some(220));
+        assert_eq!(solve_part_1(&values, 3), Some(220));
     }
 
     #[test]
     fn test_part_1_3() {
         let values = vec![];
 
-        assert_eq!(solve_part_1(&values), Some(0));
+        assert_eq!(solve_part_1(&values, 3), Some(0));
     }
 
     #[test]
     fn test_part_1_4() {
         let values = vec![3, 9];
 
-        assert_eq!(solve_part_1(&values), None);
+        assert_eq!(solve_part_1(&values, 3), None);
     }
 
     #[test]
     fn test_part_2_1() {
         let values = vec![16, 10, 15, 5, 1, 11, 7, 19, 6, 12, 4];
 
-        assert_eq!(solve_part_2(&values), 8);
+        assert_eq!(solve_part_2(&values, 3), 8);
     }
 
     #[test]
@@ -144,6 +162,6 @@ mod tests {
             8, 17, 7, 9, 4, 2, 34, 10, 3,
         ];
 
-        assert_eq!(solve_part_2(&values), 19208);
+        assert_eq!(solve_part_2(&values, 3), 19208);
     }
 }
