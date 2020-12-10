@@ -54,11 +54,12 @@ fn solve_part_1(values: &[u32], max_jolt_difference: u32) -> Option<u32> {
 
 fn solve_part_2(values: &[u32], max_jolt_difference: u32) -> u64 {
     let mut values = values.to_vec();
+    values.push(0); // we start at 0
     values.sort_unstable();
-    values.push(values[values.len() - 1] + max_jolt_difference);
+    values.push(values[values.len() - 1] + max_jolt_difference); // and end at the target
     let values = values;
-    let result_size = max_jolt_difference as usize;
 
+    let result_size = max_jolt_difference as usize;
     let mut result: Vec<u64> = vec![0; result_size];
     result[(values.len() - 1) % result_size] = 1;
 
@@ -72,12 +73,7 @@ fn solve_part_2(values: &[u32], max_jolt_difference: u32) -> u64 {
             .sum();
     }
 
-    values
-        .iter()
-        .take_while(|&&v| v <= max_jolt_difference)
-        .enumerate()
-        .map(|(pos, _)| result[pos % result_size])
-        .sum()
+    result[0]
 }
 
 #[cfg(test)]
