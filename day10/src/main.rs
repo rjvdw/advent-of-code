@@ -57,17 +57,18 @@ fn solve_part_2(values: &[u32], max_jolt_difference: u32) -> u64 {
     values.sort_unstable();
     values.push(values[values.len() - 1] + max_jolt_difference);
     let values = values;
+    let result_size = max_jolt_difference as usize;
 
-    let mut result: Vec<u64> = vec![0; values.len()];
-    result[values.len() - 1] = 1;
+    let mut result: Vec<u64> = vec![0; result_size];
+    result[(values.len() - 1) % result_size] = 1;
 
     for (idx, value) in values.iter().enumerate().rev().skip(1) {
-        result[idx] = values
+        result[idx % result_size] = values
             .iter()
             .skip(idx + 1)
             .take_while(|&&v| v - value <= max_jolt_difference)
             .enumerate()
-            .map(|(pos, _)| result[pos + idx + 1])
+            .map(|(pos, _)| result[(pos + idx + 1) % result_size])
             .sum();
     }
 
@@ -75,7 +76,7 @@ fn solve_part_2(values: &[u32], max_jolt_difference: u32) -> u64 {
         .iter()
         .take_while(|&&v| v <= max_jolt_difference)
         .enumerate()
-        .map(|(pos, _)| result[pos])
+        .map(|(pos, _)| result[pos % result_size])
         .sum()
 }
 
