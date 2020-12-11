@@ -6,6 +6,7 @@ use std::process::exit;
 use helpers::{handle_result, read_multiline_input};
 use seat_layout::SeatLayout;
 
+mod cardinal_direction;
 mod seat_layout;
 #[cfg(test)]
 mod test_helpers;
@@ -49,13 +50,14 @@ fn solve(initial_state: SeatLayout, view_distance: usize, seat_threshold: usize)
 }
 
 #[cfg(test)]
+#[rustfmt::skip::macros(vec)]
 mod tests {
-    use super::*;
     use crate::test_helpers::get_input;
+
+    use super::*;
 
     #[test]
     fn test_1() {
-        #[rustfmt::skip]
         let state = get_input(vec![
             "L.LL.LL.LL",
             "LLLLLLL.LL",
@@ -74,7 +76,6 @@ mod tests {
 
     #[test]
     fn test_2() {
-        #[rustfmt::skip]
         let state = get_input(vec![
             "L.LL.LL.LL",
             "LLLLLLL.LL",
