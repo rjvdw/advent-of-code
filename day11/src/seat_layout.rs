@@ -98,11 +98,7 @@ impl SeatLayout {
     /// means unlimited.
     fn adjacent_seats(&self, x: usize, y: usize, view_distance: usize) -> Vec<Position> {
         let view_distance = if view_distance == 0 {
-            if self.width > self.height {
-                self.width
-            } else {
-                self.height
-            }
+            usize::MAX
         } else {
             view_distance
         };
@@ -205,9 +201,8 @@ impl SeatLayout {
         predicate: impl Fn(usize) -> bool,
         mapper: impl Fn(usize) -> (usize, usize),
     ) -> Option<Position> {
-        // TODO: Optimization: Use a take_while
         (1..=view_distance)
-            .filter(|&i| predicate(i))
+            .take_while(|&i| predicate(i))
             .map(|i| mapper(i))
             .map(|(x, y)| self.current_state(x, y))
             .find(|&pos| pos == Seat(Occupied) || pos == Seat(Empty))
