@@ -182,16 +182,14 @@ impl FromMultilineStr for SeatLayout {
 
         for char in line.chars() {
             self.seats.push(match char {
-                '.' => Floor,
-                'L' => Seat(Empty),
-                '#' => Seat(Occupied),
-                _ => {
-                    return Err(ParseError(format!(
-                        "Invalid input character found in line '{}'.",
-                        char
-                    )));
-                }
-            });
+                '.' => Ok(Floor),
+                'L' => Ok(Seat(Empty)),
+                '#' => Ok(Seat(Occupied)),
+                _ => Err(ParseError(format!(
+                    "Invalid input character found in line '{}'.",
+                    char,
+                ))),
+            }?);
         }
 
         Ok(())

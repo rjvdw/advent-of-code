@@ -21,11 +21,11 @@ impl FromStr for InputRecord {
         match s.find(' ') {
             Some(pos) => {
                 let op: Operation = match &s[..pos] {
-                    "acc" => Operation::ACC,
-                    "jmp" => Operation::JMP,
-                    "nop" => Operation::NOP,
-                    _ => return Err(ParseError(format!("Invalid input line: '{}'", s))),
-                };
+                    "acc" => Ok(Operation::ACC),
+                    "jmp" => Ok(Operation::JMP),
+                    "nop" => Ok(Operation::NOP),
+                    _ => Err(ParseError(format!("Invalid input line: '{}'", s))),
+                }?;
                 let value: i32 = s[pos + 1..].parse::<i32>()?;
 
                 Ok(InputRecord { op, value })

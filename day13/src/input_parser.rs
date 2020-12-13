@@ -7,9 +7,9 @@ pub fn read(path: &str) -> Result<(u32, Vec<u32>), ParseError> {
     let file = File::open(path)?;
     let mut lines = BufReader::new(file).lines();
     let earliest_departure = match lines.next() {
-        Some(Ok(line)) => line.parse::<u32>()?,
-        _ => return Err(ParseError("Input file has insufficient lines".to_string())),
-    };
+        Some(Ok(line)) => Ok(line.parse::<u32>()?),
+        _ => Err(ParseError("Input file has insufficient lines".to_string())),
+    }?;
     let mut schedule = Vec::new();
     match lines.next() {
         Some(Ok(line)) => {
@@ -20,9 +20,10 @@ pub fn read(path: &str) -> Result<(u32, Vec<u32>), ParseError> {
                     schedule.push(line.parse::<u32>()?);
                 }
             }
+            Ok(())
         }
-        _ => return Err(ParseError("Input file has insufficient lines".to_string())),
-    };
+        _ => Err(ParseError("Input file has insufficient lines".to_string())),
+    }?;
 
     Ok((earliest_departure, schedule))
 }

@@ -60,17 +60,15 @@ impl FromStr for InputRecord {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let action = match s.chars().next() {
-            Some('N') => Action::NORTH,
-            Some('S') => Action::SOUTH,
-            Some('E') => Action::EAST,
-            Some('W') => Action::WEST,
-            Some('L') => Action::LEFT,
-            Some('R') => Action::RIGHT,
-            Some('F') => Action::FORWARD,
-            _ => {
-                return Err(ParseError(format!("Invalid action in line '{}'", s)));
-            }
-        };
+            Some('N') => Ok(Action::NORTH),
+            Some('S') => Ok(Action::SOUTH),
+            Some('E') => Ok(Action::EAST),
+            Some('W') => Ok(Action::WEST),
+            Some('L') => Ok(Action::LEFT),
+            Some('R') => Ok(Action::RIGHT),
+            Some('F') => Ok(Action::FORWARD),
+            _ => Err(ParseError(format!("Invalid action in line '{}'", s))),
+        }?;
 
         let value = s[1..].parse::<i32>()?;
         let value = match action {

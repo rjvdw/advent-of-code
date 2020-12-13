@@ -111,22 +111,21 @@ impl FromMultilineStr for InputRecord {
                         let key = &tuple[..idx];
                         let value = tuple[idx + 1..].to_string();
 
+                        #[allow(clippy::unit_arg)]
                         match key {
-                            "byr" => self.byr.set_value(value),
-                            "iyr" => self.iyr.set_value(value),
-                            "eyr" => self.eyr.set_value(value),
-                            "hgt" => self.hgt.set_value(value),
-                            "hcl" => self.hcl.set_value(value),
-                            "ecl" => self.ecl.set_value(value),
-                            "pid" => self.pid.set_value(value),
-                            "cid" => self.cid.set_value(value),
-                            _ => {
-                                return Err(ParseError(format!(
-                                    "Invalid key '{}' in line '{}'",
-                                    key, line
-                                )))
-                            }
-                        }
+                            "byr" => Ok(self.byr.set_value(value)),
+                            "iyr" => Ok(self.iyr.set_value(value)),
+                            "eyr" => Ok(self.eyr.set_value(value)),
+                            "hgt" => Ok(self.hgt.set_value(value)),
+                            "hcl" => Ok(self.hcl.set_value(value)),
+                            "ecl" => Ok(self.ecl.set_value(value)),
+                            "pid" => Ok(self.pid.set_value(value)),
+                            "cid" => Ok(self.cid.set_value(value)),
+                            _ => Err(ParseError(format!(
+                                "Invalid key '{}' in line '{}'",
+                                key, line
+                            ))),
+                        }?
                     }
                     None => {
                         return Err(ParseError(format!(
