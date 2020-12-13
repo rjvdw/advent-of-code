@@ -1,7 +1,6 @@
 use std::collections::HashMap;
-use std::fmt;
 
-use helpers::FromMultilineStr;
+use helpers::{FromMultilineStr, ParseError};
 
 #[derive(Debug)]
 pub struct InputRecord {
@@ -22,19 +21,8 @@ impl InputRecord {
     }
 }
 
-#[derive(Debug)]
-pub struct InputRecordError {
-    msg: String,
-}
-
-impl fmt::Display for InputRecordError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.msg)
-    }
-}
-
 impl FromMultilineStr for InputRecord {
-    type Err = InputRecordError;
+    type Err = ParseError;
 
     fn new() -> Self {
         InputRecord {

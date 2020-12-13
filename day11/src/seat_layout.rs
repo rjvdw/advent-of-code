@@ -1,6 +1,6 @@
 use std::fmt;
 
-use helpers::FromMultilineStr;
+use helpers::{FromMultilineStr, ParseError};
 use Position::{Floor, Seat};
 use SeatState::{Empty, Occupied};
 
@@ -157,19 +157,8 @@ impl fmt::Display for SeatLayout {
     }
 }
 
-#[derive(Debug)]
-pub struct SeatLayoutError {
-    msg: String,
-}
-
-impl fmt::Display for SeatLayoutError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.msg)
-    }
-}
-
 impl FromMultilineStr for SeatLayout {
-    type Err = SeatLayoutError;
+    type Err = ParseError;
 
     fn new() -> Self {
         SeatLayout::new(0, 0)
@@ -184,13 +173,11 @@ impl FromMultilineStr for SeatLayout {
         if self.width == 0 {
             self.width = line.len();
         } else if self.width != line.len() {
-            return Err(SeatLayoutError {
-                msg: format!(
-                    "The width of the lines is not consistent (seen both {} and {}).",
-                    self.width,
-                    line.len()
-                ),
-            });
+            return Err(ParseError(format!(
+                "The width of the lines is not consistent (seen both {} and {}).",
+                self.width,
+                line.len()
+            )));
         }
 
         for char in line.chars() {
@@ -199,9 +186,10 @@ impl FromMultilineStr for SeatLayout {
                 'L' => Seat(Empty),
                 '#' => Seat(Occupied),
                 _ => {
-                    return Err(SeatLayoutError {
-                        msg: format!("Invalid input character found in line '{}'.", char),
-                    });
+                    return Err(ParseError(format!(
+                        "Invalid input character found in line '{}'.",
+                        char
+                    )));
                 }
             });
         }

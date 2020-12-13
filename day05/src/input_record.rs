@@ -1,3 +1,4 @@
+use helpers::ParseError;
 use std::str::FromStr;
 
 #[rustfmt::skip]
@@ -30,7 +31,7 @@ impl InputRecord {
 }
 
 impl FromStr for InputRecord {
-    type Err = ();
+    type Err = ParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let mut row = 0;

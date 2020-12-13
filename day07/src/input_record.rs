@@ -1,5 +1,5 @@
+use helpers::ParseError;
 use std::collections::HashMap;
-use std::fmt;
 use std::str::FromStr;
 
 const INPUT_SEPARATOR: &str = " bags contain";
@@ -10,26 +10,11 @@ pub struct InputRecord {
     pub contains: HashMap<String, u32>,
 }
 
-#[derive(Debug)]
-pub struct InputRecordError {
-    msg: String,
-}
-
-impl fmt::Display for InputRecordError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.msg)
-    }
-}
-
 impl FromStr for InputRecord {
-    type Err = InputRecordError;
+    type Err = ParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let error = || {
-            Err(InputRecordError {
-                msg: format!("Invalid input line: '{}'", s),
-            })
-        };
+        let error = || Err(ParseError(format!("Invalid input line: '{}'", s)));
         match s.find(INPUT_SEPARATOR) {
             Some(pos) => {
                 let color = s[..pos].to_string();
@@ -50,10 +35,7 @@ impl FromStr for InputRecord {
                         }
                         let idx2 = idx2.unwrap();
 
-                        let count = match ss[..idx1].parse::<u32>() {
-                            Ok(v) => v,
-                            Err(_) => return error(),
-                        };
+                        let count = ss[..idx1].parse::<u32>()?;
                         let color = ss[idx1 + 1..idx2].to_string();
 
                         contains.insert(color, count);

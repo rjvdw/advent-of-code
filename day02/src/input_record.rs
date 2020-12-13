@@ -1,5 +1,6 @@
-use std::fmt;
 use std::str::FromStr;
+
+use helpers::ParseError;
 
 #[derive(Debug)]
 pub struct InputRecord {
@@ -36,72 +37,20 @@ impl InputRecord {
     }
 }
 
-#[derive(Debug)]
-pub struct InputRecordError {
-    msg: String,
-}
-
-impl fmt::Display for InputRecordError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.msg)
-    }
-}
-
 impl FromStr for InputRecord {
-    type Err = InputRecordError;
+    type Err = ParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let p1 = match s.chars().position(|c| c == '-') {
-            Some(pos) => pos,
-            None => {
-                return Err(InputRecordError {
-                    msg: format!("Input file has invalid format in line {}", s),
-                })
-            }
-        };
-        let p2 = p1
-            + match s.chars().skip(p1).position(|c| c == ' ') {
-                Some(pos) => pos,
-                None => {
-                    return Err(InputRecordError {
-                        msg: format!("Input file has invalid format in line {}", s),
-                    })
-                }
-            };
-        let p3 = p2
-            + match s.chars().skip(p2).position(|c| c == ':') {
-                Some(pos) => pos,
-                None => {
-                    return Err(InputRecordError {
-                        msg: format!("Input file has invalid format in line {}", s),
-                    })
-                }
-            };
+        let p1 = find_char(s, 0, '-')?;
+        let p2 = p1 + find_char(s, p1, ' ')?;
+        let p3 = p2 + find_char(s, p2, ':')?;
 
-        let idx1 = match s[..p1].parse::<usize>() {
-            Ok(val) => val,
-            Err(_) => {
-                return Err(InputRecordError {
-                    msg: format!("Invalid lower bound in line {}", s),
-                })
-            }
-        };
-        let idx2 = match s[p1 + 1..p2].parse::<usize>() {
-            Ok(val) => val,
-            Err(_) => {
-                return Err(InputRecordError {
-                    msg: format!("Invalid upper bound in line {}", s),
-                })
-            }
-        };
+        let idx1 = s[..p1].parse::<usize>()?;
+        let idx2 = s[p1 + 1..p2].parse::<usize>()?;
         let character = match s.chars().nth(p2 + 1) {
-            Some(val) => val,
-            None => {
-                return Err(InputRecordError {
-                    msg: format!("Invalid character in line {}", s),
-                })
-            }
-        };
+            Some(v) => Ok(v),
+            None => Err(ParseError(format!("Invalid character in line {}", s))),
+        }?;
         let password = s.chars().skip(p3 + 2).collect();
 
         Ok(InputRecord {
@@ -110,5 +59,15 @@ impl FromStr for InputRecord {
             character,
             password,
         })
+    }
+}
+
+fn find_char(s: &str, offset: usize, ch: char) -> Result<usize, ParseError> {
+    match s.chars().skip(offset).position(|c| c == ch) {
+        Some(v) => Ok(v),
+        None => Err(ParseError(format!(
+            "Input file has invalid format in line {}",
+            s,
+        ))),
     }
 }

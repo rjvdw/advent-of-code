@@ -1,6 +1,6 @@
 use std::fmt;
 
-use helpers::FromMultilineStr;
+use helpers::{FromMultilineStr, ParseError};
 
 use crate::validators::{
     valid_color, valid_eye_color, valid_height, valid_passport_id, valid_year,
@@ -83,19 +83,8 @@ impl InputRecord {
     }
 }
 
-#[derive(Debug)]
-pub struct InputRecordError {
-    msg: String,
-}
-
-impl fmt::Display for InputRecordError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.msg)
-    }
-}
-
 impl FromMultilineStr for InputRecord {
-    type Err = InputRecordError;
+    type Err = ParseError;
 
     fn new() -> Self {
         InputRecord {
@@ -132,16 +121,18 @@ impl FromMultilineStr for InputRecord {
                             "pid" => self.pid.set_value(value),
                             "cid" => self.cid.set_value(value),
                             _ => {
-                                return Err(InputRecordError {
-                                    msg: format!("Invalid key '{}' in line '{}'", key, line),
-                                })
+                                return Err(ParseError(format!(
+                                    "Invalid key '{}' in line '{}'",
+                                    key, line
+                                )))
                             }
                         }
                     }
                     None => {
-                        return Err(InputRecordError {
-                            msg: format!("Invalid tuple '{}' in line '{}'", tuple, line),
-                        })
+                        return Err(ParseError(format!(
+                            "Invalid tuple '{}' in line '{}'",
+                            tuple, line
+                        )))
                     }
                 }
             }

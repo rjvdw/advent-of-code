@@ -1,5 +1,5 @@
 use crate::coordinates::Coordinates;
-use std::fmt;
+use helpers::ParseError;
 use std::str::FromStr;
 
 #[derive(Clone, Copy, PartialEq, PartialOrd, Eq, Ord, Debug, Hash)]
@@ -55,19 +55,8 @@ impl InputRecord {
     }
 }
 
-#[derive(Debug)]
-pub struct InputRecordError {
-    msg: String,
-}
-
-impl fmt::Display for InputRecordError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.msg)
-    }
-}
-
 impl FromStr for InputRecord {
-    type Err = InputRecordError;
+    type Err = ParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let action = match s.chars().next() {
@@ -79,22 +68,14 @@ impl FromStr for InputRecord {
             Some('R') => Action::RIGHT,
             Some('F') => Action::FORWARD,
             _ => {
-                return Err(InputRecordError {
-                    msg: format!("Invalid action in line '{}'", s),
-                });
+                return Err(ParseError(format!("Invalid action in line '{}'", s)));
             }
         };
 
-        let value = match s[1..].parse::<i32>() {
-            Ok(v) => match action {
-                Action::LEFT | Action::RIGHT => v % 360,
-                _ => v,
-            },
-            Err(e) => {
-                return Err(InputRecordError {
-                    msg: format!("Failed to parse value in line '{}': {}", s, e),
-                });
-            }
+        let value = s[1..].parse::<i32>()?;
+        let value = match action {
+            Action::LEFT | Action::RIGHT => value % 360,
+            _ => value,
         };
 
         Ok(InputRecord { action, value })
