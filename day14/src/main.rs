@@ -1,14 +1,13 @@
 extern crate helpers;
 
+use std::collections::HashMap;
 use std::env;
 use std::process::exit;
 
 use helpers::{handle_result, read_input};
 
 use crate::instruction::Instruction;
-use std::collections::HashMap;
 
-mod constants;
 mod instruction;
 mod v1;
 mod v2;
