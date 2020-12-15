@@ -77,121 +77,125 @@ mod valid_year_tests {
 }
 
 #[cfg(test)]
-mod valid_height_tests {
+mod tests {
     use super::*;
 
-    #[test]
-    fn test_valid_height_between_bounds_using_cm() {
-        assert!(valid_height(&"175cm".to_string(), 50, 100, 100, 200))
+    mod valid_height_tests {
+        use super::*;
+
+        #[test]
+        fn test_valid_height_between_bounds_using_cm() {
+            assert!(valid_height(&"175cm".to_string(), 50, 100, 100, 200))
+        }
+
+        #[test]
+        fn test_valid_height_at_lower_bound_using_cm() {
+            assert!(valid_height(&"100cm".to_string(), 50, 100, 100, 200))
+        }
+
+        #[test]
+        fn test_valid_height_at_upper_bound_using_cm() {
+            assert!(valid_height(&"200cm".to_string(), 50, 100, 100, 200))
+        }
+
+        #[test]
+        fn test_valid_height_below_lower_bound_using_cm() {
+            assert!(!valid_height(&"99cm".to_string(), 50, 100, 100, 200))
+        }
+
+        #[test]
+        fn test_valid_height_above_upper_bound_using_cm() {
+            assert!(!valid_height(&"201cm".to_string(), 50, 100, 100, 200))
+        }
+
+        #[test]
+        fn test_valid_height_between_bounds_using_in() {
+            assert!(valid_height(&"75in".to_string(), 50, 100, 100, 200))
+        }
+
+        #[test]
+        fn test_valid_height_at_lower_bound_using_in() {
+            assert!(valid_height(&"50in".to_string(), 50, 100, 100, 200))
+        }
+
+        #[test]
+        fn test_valid_height_at_upper_bound_using_in() {
+            assert!(valid_height(&"100in".to_string(), 50, 100, 100, 200))
+        }
+
+        #[test]
+        fn test_valid_height_below_lower_bound_using_in() {
+            assert!(!valid_height(&"49in".to_string(), 50, 100, 100, 200))
+        }
+
+        #[test]
+        fn test_valid_height_above_upper_bound_using_in() {
+            assert!(!valid_height(&"101in".to_string(), 50, 100, 100, 200))
+        }
+
+        #[test]
+        fn test_invalid_unit() {
+            assert!(!valid_height(&"150km".to_string(), 50, 100, 100, 200))
+        }
+
+        #[test]
+        fn test_invalid_height() {
+            assert!(!valid_height(&"abcm".to_string(), 50, 100, 100, 200))
+        }
     }
 
-    #[test]
-    fn test_valid_height_at_lower_bound_using_cm() {
-        assert!(valid_height(&"100cm".to_string(), 50, 100, 100, 200))
+    #[cfg(test)]
+    mod valid_color_tests {
+        use super::*;
+
+        #[test]
+        fn test_valid_color() {
+            assert!(valid_color(&"#18ab2e".to_string()))
+        }
+
+        #[test]
+        fn test_invalid_color() {
+            assert!(!valid_color(&"#qwerty".to_string()));
+            assert!(!valid_color(&"#123".to_string()));
+            assert!(!valid_color(&"123123".to_string()));
+        }
     }
 
-    #[test]
-    fn test_valid_height_at_upper_bound_using_cm() {
-        assert!(valid_height(&"200cm".to_string(), 50, 100, 100, 200))
+    #[cfg(test)]
+    mod valid_eye_color_tests {
+        use super::*;
+
+        #[test]
+        fn test_valid_color() {
+            assert!(valid_eye_color(&"amb".to_string()));
+            assert!(valid_eye_color(&"blu".to_string()));
+            assert!(valid_eye_color(&"brn".to_string()));
+            assert!(valid_eye_color(&"gry".to_string()));
+            assert!(valid_eye_color(&"grn".to_string()));
+            assert!(valid_eye_color(&"hzl".to_string()));
+            assert!(valid_eye_color(&"oth".to_string()));
+        }
+
+        #[test]
+        fn test_invalid_color() {
+            assert!(!valid_eye_color(&"ylw".to_string()))
+        }
     }
 
-    #[test]
-    fn test_valid_height_below_lower_bound_using_cm() {
-        assert!(!valid_height(&"99cm".to_string(), 50, 100, 100, 200))
-    }
+    #[cfg(test)]
+    mod valid_passport_id_tests {
+        use super::*;
 
-    #[test]
-    fn test_valid_height_above_upper_bound_using_cm() {
-        assert!(!valid_height(&"201cm".to_string(), 50, 100, 100, 200))
-    }
+        #[test]
+        fn test_valid_passport_id() {
+            assert!(valid_passport_id(&"012345678".to_string()))
+        }
 
-    #[test]
-    fn test_valid_height_between_bounds_using_in() {
-        assert!(valid_height(&"75in".to_string(), 50, 100, 100, 200))
-    }
-
-    #[test]
-    fn test_valid_height_at_lower_bound_using_in() {
-        assert!(valid_height(&"50in".to_string(), 50, 100, 100, 200))
-    }
-
-    #[test]
-    fn test_valid_height_at_upper_bound_using_in() {
-        assert!(valid_height(&"100in".to_string(), 50, 100, 100, 200))
-    }
-
-    #[test]
-    fn test_valid_height_below_lower_bound_using_in() {
-        assert!(!valid_height(&"49in".to_string(), 50, 100, 100, 200))
-    }
-
-    #[test]
-    fn test_valid_height_above_upper_bound_using_in() {
-        assert!(!valid_height(&"101in".to_string(), 50, 100, 100, 200))
-    }
-
-    #[test]
-    fn test_invalid_unit() {
-        assert!(!valid_height(&"150km".to_string(), 50, 100, 100, 200))
-    }
-
-    #[test]
-    fn test_invalid_height() {
-        assert!(!valid_height(&"abcm".to_string(), 50, 100, 100, 200))
-    }
-}
-
-#[cfg(test)]
-mod valid_color_tests {
-    use super::*;
-
-    #[test]
-    fn test_valid_color() {
-        assert!(valid_color(&"#18ab2e".to_string()))
-    }
-
-    #[test]
-    fn test_invalid_color() {
-        assert!(!valid_color(&"#qwerty".to_string()));
-        assert!(!valid_color(&"#123".to_string()));
-        assert!(!valid_color(&"123123".to_string()));
-    }
-}
-
-#[cfg(test)]
-mod valid_eye_color_tests {
-    use super::*;
-
-    #[test]
-    fn test_valid_color() {
-        assert!(valid_eye_color(&"amb".to_string()));
-        assert!(valid_eye_color(&"blu".to_string()));
-        assert!(valid_eye_color(&"brn".to_string()));
-        assert!(valid_eye_color(&"gry".to_string()));
-        assert!(valid_eye_color(&"grn".to_string()));
-        assert!(valid_eye_color(&"hzl".to_string()));
-        assert!(valid_eye_color(&"oth".to_string()));
-    }
-
-    #[test]
-    fn test_invalid_color() {
-        assert!(!valid_eye_color(&"ylw".to_string()))
-    }
-}
-
-#[cfg(test)]
-mod valid_passport_id_tests {
-    use super::*;
-
-    #[test]
-    fn test_valid_passport_id() {
-        assert!(valid_passport_id(&"012345678".to_string()))
-    }
-
-    #[test]
-    fn test_invalid_passport_id() {
-        assert!(!valid_passport_id(&"12345678".to_string()));
-        assert!(!valid_passport_id(&"0123456789".to_string()));
-        assert!(!valid_passport_id(&"abcdefghi".to_string()));
+        #[test]
+        fn test_invalid_passport_id() {
+            assert!(!valid_passport_id(&"12345678".to_string()));
+            assert!(!valid_passport_id(&"0123456789".to_string()));
+            assert!(!valid_passport_id(&"abcdefghi".to_string()));
+        }
     }
 }

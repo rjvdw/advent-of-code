@@ -50,15 +50,23 @@ fn solve(values: &[i32], skip: usize, count: usize, sum: i32) -> Option<i32> {
 mod tests {
     use super::*;
 
-    #[test]
-    fn test_part_1() {
-        let input = vec![1721, 979, 366, 299, 675, 1456];
-        assert_eq!(solve(&input, 0, 2, 2020), Some(514579));
+    mod part1 {
+        use super::*;
+
+        #[test]
+        fn test() {
+            let input = vec![1721, 979, 366, 299, 675, 1456];
+            assert_eq!(solve(&input, 0, 2, 2020), Some(514579));
+        }
     }
 
-    #[test]
-    fn test_part_2() {
-        let input = vec![1721, 979, 366, 299, 675, 1456];
-        assert_eq!(solve(&input, 0, 3, 2020), Some(241861950));
+    mod part2 {
+        use super::*;
+
+        #[test]
+        fn test() {
+            let input = vec![1721, 979, 366, 299, 675, 1456];
+            assert_eq!(solve(&input, 0, 3, 2020), Some(241861950));
+        }
     }
 }

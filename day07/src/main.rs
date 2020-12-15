@@ -70,55 +70,63 @@ mod tests {
 
     use super::*;
 
-    #[test]
-    fn test_part_1() {
-        let values = parse_input::<InputRecord>(vec![
-            "light red bags contain 1 bright white bag, 2 muted yellow bags.",
-            "dark orange bags contain 3 bright white bags, 4 muted yellow bags.",
-            "bright white bags contain 1 shiny gold bag.",
-            "muted yellow bags contain 2 shiny gold bags, 9 faded blue bags.",
-            "shiny gold bags contain 1 dark olive bag, 2 vibrant plum bags.",
-            "dark olive bags contain 3 faded blue bags, 4 dotted black bags.",
-            "vibrant plum bags contain 5 faded blue bags, 6 dotted black bags.",
-            "faded blue bags contain no other bags.",
-            "dotted black bags contain no other bags.",
-        ])
-        .unwrap();
+    mod part1 {
+        use super::*;
 
-        let matching_bags = solve_part_1(&values, &"shiny gold".to_string());
-        assert_eq!(matching_bags.len(), 4);
-        assert!(matching_bags.contains("bright white"));
-        assert!(matching_bags.contains("muted yellow"));
-        assert!(matching_bags.contains("light red"));
-        assert!(matching_bags.contains("dark orange"));
+        #[test]
+        fn test() {
+            let values = parse_input::<InputRecord>(vec![
+                "light red bags contain 1 bright white bag, 2 muted yellow bags.",
+                "dark orange bags contain 3 bright white bags, 4 muted yellow bags.",
+                "bright white bags contain 1 shiny gold bag.",
+                "muted yellow bags contain 2 shiny gold bags, 9 faded blue bags.",
+                "shiny gold bags contain 1 dark olive bag, 2 vibrant plum bags.",
+                "dark olive bags contain 3 faded blue bags, 4 dotted black bags.",
+                "vibrant plum bags contain 5 faded blue bags, 6 dotted black bags.",
+                "faded blue bags contain no other bags.",
+                "dotted black bags contain no other bags.",
+            ])
+            .unwrap();
+
+            let matching_bags = solve_part_1(&values, &"shiny gold".to_string());
+            assert_eq!(matching_bags.len(), 4);
+            assert!(matching_bags.contains("bright white"));
+            assert!(matching_bags.contains("muted yellow"));
+            assert!(matching_bags.contains("light red"));
+            assert!(matching_bags.contains("dark orange"));
+        }
     }
 
-    #[test]
-    fn test_part_2() {
-        let values = parse_input::<InputRecord>(vec![
-            "shiny gold bags contain 2 dark red bags.",
-            "dark red bags contain 2 dark orange bags.",
-            "dark orange bags contain 2 dark yellow bags.",
-            "dark yellow bags contain 2 dark green bags.",
-            "dark green bags contain 2 dark blue bags.",
-            "dark blue bags contain 2 dark violet bags.",
-            "dark violet bags contain no other bags.",
-        ])
-        .unwrap();
+    mod part2 {
+        use super::*;
 
-        assert_eq!(solve_part_2(&values, &"shiny gold".to_string()), 126);
-    }
+        #[test]
+        fn test() {
+            let values = parse_input::<InputRecord>(vec![
+                "shiny gold bags contain 2 dark red bags.",
+                "dark red bags contain 2 dark orange bags.",
+                "dark orange bags contain 2 dark yellow bags.",
+                "dark yellow bags contain 2 dark green bags.",
+                "dark green bags contain 2 dark blue bags.",
+                "dark blue bags contain 2 dark violet bags.",
+                "dark violet bags contain no other bags.",
+            ])
+            .unwrap();
 
-    #[test]
-    fn test_part_2_extra() {
-        let values = parse_input::<InputRecord>(vec![
-            "AAA bags contain 2 BBB bags, 2 CCC bags.",
-            "BBB bags contain 2 CCC bags, 2 DDD bags.",
-            "CCC bags contain 2 DDD bags.",
-            "DDD bags contain no other bags.",
-        ])
-        .unwrap();
+            assert_eq!(solve_part_2(&values, &"shiny gold".to_string()), 126);
+        }
 
-        assert_eq!(solve_part_2(&values, &"AAA".to_string()), 24);
+        #[test]
+        fn extra_test() {
+            let values = parse_input::<InputRecord>(vec![
+                "AAA bags contain 2 BBB bags, 2 CCC bags.",
+                "BBB bags contain 2 CCC bags, 2 DDD bags.",
+                "CCC bags contain 2 DDD bags.",
+                "DDD bags contain no other bags.",
+            ])
+            .unwrap();
+
+            assert_eq!(solve_part_2(&values, &"AAA".to_string()), 24);
+        }
     }
 }

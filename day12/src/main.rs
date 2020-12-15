@@ -60,24 +60,32 @@ mod tests {
 
     use super::*;
 
-    #[test]
-    fn test_part_1() {
-        let instructions =
-            parse_input::<InputRecord>(vec!["F10", "N3", "F7", "R90", "F11"]).unwrap();
+    mod part1 {
+        use super::*;
 
-        assert_eq!(travel(&instructions).manhattan_distance(), 25);
+        #[test]
+        fn test() {
+            let instructions =
+                parse_input::<InputRecord>(vec!["F10", "N3", "F7", "R90", "F11"]).unwrap();
+
+            assert_eq!(travel(&instructions).manhattan_distance(), 25);
+        }
     }
 
-    #[test]
-    fn test_part_2() {
-        let instructions =
-            parse_input::<InputRecord>(vec!["F10", "N3", "F7", "R90", "F11"]).unwrap();
+    mod part2 {
+        use super::*;
 
-        let waypoint = Coordinates(10, 1);
+        #[test]
+        fn test() {
+            let instructions =
+                parse_input::<InputRecord>(vec!["F10", "N3", "F7", "R90", "F11"]).unwrap();
 
-        assert_eq!(
-            travel_with_waypoint(&instructions, waypoint).manhattan_distance(),
-            286,
-        );
+            let waypoint = Coordinates(10, 1);
+
+            assert_eq!(
+                travel_with_waypoint(&instructions, waypoint).manhattan_distance(),
+                286,
+            );
+        }
     }
 }

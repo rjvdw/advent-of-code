@@ -68,56 +68,64 @@ fn win_contest(schedule: &[u32]) -> u64 {
 mod tests {
     use super::*;
 
-    #[test]
-    fn test_part_1() {
-        let earliest_departure = 939;
-        let schedule = vec![7, 13, 0, 0, 59, 0, 31, 19];
+    mod part1 {
+        use super::*;
 
-        assert_eq!(
-            find_shortest_wait_time(earliest_departure, &schedule),
-            Some((59, 5))
-        );
+        #[test]
+        fn test() {
+            let earliest_departure = 939;
+            let schedule = vec![7, 13, 0, 0, 59, 0, 31, 19];
+
+            assert_eq!(
+                find_shortest_wait_time(earliest_departure, &schedule),
+                Some((59, 5))
+            );
+        }
     }
 
-    #[test]
-    fn test_part_2_1() {
-        let schedule = vec![7, 13, 0, 0, 59, 0, 31, 19];
+    mod part2 {
+        use super::*;
 
-        assert_eq!(win_contest(&schedule), 1068781);
-    }
+        #[test]
+        fn test_1() {
+            let schedule = vec![7, 13, 0, 0, 59, 0, 31, 19];
 
-    #[test]
-    fn test_part_2_2() {
-        let schedule = vec![17, 0, 13, 19];
+            assert_eq!(win_contest(&schedule), 1068781);
+        }
 
-        assert_eq!(win_contest(&schedule), 3417);
-    }
+        #[test]
+        fn test_2() {
+            let schedule = vec![17, 0, 13, 19];
 
-    #[test]
-    fn test_part_2_3() {
-        let schedule = vec![67, 7, 59, 61];
+            assert_eq!(win_contest(&schedule), 3417);
+        }
 
-        assert_eq!(win_contest(&schedule), 754018);
-    }
+        #[test]
+        fn test_3() {
+            let schedule = vec![67, 7, 59, 61];
 
-    #[test]
-    fn test_part_2_4() {
-        let schedule = vec![67, 0, 7, 59, 61];
+            assert_eq!(win_contest(&schedule), 754018);
+        }
 
-        assert_eq!(win_contest(&schedule), 779210);
-    }
+        #[test]
+        fn test_4() {
+            let schedule = vec![67, 0, 7, 59, 61];
 
-    #[test]
-    fn test_part_2_5() {
-        let schedule = vec![67, 7, 0, 59, 61];
+            assert_eq!(win_contest(&schedule), 779210);
+        }
 
-        assert_eq!(win_contest(&schedule), 1261476);
-    }
+        #[test]
+        fn test_5() {
+            let schedule = vec![67, 7, 0, 59, 61];
 
-    #[test]
-    fn test_part_2_6() {
-        let schedule = vec![1789, 37, 47, 1889];
+            assert_eq!(win_contest(&schedule), 1261476);
+        }
 
-        assert_eq!(win_contest(&schedule), 1202161486);
+        #[test]
+        fn test_6() {
+            let schedule = vec![1789, 37, 47, 1889];
+
+            assert_eq!(win_contest(&schedule), 1202161486);
+        }
     }
 }

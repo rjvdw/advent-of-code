@@ -48,33 +48,41 @@ mod tests {
 
     use super::*;
 
-    #[test]
-    fn test_part_1() {
-        let instructions = parse_input::<Instruction>(vec![
-            "mask = XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X",
-            "mem[8] = 11",
-            "mem[7] = 101",
-            "mem[8] = 0",
-        ])
-        .unwrap();
-        let mut memory: HashMap<usize, u64> = HashMap::new();
+    mod part1 {
+        use super::*;
 
-        assert_eq!(v1::run_program(&instructions, &mut memory), Ok(()));
-        assert_eq!(memory.values().sum::<u64>(), 165);
+        #[test]
+        fn test() {
+            let instructions = parse_input::<Instruction>(vec![
+                "mask = XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X",
+                "mem[8] = 11",
+                "mem[7] = 101",
+                "mem[8] = 0",
+            ])
+            .unwrap();
+            let mut memory: HashMap<usize, u64> = HashMap::new();
+
+            assert_eq!(v1::run_program(&instructions, &mut memory), Ok(()));
+            assert_eq!(memory.values().sum::<u64>(), 165);
+        }
     }
 
-    #[test]
-    fn test_part_2() {
-        let instructions = parse_input::<Instruction>(vec![
-            "mask = 000000000000000000000000000000X1001X",
-            "mem[42] = 100",
-            "mask = 00000000000000000000000000000000X0XX",
-            "mem[26] = 1",
-        ])
-        .unwrap();
-        let mut memory: HashMap<usize, u64> = HashMap::new();
+    mod part2 {
+        use super::*;
 
-        assert_eq!(v2::run_program(&instructions, &mut memory), Ok(()));
-        assert_eq!(memory.values().sum::<u64>(), 208);
+        #[test]
+        fn test() {
+            let instructions = parse_input::<Instruction>(vec![
+                "mask = 000000000000000000000000000000X1001X",
+                "mem[42] = 100",
+                "mask = 00000000000000000000000000000000X0XX",
+                "mem[26] = 1",
+            ])
+            .unwrap();
+            let mut memory: HashMap<usize, u64> = HashMap::new();
+
+            assert_eq!(v2::run_program(&instructions, &mut memory), Ok(()));
+            assert_eq!(memory.values().sum::<u64>(), 208);
+        }
     }
 }

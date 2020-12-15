@@ -80,51 +80,59 @@ fn solve_part_2(values: &[u32], max_jolt_difference: u32) -> u64 {
 mod tests {
     use super::*;
 
-    #[test]
-    fn test_part_1_1() {
-        let values = vec![16, 10, 15, 5, 1, 11, 7, 19, 6, 12, 4];
+    mod part1 {
+        use super::*;
 
-        assert_eq!(solve_part_1(&values, 3), Some(35));
+        #[test]
+        fn test_1() {
+            let values = vec![16, 10, 15, 5, 1, 11, 7, 19, 6, 12, 4];
+
+            assert_eq!(solve_part_1(&values, 3), Some(35));
+        }
+
+        #[test]
+        fn test_2() {
+            let values = vec![
+                28, 33, 18, 42, 31, 14, 46, 20, 48, 47, 24, 23, 49, 45, 19, 38, 39, 11, 1, 32, 25,
+                35, 8, 17, 7, 9, 4, 2, 34, 10, 3,
+            ];
+
+            assert_eq!(solve_part_1(&values, 3), Some(220));
+        }
+
+        #[test]
+        fn test_3() {
+            let values = vec![];
+
+            assert_eq!(solve_part_1(&values, 3), Some(0));
+        }
+
+        #[test]
+        fn test_4() {
+            let values = vec![3, 9];
+
+            assert_eq!(solve_part_1(&values, 3), None);
+        }
     }
 
-    #[test]
-    fn test_part_1_2() {
-        let values = vec![
-            28, 33, 18, 42, 31, 14, 46, 20, 48, 47, 24, 23, 49, 45, 19, 38, 39, 11, 1, 32, 25, 35,
-            8, 17, 7, 9, 4, 2, 34, 10, 3,
-        ];
+    mod part2 {
+        use super::*;
 
-        assert_eq!(solve_part_1(&values, 3), Some(220));
-    }
+        #[test]
+        fn test_1() {
+            let values = vec![16, 10, 15, 5, 1, 11, 7, 19, 6, 12, 4];
 
-    #[test]
-    fn test_part_1_3() {
-        let values = vec![];
+            assert_eq!(solve_part_2(&values, 3), 8);
+        }
 
-        assert_eq!(solve_part_1(&values, 3), Some(0));
-    }
+        #[test]
+        fn test_2() {
+            let values = vec![
+                28, 33, 18, 42, 31, 14, 46, 20, 48, 47, 24, 23, 49, 45, 19, 38, 39, 11, 1, 32, 25,
+                35, 8, 17, 7, 9, 4, 2, 34, 10, 3,
+            ];
 
-    #[test]
-    fn test_part_1_4() {
-        let values = vec![3, 9];
-
-        assert_eq!(solve_part_1(&values, 3), None);
-    }
-
-    #[test]
-    fn test_part_2_1() {
-        let values = vec![16, 10, 15, 5, 1, 11, 7, 19, 6, 12, 4];
-
-        assert_eq!(solve_part_2(&values, 3), 8);
-    }
-
-    #[test]
-    fn test_part_2_2() {
-        let values = vec![
-            28, 33, 18, 42, 31, 14, 46, 20, 48, 47, 24, 23, 49, 45, 19, 38, 39, 11, 1, 32, 25, 35,
-            8, 17, 7, 9, 4, 2, 34, 10, 3,
-        ];
-
-        assert_eq!(solve_part_2(&values, 3), 19208);
+            assert_eq!(solve_part_2(&values, 3), 19208);
+        }
     }
 }

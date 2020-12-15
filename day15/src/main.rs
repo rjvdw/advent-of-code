@@ -54,78 +54,86 @@ fn solve(index: usize, inputs: &[usize]) -> usize {
 mod tests {
     use super::*;
 
-    #[test]
-    fn test_1() {
-        assert_eq!(solve(10, &vec![0, 3, 6]), 0);
+    mod part1 {
+        use super::*;
+
+        #[test]
+        fn test_1() {
+            assert_eq!(solve(10, &vec![0, 3, 6]), 0);
+        }
+
+        #[test]
+        fn test_2() {
+            assert_eq!(solve(2020, &vec![0, 3, 6]), 436);
+        }
+
+        #[test]
+        fn test_3() {
+            assert_eq!(solve(2020, &vec![1, 3, 2]), 1);
+        }
+
+        #[test]
+        fn test_4() {
+            assert_eq!(solve(2020, &vec![2, 1, 3]), 10);
+        }
+
+        #[test]
+        fn test_5() {
+            assert_eq!(solve(2020, &vec![1, 2, 3]), 27);
+        }
+
+        #[test]
+        fn test_6() {
+            assert_eq!(solve(2020, &vec![2, 3, 1]), 78);
+        }
+
+        #[test]
+        fn test_7() {
+            assert_eq!(solve(2020, &vec![3, 2, 1]), 438);
+        }
+
+        #[test]
+        fn test_8() {
+            assert_eq!(solve(2020, &vec![3, 1, 2]), 1836);
+        }
     }
 
-    #[test]
-    fn test_2() {
-        assert_eq!(solve(2020, &vec![0, 3, 6]), 436);
-    }
+    mod part2 {
+        use super::*;
 
-    #[test]
-    fn test_3() {
-        assert_eq!(solve(2020, &vec![1, 3, 2]), 1);
-    }
+        #[test]
+        fn test_1() {
+            assert_eq!(solve(30_000_000, &vec![0, 3, 6]), 175594);
+        }
 
-    #[test]
-    fn test_4() {
-        assert_eq!(solve(2020, &vec![2, 1, 3]), 10);
-    }
+        #[test]
+        fn test_2() {
+            assert_eq!(solve(30_000_000, &vec![1, 3, 2]), 2578);
+        }
 
-    #[test]
-    fn test_5() {
-        assert_eq!(solve(2020, &vec![1, 2, 3]), 27);
-    }
+        #[test]
+        fn test_3() {
+            assert_eq!(solve(30_000_000, &vec![2, 1, 3]), 3544142);
+        }
 
-    #[test]
-    fn test_6() {
-        assert_eq!(solve(2020, &vec![2, 3, 1]), 78);
-    }
+        #[test]
+        fn test_4() {
+            assert_eq!(solve(30_000_000, &vec![1, 2, 3]), 261214);
+        }
 
-    #[test]
-    fn test_7() {
-        assert_eq!(solve(2020, &vec![3, 2, 1]), 438);
-    }
+        #[test]
+        fn test_5() {
+            assert_eq!(solve(30_000_000, &vec![2, 3, 1]), 6895259);
+        }
 
-    #[test]
-    fn test_8() {
-        assert_eq!(solve(2020, &vec![3, 1, 2]), 1836);
-    }
+        #[test]
+        fn test_6() {
+            assert_eq!(solve(30_000_000, &vec![3, 2, 1]), 18);
+        }
 
-    #[test]
-    fn test_9() {
-        assert_eq!(solve(30_000_000, &vec![0, 3, 6]), 175594);
-    }
-
-    #[test]
-    fn test_10() {
-        assert_eq!(solve(30_000_000, &vec![1, 3, 2]), 2578);
-    }
-
-    #[test]
-    fn test_11() {
-        assert_eq!(solve(30_000_000, &vec![2, 1, 3]), 3544142);
-    }
-
-    #[test]
-    fn test_12() {
-        assert_eq!(solve(30_000_000, &vec![1, 2, 3]), 261214);
-    }
-
-    #[test]
-    fn test_13() {
-        assert_eq!(solve(30_000_000, &vec![2, 3, 1]), 6895259);
-    }
-
-    #[test]
-    fn test_14() {
-        assert_eq!(solve(30_000_000, &vec![3, 2, 1]), 18);
-    }
-
-    #[test]
-    fn test_15() {
-        assert_eq!(solve(30_000_000, &vec![3, 1, 2]), 362);
+        #[test]
+        fn test_7() {
+            assert_eq!(solve(30_000_000, &vec![3, 1, 2]), 362);
+        }
     }
 }

@@ -36,31 +36,39 @@ mod tests {
 
     use super::*;
 
-    #[test]
-    fn test_part_1() {
-        let values = parse_multiline_input::<InputRecord>(vec![
-            "abc", "", "a", "b", "c", "", "ab", "ac", "", "a", "a", "a", "a", "", "b",
-        ])
-        .unwrap();
+    mod part1 {
+        use super::*;
 
-        assert_eq!(values[0].nr_of_questions_anyone_answered_with_yes(), 3);
-        assert_eq!(values[1].nr_of_questions_anyone_answered_with_yes(), 3);
-        assert_eq!(values[2].nr_of_questions_anyone_answered_with_yes(), 3);
-        assert_eq!(values[3].nr_of_questions_anyone_answered_with_yes(), 1);
-        assert_eq!(values[4].nr_of_questions_anyone_answered_with_yes(), 1);
+        #[test]
+        fn test() {
+            let values = parse_multiline_input::<InputRecord>(vec![
+                "abc", "", "a", "b", "c", "", "ab", "ac", "", "a", "a", "a", "a", "", "b",
+            ])
+            .unwrap();
+
+            assert_eq!(values[0].nr_of_questions_anyone_answered_with_yes(), 3);
+            assert_eq!(values[1].nr_of_questions_anyone_answered_with_yes(), 3);
+            assert_eq!(values[2].nr_of_questions_anyone_answered_with_yes(), 3);
+            assert_eq!(values[3].nr_of_questions_anyone_answered_with_yes(), 1);
+            assert_eq!(values[4].nr_of_questions_anyone_answered_with_yes(), 1);
+        }
     }
 
-    #[test]
-    fn test_part_2() {
-        let values = parse_multiline_input::<InputRecord>(vec![
-            "abc", "", "a", "b", "c", "", "ab", "ac", "", "a", "a", "a", "a", "", "b",
-        ])
-        .unwrap();
+    mod part2 {
+        use super::*;
 
-        assert_eq!(values[0].nr_of_questions_everyone_answered_with_yes(), 3);
-        assert_eq!(values[1].nr_of_questions_everyone_answered_with_yes(), 0);
-        assert_eq!(values[2].nr_of_questions_everyone_answered_with_yes(), 1);
-        assert_eq!(values[3].nr_of_questions_everyone_answered_with_yes(), 1);
-        assert_eq!(values[4].nr_of_questions_everyone_answered_with_yes(), 1);
+        #[test]
+        fn test() {
+            let values = parse_multiline_input::<InputRecord>(vec![
+                "abc", "", "a", "b", "c", "", "ab", "ac", "", "a", "a", "a", "a", "", "b",
+            ])
+            .unwrap();
+
+            assert_eq!(values[0].nr_of_questions_everyone_answered_with_yes(), 3);
+            assert_eq!(values[1].nr_of_questions_everyone_answered_with_yes(), 0);
+            assert_eq!(values[2].nr_of_questions_everyone_answered_with_yes(), 1);
+            assert_eq!(values[3].nr_of_questions_everyone_answered_with_yes(), 1);
+            assert_eq!(values[4].nr_of_questions_everyone_answered_with_yes(), 1);
+        }
     }
 }

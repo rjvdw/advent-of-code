@@ -114,30 +114,38 @@ fn get_sum_of_smallest_and_largest_values_from(values: &[u64], start: usize, end
 mod tests {
     use super::*;
 
-    #[test]
-    fn test_part_1() {
-        let values = vec![
-            35, 20, 15, 25, 47, 40, 62, 55, 65, 95, 102, 117, 150, 182, 127, 219, 299, 277, 309,
-            576,
-        ];
+    mod part1 {
+        use super::*;
 
-        assert_eq!(find_first_invalid_number(&values, 5), Some((127, 14)));
+        #[test]
+        fn test() {
+            let values = vec![
+                35, 20, 15, 25, 47, 40, 62, 55, 65, 95, 102, 117, 150, 182, 127, 219, 299, 277,
+                309, 576,
+            ];
+
+            assert_eq!(find_first_invalid_number(&values, 5), Some((127, 14)));
+        }
     }
 
-    #[test]
-    fn test_part_2() {
-        let values = vec![
-            35, 20, 15, 25, 47, 40, 62, 55, 65, 95, 102, 117, 150, 182, 127, 219, 299, 277, 309,
-            576,
-        ];
+    mod part2 {
+        use super::*;
 
-        assert_eq!(
-            find_contiguous_numbers_that_sum_to(&values, 127),
-            Some((2, 5))
-        );
-        assert_eq!(
-            get_sum_of_smallest_and_largest_values_from(&values, 2, 5),
-            62
-        );
+        #[test]
+        fn test() {
+            let values = vec![
+                35, 20, 15, 25, 47, 40, 62, 55, 65, 95, 102, 117, 150, 182, 127, 219, 299, 277,
+                309, 576,
+            ];
+
+            assert_eq!(
+                find_contiguous_numbers_that_sum_to(&values, 127),
+                Some((2, 5))
+            );
+            assert_eq!(
+                get_sum_of_smallest_and_largest_values_from(&values, 2, 5),
+                62
+            );
+        }
     }
 }

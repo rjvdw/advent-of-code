@@ -72,53 +72,61 @@ pub fn bezout_coefficients(a: i64, b: i64) -> (i64, i64) {
 mod tests {
     use super::*;
 
-    #[test]
-    pub fn test_chinese_remainder_theorem_1() {
-        assert_eq!(solve_crt((3, 1), (5, 4)), 4);
+    mod chinese_remainder_theorem {
+        use super::*;
+
+        #[test]
+        pub fn test_1() {
+            assert_eq!(solve_crt((3, 1), (5, 4)), 4);
+        }
+
+        #[test]
+        pub fn test_2() {
+            assert_eq!(solve_crt((5, 4), (7, 6)), 34);
+        }
+
+        #[test]
+        pub fn test_3() {
+            assert_eq!(solve_crt((3, 1), (7, 6)), 13);
+        }
+
+        #[test]
+        pub fn test_4() {
+            assert_eq!(solve_crt((15, 4), (7, 6)), 34);
+        }
+
+        #[test]
+        pub fn test_5() {
+            assert_eq!(solve_crt((35, 34), (3, 1)), 34);
+        }
+
+        #[test]
+        pub fn test_6() {
+            assert_eq!(solve_crt((21, 13), (5, 4)), 34);
+        }
     }
 
-    #[test]
-    pub fn test_chinese_remainder_theorem_2() {
-        assert_eq!(solve_crt((5, 4), (7, 6)), 34);
-    }
+    mod bezout_coefficients {
+        use super::*;
 
-    #[test]
-    pub fn test_chinese_remainder_theorem_3() {
-        assert_eq!(solve_crt((3, 1), (7, 6)), 13);
-    }
+        #[test]
+        pub fn test_1() {
+            assert_eq!(bezout_coefficients(3, 4), (-1, 1));
+        }
 
-    #[test]
-    pub fn test_chinese_remainder_theorem_4() {
-        assert_eq!(solve_crt((15, 4), (7, 6)), 34);
-    }
+        #[test]
+        pub fn test_2() {
+            assert_eq!(bezout_coefficients(3, 5), (2, -1));
+        }
 
-    #[test]
-    pub fn test_chinese_remainder_theorem_5() {
-        assert_eq!(solve_crt((35, 34), (3, 1)), 34);
-    }
+        #[test]
+        pub fn test_3() {
+            assert_eq!(bezout_coefficients(3, 7), (-2, 1));
+        }
 
-    #[test]
-    pub fn test_chinese_remainder_theorem_6() {
-        assert_eq!(solve_crt((21, 13), (5, 4)), 34);
-    }
-
-    #[test]
-    pub fn test_bezout_coefficients_1() {
-        assert_eq!(bezout_coefficients(3, 4), (-1, 1));
-    }
-
-    #[test]
-    pub fn test_bezout_coefficients_2() {
-        assert_eq!(bezout_coefficients(3, 5), (2, -1));
-    }
-
-    #[test]
-    pub fn test_bezout_coefficients_3() {
-        assert_eq!(bezout_coefficients(3, 7), (-2, 1));
-    }
-
-    #[test]
-    pub fn test_bezout_coefficients_4() {
-        assert_eq!(bezout_coefficients(5, 7), (3, -2));
+        #[test]
+        pub fn test_4() {
+            assert_eq!(bezout_coefficients(5, 7), (3, -2));
+        }
     }
 }

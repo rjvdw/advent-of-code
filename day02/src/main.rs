@@ -40,25 +40,33 @@ fn main() {
 mod tests {
     use super::*;
 
-    #[test]
-    fn test_part_1() {
-        let input1 = "1-3 a: abcde".parse::<InputRecord>().unwrap();
-        let input2 = "1-3 b: cdefg".parse::<InputRecord>().unwrap();
-        let input3 = "2-9 c: ccccccccc".parse::<InputRecord>().unwrap();
+    mod part1 {
+        use super::*;
 
-        assert!(input1.valid_according_to_old_job());
-        assert!(!input2.valid_according_to_old_job());
-        assert!(input3.valid_according_to_old_job());
+        #[test]
+        fn test() {
+            let input1 = "1-3 a: abcde".parse::<InputRecord>().unwrap();
+            let input2 = "1-3 b: cdefg".parse::<InputRecord>().unwrap();
+            let input3 = "2-9 c: ccccccccc".parse::<InputRecord>().unwrap();
+
+            assert!(input1.valid_according_to_old_job());
+            assert!(!input2.valid_according_to_old_job());
+            assert!(input3.valid_according_to_old_job());
+        }
     }
 
-    #[test]
-    fn test_part_2() {
-        let input1 = "1-3 a: abcde".parse::<InputRecord>().unwrap();
-        let input2 = "1-3 b: cdefg".parse::<InputRecord>().unwrap();
-        let input3 = "2-9 c: ccccccccc".parse::<InputRecord>().unwrap();
+    mod part2 {
+        use super::*;
 
-        assert!(input1.valid_according_to_old_job());
-        assert!(!input2.valid_according_to_corporate_policy());
-        assert!(!input3.valid_according_to_corporate_policy());
+        #[test]
+        fn test() {
+            let input1 = "1-3 a: abcde".parse::<InputRecord>().unwrap();
+            let input2 = "1-3 b: cdefg".parse::<InputRecord>().unwrap();
+            let input3 = "2-9 c: ccccccccc".parse::<InputRecord>().unwrap();
+
+            assert!(input1.valid_according_to_old_job());
+            assert!(!input2.valid_according_to_corporate_policy());
+            assert!(!input3.valid_according_to_corporate_policy());
+        }
     }
 }

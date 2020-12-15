@@ -88,29 +88,37 @@ mod tests {
 
     use super::*;
 
-    #[test]
-    fn test_part_1() {
-        let values = parse_input::<InputRecord>(vec![
-            "nop +0", "acc +1", "jmp +4", "acc +3", "jmp -3", "acc -99", "acc +1", "jmp -4",
-            "acc +6",
-        ])
-        .unwrap();
+    mod part1 {
+        use super::*;
 
-        assert_eq!(solve(&values), (false, 5));
+        #[test]
+        fn test() {
+            let values = parse_input::<InputRecord>(vec![
+                "nop +0", "acc +1", "jmp +4", "acc +3", "jmp -3", "acc -99", "acc +1", "jmp -4",
+                "acc +6",
+            ])
+            .unwrap();
+
+            assert_eq!(solve(&values), (false, 5));
+        }
     }
 
-    #[test]
-    fn test_part_2() {
-        let values = parse_input::<InputRecord>(vec![
-            "nop +0", "acc +1", "jmp +4", "acc +3", "jmp -3", "acc -99", "acc +1", "jmp -4",
-            "acc +6",
-        ])
-        .unwrap();
+    mod part2 {
+        use super::*;
 
-        let fixer = ProgramFixer::new(&values, solve);
-        let fixes: Vec<(usize, i32)> = fixer.collect();
+        #[test]
+        fn test() {
+            let values = parse_input::<InputRecord>(vec![
+                "nop +0", "acc +1", "jmp +4", "acc +3", "jmp -3", "acc -99", "acc +1", "jmp -4",
+                "acc +6",
+            ])
+            .unwrap();
 
-        assert_eq!(fixes.len(), 1);
-        assert_eq!(fixes[0], (7, 8));
+            let fixer = ProgramFixer::new(&values, solve);
+            let fixes: Vec<(usize, i32)> = fixer.collect();
+
+            assert_eq!(fixes.len(), 1);
+            assert_eq!(fixes[0], (7, 8));
+        }
     }
 }

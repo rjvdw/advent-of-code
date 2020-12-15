@@ -2,5 +2,6 @@
 members = ["day*"]
 exclude = []
 
-[profile.test]
+# The tests for day 15 deal with rather large input values. Without optimizations these tests just take too long.
+[profile.test.package.day15]
 opt-level = 2
