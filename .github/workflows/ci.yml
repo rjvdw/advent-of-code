@@ -16,7 +16,7 @@ jobs:
             ~/.cargo/git
           key: ${{ runner.os }}-targets
       - name: test
-        run: cargo test
+        run: cargo test --release
       - name: fmt
         run: cargo fmt -- --check
       - name: clippy
