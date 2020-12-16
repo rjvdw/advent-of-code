@@ -63,11 +63,12 @@ impl PuzzleInput {
         let mut sum = 0;
 
         for ticket in self.nearby_tickets.to_vec() {
-            let count = self.count_invalid_values_in_ticket(&ticket);
-            if count == 0 {
+            let (valid, count) = self.count_invalid_values_in_ticket(&ticket);
+            if valid {
                 filtered.push(ticket);
+            } else {
+                sum += count;
             }
-            sum += count;
         }
 
         self.nearby_tickets = filtered;
@@ -88,7 +89,8 @@ impl PuzzleInput {
         }
     }
 
-    fn count_invalid_values_in_ticket(&self, ticket: &[u32]) -> u32 {
+    fn count_invalid_values_in_ticket(&self, ticket: &[u32]) -> (bool, u32) {
+        let mut valid = true;
         let mut count = 0;
 
         for &value in ticket {
@@ -100,11 +102,12 @@ impl PuzzleInput {
                 .collect::<Vec<(u32, u32)>>();
 
             if !falls_within_ranges(&ranges, value) {
+                valid = false;
                 count += value;
             }
         }
 
-        count
+        (valid, count)
     }
 }
 

@@ -23,17 +23,21 @@ fn main() {
     let invalid_values = input.filter_out_invalid_nearby_tickets();
     println!("The sum of all invalid values is: {}", invalid_values);
 
-    let mapping = solve(&input);
-    let mut prd = 1;
-    for (k, v) in mapping {
-        if k.starts_with("departure") {
-            prd *= input.your_ticket[v] as u64;
+    match solve(&input) {
+        Some(mapping) => {
+            let mut prd = 1;
+            for (k, v) in mapping {
+                if k.starts_with("departure") {
+                    prd *= input.your_ticket[v] as u64;
+                }
+            }
+            println!("The product of all the departure information is: {}", prd);
         }
+        None => eprintln!("No solution found"),
     }
-    println!("The product of all the departure information is: {}", prd);
 }
 
-fn solve(input: &PuzzleInput) -> HashMap<String, usize> {
+fn solve(input: &PuzzleInput) -> Option<HashMap<String, usize>> {
     let mut mapping: HashMap<String, usize> = HashMap::new();
 
     while mapping.keys().len() != input.possible_field_values.keys().len() {
@@ -47,11 +51,11 @@ fn solve(input: &PuzzleInput) -> HashMap<String, usize> {
             }
         }
         if !found_at_least_one {
-            break;
+            return None;
         }
     }
 
-    mapping
+    Some(mapping)
 }
 
 fn find_unique_solution(
@@ -131,7 +135,7 @@ mod tests {
             .unwrap();
 
             input.filter_out_invalid_nearby_tickets();
-            let mapping = solve(&input);
+            let mapping = solve(&input).unwrap();
 
             assert_eq!(mapping.get("row"), Some(&0));
             assert_eq!(mapping.get("class"), Some(&1));
