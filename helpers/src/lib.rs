@@ -38,6 +38,20 @@ pub fn read_multiline_input<T: FromMultilineStr>(
     Ok(values)
 }
 
+/// Reads input from a file, parses each line using `FromMultilineStr`, and returns a single record.
+pub fn read_multiline_input_as_single<T: FromMultilineStr>(
+    path: &str,
+) -> Result<T, <T as FromMultilineStr>::Err> {
+    let file = File::open(path).expect("Failed to open file");
+    let mut record = T::new();
+    for line in BufReader::new(file).lines() {
+        let line = line.expect("Failed to read line");
+        record.parse(&line)?;
+    }
+
+    Ok(record)
+}
+
 /// Mirrors `std::str::FromStr`, but slightly modified so it can be used to parse record that span
 /// multiple lines.
 pub trait FromMultilineStr {
@@ -92,6 +106,20 @@ pub fn parse_multiline_input<I: FromMultilineStr>(
     values.push(record);
 
     Ok(values)
+}
+
+/// Helper method for parsing input using FromMultilineStr. This method is mostly useful for unit
+/// tests.
+pub fn parse_multiline_input_as_single<I: FromMultilineStr>(
+    input_lines: Vec<&str>,
+) -> Result<I, <I as FromMultilineStr>::Err> {
+    let mut record = I::new();
+    for line in input_lines {
+        let line = &line.to_string();
+        record.parse(line)?;
+    }
+
+    Ok(record)
 }
 
 /// Generic parsing error.
