@@ -4,7 +4,8 @@ use std::env;
 use std::process::exit;
 
 use helpers::handle_result;
-use std::collections::HashMap;
+
+const SEEN_SIZE: usize = 100_000_000;
 
 /// https://adventofcode.com/2020/day/15
 fn main() {
@@ -31,19 +32,21 @@ fn main() {
 }
 
 fn solve(index: usize, inputs: &[usize]) -> usize {
-    let mut seen: HashMap<usize, usize> = HashMap::new();
+    let mut seen_at: Vec<usize> = vec![0; SEEN_SIZE];
     let mut last_number = *inputs.last().unwrap();
 
     for (idx, &number) in inputs.iter().enumerate().rev().skip(1) {
-        seen.insert(number, idx + 1);
+        seen_at[number] = idx + 1;
     }
 
     for idx in inputs.len()..index {
-        let next_number = seen
-            .get(&last_number)
-            .map(|&number| idx - number)
-            .unwrap_or(0);
-        seen.insert(last_number, idx);
+        let next_number = if seen_at[last_number] == 0 {
+            0
+        } else {
+            idx - seen_at[last_number]
+        };
+
+        seen_at[last_number] = idx;
         last_number = next_number;
     }
 
