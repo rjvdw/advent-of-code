@@ -8,10 +8,6 @@ use std::process::exit;
 
 use helpers::{handle_result, ParseError};
 
-const MAX_DIMENSIONS: usize = 5;
-
-type Coords = (i32, i32, i32, i32, i32);
-
 /// https://adventofcode.com/2020/day/17
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -21,17 +17,9 @@ fn main() {
         exit(1);
     }
 
-    let input = handle_result(read(&args[1]));
     let steps = handle_result(args[2].parse::<usize>());
     let dimensions = handle_result(args[3].parse::<usize>());
-
-    if dimensions > MAX_DIMENSIONS {
-        eprintln!(
-            "Currently, a maximum of {} dimensions are supported.",
-            MAX_DIMENSIONS
-        );
-        exit(1);
-    }
+    let input = handle_result(read(&args[1], dimensions));
 
     println!(
         "After {} steps, there are {} active cells.",
@@ -40,7 +28,7 @@ fn main() {
     );
 }
 
-fn read(path: &str) -> Result<Vec<Coords>, ParseError> {
+fn read(path: &str, dimensions: usize) -> Result<Vec<Vec<i32>>, ParseError> {
     let file = File::open(path)?;
     let mut active = Vec::new();
 
@@ -48,7 +36,9 @@ fn read(path: &str) -> Result<Vec<Coords>, ParseError> {
         let line = line?;
         for (x, ch) in line.chars().enumerate() {
             if ch == '#' {
-                active.push((x as i32, y as i32, 0, 0, 0));
+                let mut coords = vec![x as i32, y as i32];
+                coords.resize(dimensions, 0);
+                active.push(coords);
             }
         }
     }
@@ -56,7 +46,7 @@ fn read(path: &str) -> Result<Vec<Coords>, ParseError> {
     Ok(active)
 }
 
-fn solve(input: &[Coords], steps: usize, dimensions: usize) -> usize {
+fn solve(input: &[Vec<i32>], steps: usize, dimensions: usize) -> usize {
     let mut active = HashSet::new();
     let (mut lower_bound, mut upper_bound) = do_prep(input, &mut active);
 
@@ -71,40 +61,38 @@ fn solve(input: &[Coords], steps: usize, dimensions: usize) -> usize {
 }
 
 #[rustfmt::skip]
-fn do_prep(input: &[Coords], active: &mut HashSet<Coords>) -> (i32, i32) {
+fn do_prep(input: &[Vec<i32>], active: &mut HashSet<Vec<i32>>) -> (i32, i32) {
     let mut min = i32::MAX;
     let mut max = i32::MIN;
 
-    for &v in input {
-        active.insert(v);
-        if v.0 < min { min = v.0 }
-        if v.1 < min { min = v.1 }
-        if v.2 < min { min = v.2 }
-        if v.3 < min { min = v.3 }
-        if v.4 < min { min = v.4 }
-        if v.0 > max { max = v.0 }
-        if v.1 > max { max = v.1 }
-        if v.2 > max { max = v.2 }
-        if v.3 > max { max = v.3 }
-        if v.4 > max { max = v.4 }
+    for v in input {
+        active.insert(v.to_vec());
+        for &i in v {
+            if i < min {
+                min = i;
+            }
+            if i > max {
+                max = i;
+            }
+        }
     }
 
     (min, max)
 }
 
 fn next_step(
-    active: &HashSet<Coords>,
+    active: &HashSet<Vec<i32>>,
     lower_bound: i32,
     upper_bound: i32,
     dimensions: usize,
-) -> (HashSet<Coords>, i32, i32) {
+) -> (HashSet<Vec<i32>>, i32, i32) {
     let min = lower_bound - 1;
     let max = upper_bound + 1;
 
     let mut next = HashSet::new();
 
     for coords in get_coords(min, max, dimensions) {
-        if is_active(active, &coords) {
+        if is_active(active, &coords, dimensions) {
             next.insert(coords);
         }
     }
@@ -112,38 +100,22 @@ fn next_step(
     (next, min, max)
 }
 
-fn get_coords(min: i32, max: i32, dimensions: usize) -> Vec<Coords> {
+fn get_coords(min: i32, max: i32, dimensions: usize) -> Vec<Vec<i32>> {
     let mut coords = Vec::new();
 
     for x in min..=max {
-        coords.push((x, 0, 0, 0, 0));
+        let mut coord = vec![x];
+        coord.resize(dimensions, 0);
+        coords.push(coord);
     }
 
     for i in 1..dimensions {
         let mut new_coords = coords.clone();
         for coord in coords {
-            match i {
-                1 => {
-                    for y in min..=max {
-                        new_coords.push((coord.0, y, 0, 0, 0))
-                    }
-                }
-                2 => {
-                    for z in min..=max {
-                        new_coords.push((coord.0, coord.1, z, 0, 0))
-                    }
-                }
-                3 => {
-                    for w in min..=max {
-                        new_coords.push((coord.0, coord.1, coord.2, w, 0))
-                    }
-                }
-                4 => {
-                    for v in min..=max {
-                        new_coords.push((coord.0, coord.1, coord.2, coord.3, v))
-                    }
-                }
-                _ => panic!("Invalid dimension"),
+            for v in min..=max {
+                let mut new_coord = coord.clone();
+                new_coord[i] = v;
+                new_coords.push(new_coord);
             }
         }
         coords = new_coords;
@@ -152,8 +124,8 @@ fn get_coords(min: i32, max: i32, dimensions: usize) -> Vec<Coords> {
     coords
 }
 
-fn is_active(active: &HashSet<Coords>, coords: &Coords) -> bool {
-    let active_neighbours = count_neighbours(active, coords);
+fn is_active(active: &HashSet<Vec<i32>>, coords: &[i32], dimensions: usize) -> bool {
+    let active_neighbours = count_neighbours(active, coords, dimensions);
     if active.contains(coords) {
         active_neighbours == 2 || active_neighbours == 3
     } else {
@@ -161,21 +133,24 @@ fn is_active(active: &HashSet<Coords>, coords: &Coords) -> bool {
     }
 }
 
-fn count_neighbours(active: &HashSet<Coords>, coords: &Coords) -> usize {
-    active.iter().filter(|v| is_neighbour(v, coords)).count()
+fn count_neighbours(active: &HashSet<Vec<i32>>, coords: &[i32], dimensions: usize) -> usize {
+    active
+        .iter()
+        .filter(|v| is_neighbour(v, coords, dimensions))
+        .count()
 }
 
-fn is_neighbour(c1: &Coords, c2: &Coords) -> bool {
+fn is_neighbour(c1: &[i32], c2: &[i32], dimensions: usize) -> bool {
     if c1 == c2 {
         false
     } else {
-        let d1 = (c1.0 - c2.0).abs();
-        let d2 = (c1.1 - c2.1).abs();
-        let d3 = (c1.2 - c2.2).abs();
-        let d4 = (c1.3 - c2.3).abs();
-        let d5 = (c1.4 - c2.4).abs();
+        for i in 0..dimensions {
+            if (c1[i] - c2[i]).abs() > 1 {
+                return false;
+            }
+        }
 
-        !(d1 > 1 || d2 > 1 || d3 > 1 || d4 > 1 || d5 > 1)
+        true
     }
 }
 
@@ -183,17 +158,44 @@ fn is_neighbour(c1: &Coords, c2: &Coords) -> bool {
 mod tests {
     use super::*;
 
+    mod test_is_neighbour {
+        use super::*;
+
+        #[test]
+        fn test() {
+            // noone is their own neighbour
+            assert_eq!(is_neighbour(&vec![0, 0, 0], &vec![0, 0, 0], 3), false);
+
+            // verify +/- 1 in every dimension
+            assert_eq!(is_neighbour(&vec![0, 0, 0], &vec![0, 0, -1], 3), true);
+            assert_eq!(is_neighbour(&vec![0, 0, 0], &vec![0, 0, 1], 3), true);
+            assert_eq!(is_neighbour(&vec![0, 0, 0], &vec![0, -1, 0], 3), true);
+            assert_eq!(is_neighbour(&vec![0, 0, 0], &vec![0, 1, 0], 3), true);
+            assert_eq!(is_neighbour(&vec![0, 0, 0], &vec![-1, 0, 0], 3), true);
+            assert_eq!(is_neighbour(&vec![0, 0, 0], &vec![1, 0, 0], 3), true);
+
+            // check the diagonals
+            assert_eq!(is_neighbour(&vec![0, 0, 0], &vec![1, 0, -1], 3), true);
+            assert_eq!(is_neighbour(&vec![0, 0, 0], &vec![-1, 0, 1], 3), true);
+
+            // check if the distance is 2
+            assert_eq!(is_neighbour(&vec![0, 0, 0], &vec![0, 0, 2], 3), false);
+            assert_eq!(is_neighbour(&vec![0, 0, 0], &vec![0, 1, 2], 3), false);
+            assert_eq!(is_neighbour(&vec![0, 0, 0], &vec![0, 2, 2], 3), false);
+        }
+    }
+
     mod part1 {
         use super::*;
 
         #[test]
         fn test() {
             let input = vec![
-                (1, 0, 0, 0, 0),
-                (2, 1, 0, 0, 0),
-                (0, 2, 0, 0, 0),
-                (1, 2, 0, 0, 0),
-                (2, 2, 0, 0, 0),
+                vec![1, 0, 0],
+                vec![2, 1, 0],
+                vec![0, 2, 0],
+                vec![1, 2, 0],
+                vec![2, 2, 0],
             ];
             assert_eq!(solve(&input, 6, 3), 112);
         }
@@ -205,11 +207,11 @@ mod tests {
         #[test]
         fn test() {
             let input = vec![
-                (1, 0, 0, 0, 0),
-                (2, 1, 0, 0, 0),
-                (0, 2, 0, 0, 0),
-                (1, 2, 0, 0, 0),
-                (2, 2, 0, 0, 0),
+                vec![1, 0, 0, 0],
+                vec![2, 1, 0, 0],
+                vec![0, 2, 0, 0],
+                vec![1, 2, 0, 0],
+                vec![2, 2, 0, 0],
             ];
             assert_eq!(solve(&input, 6, 4), 848);
         }
