@@ -1,12 +1,15 @@
 use helpers::ParseError;
 
+use crate::calc::helpers::left::Left;
+use crate::calc::helpers::partial_expression::PartialExpression;
+use crate::calc::helpers::right::Right;
 use crate::calc::simple;
 
 pub fn evaluate(expr: &str) -> Result<i64, ParseError> {
     let mut expr = expr.to_string();
     while let Some(idx) = expr.find('+') {
-        let (before, left) = eval_left(&expr[..idx - 1])?;
-        let (after, right) = eval_right(&expr[idx + 2..])?;
+        let (before, left) = evaluate_partial_expression(Left(&expr[..idx - 1]))?;
+        let (after, right) = evaluate_partial_expression(Right(&expr[idx + 2..]))?;
 
         expr = format!("{}{}{}", before, left + right, after);
     }
@@ -14,95 +17,19 @@ pub fn evaluate(expr: &str) -> Result<i64, ParseError> {
     simple::evaluate(expr.as_str())
 }
 
-fn eval_left(expr: &str) -> Result<(&str, i64), ParseError> {
-    if expr.ends_with(')') {
-        let mut depth = 0;
-
-        let ln = expr.len() - 1;
-        for (idx, ch) in expr.chars().rev().enumerate() {
-            let idx = ln - idx;
-            match ch {
-                ')' => depth += 1,
-                '(' => {
-                    depth -= 1;
-
-                    if depth == 0 {
-                        return Ok((&expr[..idx], evaluate(&expr[idx..])?));
-                    }
-                }
-                _ => {}
-            }
-        }
-
-        Err(ParseError(format!(
-            "Unbalanced left-hand expression: {}",
-            expr
-        )))
+fn evaluate_partial_expression<T: PartialExpression>(expr: T) -> Result<(String, i64), ParseError> {
+    if expr.has_nested_expression() {
+        expr.parse_nested_expression(evaluate)
     } else {
-        let idx_opt = match expr.rfind(' ') {
-            Some(idx) => {
-                if let Some(other) = expr.rfind('(') {
-                    if idx > other {
-                        Some(idx)
-                    } else {
-                        Some(other)
-                    }
-                } else {
-                    Some(idx)
-                }
-            }
-            None => expr.rfind('('),
-        };
-
-        match idx_opt {
-            Some(idx) => Ok((&expr[..=idx], evaluate(&expr[idx + 1..])?)),
-            None => Ok(("", evaluate(expr)?)),
-        }
-    }
-}
-
-fn eval_right(expr: &str) -> Result<(&str, i64), ParseError> {
-    if expr.starts_with('(') {
-        let mut depth = 0;
-
-        for (idx, ch) in expr.chars().enumerate() {
-            match ch {
-                '(' => depth += 1,
-                ')' => {
-                    depth -= 1;
-
-                    if depth == 0 {
-                        return Ok((&expr[idx + 1..], evaluate(&expr[..=idx])?));
-                    }
-                }
-                _ => {}
-            }
-        }
-
-        Err(ParseError(format!(
-            "Unbalanced right-hand expression: {}",
-            expr
-        )))
-    } else {
-        let idx_opt = match expr.find(' ') {
-            Some(idx) => {
-                if let Some(other) = expr.find(')') {
-                    if idx < other {
-                        Some(idx)
-                    } else {
-                        Some(other)
-                    }
-                } else {
-                    Some(idx)
-                }
-            }
-            None => expr.find(')'),
-        };
-
-        match idx_opt {
-            Some(idx) => Ok((&expr[idx..], evaluate(&expr[..idx])?)),
-            None => Ok(("", evaluate(expr)?)),
-        }
+        expr.find(' ')
+            .map(|idx| {
+                expr.find(T::CLOSE_PAREN)
+                    .map(|other| T::first(idx, other))
+                    .unwrap_or(idx)
+            })
+            .or_else(|| expr.find(T::CLOSE_PAREN))
+            .map(|idx| expr.evaluate_number(idx, evaluate))
+            .unwrap_or_else(|| Ok(("".to_string(), evaluate(expr.get().as_str())?)))
     }
 }
 
