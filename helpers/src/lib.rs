@@ -123,8 +123,14 @@ pub fn parse_multiline_input_as_single<I: FromMultilineStr>(
 }
 
 /// Generic parsing error.
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ParseError(pub String);
+
+impl ParseError {
+    pub fn of(s: &str) -> ParseError {
+        ParseError(s.to_string())
+    }
+}
 
 impl fmt::Display for ParseError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
