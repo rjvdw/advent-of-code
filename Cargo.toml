@@ -4,6 +4,3 @@ exclude = []
 
 [profile.test.package.day15]
 opt-level = 2
-
-[profile.test.package.day17]
-opt-level = 2
