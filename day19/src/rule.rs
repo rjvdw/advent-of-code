@@ -9,7 +9,7 @@ pub enum Rule {
     Simple(char),
     Ref(usize),
     Compound(usize, Box<Rule>),
-    Either(Vec<Rule>),
+    Either(Box<Rule>, Box<Rule>),
 }
 
 impl Rule {
@@ -46,10 +46,12 @@ impl Rule {
                 }
                 results
             }
-            Rule::Either(rules) => rules
-                .iter()
-                .flat_map(|rule| rule.match_line(rules_map, line, offset))
-                .collect(),
+            Rule::Either(left, right) => {
+                let mut results = HashSet::new();
+                results.extend(left.match_line(rules_map, line, offset));
+                results.extend(right.match_line(rules_map, line, offset));
+                results
+            }
         }
     }
 }
@@ -63,12 +65,10 @@ impl FromStr for Rule {
                 Some(ch) => Ok(Rule::Simple(ch)),
                 None => Err(ParseError(format!("Invalid simple rule: {}", s))),
             }
-        } else if s.contains('|') {
-            let mut rules = Vec::new();
-            for part in s.split(" | ") {
-                rules.push(part.parse::<Rule>()?);
-            }
-            Ok(Rule::Either(rules))
+        } else if let Some(pos) = s.find(" | ") {
+            let left = s[..pos].parse::<Rule>()?;
+            let right = s[pos + 3..].parse::<Rule>()?;
+            Ok(Rule::Either(Box::new(left), Box::new(right)))
         } else {
             match s.find(' ') {
                 Some(idx) => {
