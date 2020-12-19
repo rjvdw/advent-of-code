@@ -54,8 +54,9 @@ fn solve(values: &[InputRecord], step_x: usize, step_y: usize) -> u64 {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use helpers::parse_input;
+
+    use super::*;
 
     #[test]
     fn test() {

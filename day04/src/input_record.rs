@@ -131,7 +131,7 @@ impl FromMultilineStr for InputRecord {
                         return Err(ParseError(format!(
                             "Invalid tuple '{}' in line '{}'",
                             tuple, line
-                        )))
+                        )));
                     }
                 }
             }

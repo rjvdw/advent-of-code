@@ -1,5 +1,6 @@
-use helpers::ParseError;
 use std::str::FromStr;
+
+use helpers::ParseError;
 
 #[derive(Debug, Copy, Clone)]
 pub enum Operation {

@@ -1,6 +1,8 @@
-use crate::coordinates::Coordinates;
-use helpers::ParseError;
 use std::str::FromStr;
+
+use helpers::ParseError;
+
+use crate::coordinates::Coordinates;
 
 #[derive(Clone, Copy, PartialEq, PartialOrd, Eq, Ord, Debug, Hash)]
 enum Action {

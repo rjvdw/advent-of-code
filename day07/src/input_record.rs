@@ -1,6 +1,7 @@
-use helpers::ParseError;
 use std::collections::HashMap;
 use std::str::FromStr;
+
+use helpers::ParseError;
 
 const INPUT_SEPARATOR: &str = " bags contain";
 
