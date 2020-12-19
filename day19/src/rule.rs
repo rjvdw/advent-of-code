@@ -4,6 +4,10 @@ use std::str::FromStr;
 use helpers::ParseError;
 
 use crate::rules_map::RulesMap;
+use crate::splittable_and_parsable::SplittableAndParsable;
+
+const EITHER_SEPARATOR: char = '|';
+const COMPOUND_SEPARATOR: char = ' ';
 
 pub enum Rule {
     Simple(char),
@@ -65,17 +69,14 @@ impl FromStr for Rule {
                 Some(ch) => Ok(Rule::Simple(ch)),
                 None => Err(ParseError(format!("Invalid simple rule: {}", s))),
             }
-        } else if let Some(pos) = s.find(" | ") {
-            let left = s[..pos].parse::<Rule>()?;
-            let right = s[pos + 3..].parse::<Rule>()?;
+        } else if let Some(idx) = s.find(EITHER_SEPARATOR) {
+            let (left, right) = s.split_at_and_parse::<Rule, Rule>(idx)?;
             Ok(Rule::Either(Box::new(left), Box::new(right)))
         } else {
-            match s.find(' ') {
+            match s.find(COMPOUND_SEPARATOR) {
                 Some(idx) => {
-                    let first = s[..idx].parse::<usize>()?;
-                    let tail = s[idx + 1..].parse::<Rule>()?;
-
-                    Ok(Rule::Compound(first, Box::new(tail)))
+                    let (head, tail) = s.split_at_and_parse::<usize, Rule>(idx)?;
+                    Ok(Rule::Compound(head, Box::new(tail)))
                 }
                 None => Ok(Rule::Ref(s.parse::<usize>()?)),
             }

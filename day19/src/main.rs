@@ -12,6 +12,7 @@ use crate::rule::Rule;
 
 mod rule;
 mod rules_map;
+mod splittable_and_parsable;
 
 /// https://adventofcode.com/2020/day/19
 fn main() {
