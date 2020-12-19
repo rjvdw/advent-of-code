@@ -7,7 +7,8 @@ use crate::rules_map::RulesMap;
 
 pub enum Rule {
     Simple(char),
-    Compound(Vec<usize>),
+    Ref(usize),
+    Compound(usize, Box<Rule>),
     Either(Vec<Rule>),
 }
 
@@ -24,38 +25,32 @@ impl Rule {
         line: &str,
         offset: usize,
     ) -> HashSet<usize> {
-        let mut results = HashSet::new();
-
         match self {
             Rule::Simple(ch) => {
+                let mut results = HashSet::new();
                 if line.chars().nth(offset) == Some(*ch) {
                     results.insert(offset + 1);
                 }
+                results
             }
-            Rule::Compound(rules) => {
-                match rules.split_first() {
-                    Some((rule_key, rest)) => {
-                        let rest_rule = Rule::Compound(rest.to_vec());
-                        let rule = rules_map.get_rule(rule_key);
-
-                        for next_offset in rule.match_line(rules_map, line, offset) {
-                            let m = rest_rule.match_line(rules_map, line, next_offset);
-                            results.extend(m);
-                        }
+            Rule::Ref(rule_key) => rules_map
+                .get_rule(rule_key)
+                .match_line(rules_map, line, offset),
+            Rule::Compound(rule_key, rest) => {
+                let mut results = HashSet::new();
+                let rule = rules_map.get_rule(rule_key);
+                for next_offset in rule.match_line(rules_map, line, offset) {
+                    if next_offset != line.len() {
+                        results.extend(rest.match_line(rules_map, line, next_offset));
                     }
-                    None => {
-                        results.insert(offset);
-                    }
-                };
-            }
-            Rule::Either(rules) => {
-                for rule in rules {
-                    results.extend(rule.match_line(rules_map, line, offset));
                 }
+                results
             }
+            Rule::Either(rules) => rules
+                .iter()
+                .flat_map(|rule| rule.match_line(rules_map, line, offset))
+                .collect(),
         }
-
-        results
     }
 }
 
@@ -75,11 +70,15 @@ impl FromStr for Rule {
             }
             Ok(Rule::Either(rules))
         } else {
-            let mut rules = Vec::new();
-            for part in s.split(' ') {
-                rules.push(part.parse::<usize>()?);
+            match s.find(' ') {
+                Some(idx) => {
+                    let first = s[..idx].parse::<usize>()?;
+                    let tail = s[idx + 1..].parse::<Rule>()?;
+
+                    Ok(Rule::Compound(first, Box::new(tail)))
+                }
+                None => Ok(Rule::Ref(s.parse::<usize>()?)),
             }
-            Ok(Rule::Compound(rules))
         }
     }
 }
