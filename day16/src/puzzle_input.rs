@@ -112,6 +112,8 @@ impl PuzzleInput {
 }
 
 impl FromMultilineStr for PuzzleInput {
+    const DISCARD_FIRST_RECORD: bool = false;
+
     type Err = ParseError;
 
     fn new() -> Self {

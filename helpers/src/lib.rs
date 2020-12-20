@@ -25,15 +25,21 @@ pub fn read_multiline_input<T: FromMultilineStr>(
     let file = File::open(path).expect("Failed to open file");
     let mut values = Vec::new();
     let mut record = T::new();
+    let mut discard = T::DISCARD_FIRST_RECORD;
     for line in BufReader::new(file).lines() {
         let line = line.expect("Failed to read line");
         if T::indicates_new_record(&line) {
-            values.push(record);
+            if !discard {
+                values.push(record);
+            }
             record = T::new();
+            discard = false;
         }
         record.parse(&line)?;
     }
-    values.push(record);
+    if !discard {
+        values.push(record);
+    }
 
     Ok(values)
 }
@@ -55,6 +61,10 @@ pub fn read_multiline_input_as_single<T: FromMultilineStr>(
 /// Mirrors `std::str::FromStr`, but slightly modified so it can be used to parse record that span
 /// multiple lines.
 pub trait FromMultilineStr {
+    /// If true, all lines before the first line for which `self.indicates_new_record(line)` returns
+    /// true are discarded.
+    const DISCARD_FIRST_RECORD: bool;
+
     /// The associated error which can be returned from parsing.
     type Err;
 
@@ -95,15 +105,21 @@ pub fn parse_multiline_input<I: FromMultilineStr>(
 ) -> Result<Vec<I>, <I as FromMultilineStr>::Err> {
     let mut values = Vec::new();
     let mut record = I::new();
+    let mut discard: bool = I::DISCARD_FIRST_RECORD;
     for line in input_lines {
         let line = &line.to_string();
         if I::indicates_new_record(line) {
-            values.push(record);
+            if !discard {
+                values.push(record);
+            }
             record = I::new();
+            discard = false;
         }
         record.parse(line)?;
     }
-    values.push(record);
+    if !discard {
+        values.push(record);
+    }
 
     Ok(values)
 }

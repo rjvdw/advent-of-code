@@ -158,6 +158,8 @@ impl fmt::Display for SeatLayout {
 }
 
 impl FromMultilineStr for SeatLayout {
+    const DISCARD_FIRST_RECORD: bool = false;
+
     type Err = ParseError;
 
     fn new() -> Self {

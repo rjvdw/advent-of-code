@@ -22,6 +22,8 @@ impl InputRecord {
 }
 
 impl FromMultilineStr for InputRecord {
+    const DISCARD_FIRST_RECORD: bool = false;
+
     type Err = ParseError;
 
     fn new() -> Self {
