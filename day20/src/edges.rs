@@ -62,6 +62,7 @@ impl Edges {
         }
     }
 
+    /// Swaps around edges according to `orientation`.
     pub fn orient(&self, orientation: u8) -> Edges {
         let mut edges = *self;
 
