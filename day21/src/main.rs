@@ -30,9 +30,17 @@ fn main() {
         count_occurences(&foods, &safe_ingredients)
     );
 
+    let (dangerous_ingredients, is_complete) =
+        find_dangerous_ingredients(&possible_ingredients_per_allergen);
+
     println!(
-        "The canonical dangerous ingredients list is: '{}'",
-        find_dangerous_ingredients(&possible_ingredients_per_allergen).join(",")
+        "The {} canonical dangerous ingredients list is: '{}'",
+        if is_complete {
+            "complete"
+        } else {
+            "incomplete"
+        },
+        dangerous_ingredients.join(",")
     );
 }
 
@@ -95,14 +103,15 @@ fn count_occurences(foods: &[Food], ingredients: &HashSet<String>) -> usize {
 
 fn find_dangerous_ingredients(
     possible_ingredients_per_allergen: &HashMap<String, HashSet<String>>,
-) -> Vec<String> {
+) -> (Vec<String>, bool) {
     let mut processed_allergens: HashSet<String> = HashSet::new();
     let mut dangerous_ingredients: HashSet<String> = HashSet::new();
 
     let mut mapping: Vec<(String, String)> = Vec::new();
 
-    // assumption: there is a solution (otherwise this will loop indefinitely)
-    while dangerous_ingredients.len() != possible_ingredients_per_allergen.len() {
+    let mut done = false;
+    while !done {
+        done = true;
         for (allergen, ingredients) in possible_ingredients_per_allergen {
             if !processed_allergens.contains(allergen) {
                 let ingredients: Vec<String> = ingredients
@@ -116,6 +125,8 @@ fn find_dangerous_ingredients(
                     dangerous_ingredients.insert(ingredients[0].to_string());
 
                     mapping.push((allergen.to_string(), ingredients[0].to_string()));
+
+                    done = false;
                 }
             }
         }
@@ -123,11 +134,14 @@ fn find_dangerous_ingredients(
 
     mapping.sort_unstable_by_key(|(allergen, _)| allergen.to_string());
 
-    mapping
-        .iter()
-        .map(|(_, ingredient)| ingredient)
-        .map(|v| v.to_string())
-        .collect()
+    (
+        mapping
+            .iter()
+            .map(|(_, ingredient)| ingredient)
+            .map(|v| v.to_string())
+            .collect(),
+        dangerous_ingredients.len() == possible_ingredients_per_allergen.len(),
+    )
 }
 
 #[cfg(test)]
@@ -187,7 +201,14 @@ mod tests {
 
         assert_eq!(
             find_dangerous_ingredients(&allergens),
-            vec!["mxmxvkd", "sqjhc", "fvjkl"]
+            (
+                vec![
+                    "mxmxvkd".to_string(),
+                    "sqjhc".to_string(),
+                    "fvjkl".to_string()
+                ],
+                true
+            )
         );
     }
 
