@@ -10,6 +10,12 @@ use crate::orientation_helpers::{get_orientation, orient_x_y};
 pub const SIZE: usize = 10;
 const MAX_MASK: u128 = 0b1000000000;
 
+/// A tile (by ID) and its orientation.
+pub type OrientedTile = (u64, u8);
+
+/// Lookup table for tiles by their ID.
+pub type TilesById = HashMap<u64, Tile>;
+
 /// A single tile of the image.
 #[derive(Copy, Clone, Debug)]
 pub struct Tile {
@@ -33,7 +39,7 @@ impl Tile {
     }
 
     /// Returns a list of all tile IDs of tiles that are adjacent to this tile.
-    pub fn find_adjecent_tiles(&self, tiles: &HashMap<u64, Tile>) -> Vec<u64> {
+    pub fn find_adjecent_tiles(&self, tiles: &TilesById) -> Vec<u64> {
         let mut result = Vec::new();
 
         result.extend(self.find_adjacent_tiles_to_edge(tiles, EdgeName::Top));
@@ -49,9 +55,9 @@ impl Tile {
     /// should be reoriented to line up with this tile.
     pub fn find_adjacent_tiles_to_edge(
         &self,
-        tiles: &HashMap<u64, Tile>,
+        tiles: &TilesById,
         edge_name: EdgeName,
-    ) -> Option<(u64, u8)> {
+    ) -> Option<OrientedTile> {
         let edge = self.edges.get(edge_name);
 
         for tile in tiles.values().filter(|&t| t.id != self.id) {

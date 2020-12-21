@@ -10,12 +10,14 @@ use helpers::read::read_multiline_input;
 use crate::dragon::{DRAGON_IMAGE, DRAGON_IMAGE_WIDTH, NR_ACTIVE_PIXELS_IN_DRAGON};
 use crate::edges::EdgeName;
 use crate::orientation_helpers::orient_x_y;
-use crate::tile::{Tile, SIZE};
+use crate::tile::{OrientedTile, Tile, TilesById, SIZE};
 
 mod dragon;
 mod edges;
 mod orientation_helpers;
 mod tile;
+
+type Grid<T> = Vec<Vec<T>>;
 
 /// https://adventofcode.com/2020/day/20
 fn main() {
@@ -45,14 +47,14 @@ fn main() {
     );
 }
 
-fn make_map(tiles: &[Tile]) -> HashMap<u64, Tile> {
+fn make_map(tiles: &[Tile]) -> TilesById {
     tiles.iter().fold(HashMap::new(), |mut map, &tile| {
         map.insert(tile.id, tile);
         map
     })
 }
 
-fn find_corner_tiles(tiles: &HashMap<u64, Tile>) -> Vec<u64> {
+fn find_corner_tiles(tiles: &TilesById) -> Vec<u64> {
     let mut corner_tiles = Vec::new();
 
     for tile in tiles.values() {
@@ -64,7 +66,7 @@ fn find_corner_tiles(tiles: &HashMap<u64, Tile>) -> Vec<u64> {
     corner_tiles
 }
 
-fn compose(tiles: &HashMap<u64, Tile>, start_from: u64) -> Vec<Vec<(u64, u8)>> {
+fn compose(tiles: &TilesById, start_from: u64) -> Grid<OrientedTile> {
     let mut at = (start_from, get_starting_orientation(tiles, start_from));
     let mut row_start = at;
     let mut composed = Vec::new();
@@ -94,10 +96,10 @@ fn compose(tiles: &HashMap<u64, Tile>, start_from: u64) -> Vec<Vec<(u64, u8)>> {
 }
 
 fn get_next_tile(
-    tiles: &HashMap<u64, Tile>,
-    (id, orientation): (u64, u8),
+    tiles: &TilesById,
+    (id, orientation): OrientedTile,
     edge_name: EdgeName,
-) -> Option<(u64, u8)> {
+) -> Option<OrientedTile> {
     tiles
         .get(&id)
         .unwrap()
@@ -105,7 +107,7 @@ fn get_next_tile(
         .find_adjacent_tiles_to_edge(tiles, edge_name)
 }
 
-fn get_starting_orientation(tiles: &HashMap<u64, Tile>, start_from: u64) -> u8 {
+fn get_starting_orientation(tiles: &TilesById, start_from: u64) -> u8 {
     let tile = tiles.get(&start_from).unwrap();
     let top = tile.find_adjacent_tiles_to_edge(tiles, EdgeName::Top);
     let right = tile.find_adjacent_tiles_to_edge(tiles, EdgeName::Right);
@@ -118,7 +120,7 @@ fn get_starting_orientation(tiles: &HashMap<u64, Tile>, start_from: u64) -> u8 {
     }
 }
 
-fn compile_image(tiles: &HashMap<u64, Tile>, composed: &[Vec<(u64, u8)>]) -> String {
+fn compile_image(tiles: &TilesById, composed: &[Vec<OrientedTile>]) -> String {
     let mut image = String::new();
 
     for tiles_row in composed {
@@ -332,7 +334,7 @@ mod tests {
         // );
     }
 
-    fn get_test_input() -> HashMap<u64, Tile> {
+    fn get_test_input() -> TilesById {
         let tiles = parse_multiline_input(vec![
             "Tile 2311:",
             "..##.#..#.",
@@ -447,7 +449,7 @@ mod tests {
         make_map(&tiles)
     }
 
-    fn get_test_input_for_part_2() -> (HashMap<u64, Tile>, Vec<Vec<(u64, u8)>>) {
+    fn get_test_input_for_part_2() -> (TilesById, Grid<OrientedTile>) {
         let mut tiles = get_test_input();
         // flip tile 1951, so that the output will match the output on adventofcode.com
         tiles.insert(1951, tiles.get(&1951).unwrap().orient(0b100));

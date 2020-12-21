@@ -20,4 +20,6 @@ jobs:
       - name: fmt
         run: cargo fmt -- --check
       - name: clippy
-        run: cargo clippy
+        run: cargo clippy --all-targets
+      - name: check
+        run: cargo check --all-targets

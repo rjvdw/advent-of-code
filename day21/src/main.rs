@@ -158,23 +158,23 @@ mod tests {
         let mut expected: HashMap<String, HashSet<String>> = HashMap::new();
         expected
             .entry("dairy".to_string())
-            .or_insert(HashSet::new())
+            .or_insert_with(HashSet::new)
             .insert("mxmxvkd".to_string());
         expected
             .entry("soy".to_string())
-            .or_insert(HashSet::new())
+            .or_insert_with(HashSet::new)
             .insert("sqjhc".to_string());
         expected
             .entry("soy".to_string())
-            .or_insert(HashSet::new())
+            .or_insert_with(HashSet::new)
             .insert("fvjkl".to_string());
         expected
             .entry("fish".to_string())
-            .or_insert(HashSet::new())
+            .or_insert_with(HashSet::new)
             .insert("sqjhc".to_string());
         expected
             .entry("fish".to_string())
-            .or_insert(HashSet::new())
+            .or_insert_with(HashSet::new)
             .insert("mxmxvkd".to_string());
 
         assert_eq!(allergens, expected);
