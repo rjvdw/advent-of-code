@@ -42,6 +42,13 @@ Create a folder for the next day:
 bin/next-day
 ```
 
+## To Do
+
+* For day 19, I feel the solution could be way faster. It currently runs in about 200ms on my laptop, but I think it can be done in less than 100ms.
+* For day 20, the solution can be cleaned up a little bit.
+  * Actually mark the dragons in the image.
+  * Maybe do something clever, so not all rotations have to be marked explicitely.
+
 
 [workflows-CI-badge]: https://github.com/rjvdw/advent-of-code-2020/workflows/CI/badge.svg
 [actions]: https://github.com/rjvdw/advent-of-code-2020/actions
