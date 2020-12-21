@@ -1,7 +1,8 @@
 use std::collections::HashMap;
 use std::fmt;
 
-use helpers::{FromMultilineStr, ParseError};
+use helpers::from_multiline_str::FromMultilineStr;
+use helpers::parse_error::ParseError;
 
 use crate::edges::{EdgeName, Edges};
 use crate::orientation_helpers::{get_orientation, orient_x_y};
@@ -209,7 +210,7 @@ impl FromMultilineStr for Tile {
 
 #[cfg(test)]
 mod tests {
-    use helpers::parse_multiline_input_as_single;
+    use helpers::parse::parse_multiline_input_as_single;
 
     use super::*;
 

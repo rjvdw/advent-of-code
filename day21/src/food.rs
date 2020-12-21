@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 use std::str::FromStr;
 
-use helpers::ParseError;
+use helpers::parse_error::ParseError;
 
 #[derive(Debug, Clone)]
 pub struct Food {

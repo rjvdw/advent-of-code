@@ -5,7 +5,8 @@ use std::collections::VecDeque;
 use std::env;
 use std::process::exit;
 
-use helpers::{handle_result, read_input};
+use helpers::handle_result;
+use helpers::read::read_input;
 
 /// https://adventofcode.com/2020/day/9
 fn main() {

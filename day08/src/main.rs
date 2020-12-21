@@ -3,7 +3,8 @@ extern crate helpers;
 use std::env;
 use std::process::exit;
 
-use helpers::{handle_result, read_input};
+use helpers::handle_result;
+use helpers::read::read_input;
 use input_record::InputRecord;
 
 use crate::input_record::Operation;
@@ -84,7 +85,7 @@ fn jump(idx: usize, value: i32) -> usize {
 
 #[cfg(test)]
 mod tests {
-    use helpers::parse_input;
+    use helpers::parse::parse_input;
 
     use super::*;
 

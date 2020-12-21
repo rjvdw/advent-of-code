@@ -4,7 +4,8 @@ use std::collections::HashMap;
 use std::env;
 use std::process::exit;
 
-use helpers::{handle_result, read_multiline_input};
+use helpers::handle_result;
+use helpers::read::read_multiline_input;
 
 use crate::dragon::{DRAGON_IMAGE, DRAGON_IMAGE_WIDTH, NR_ACTIVE_PIXELS_IN_DRAGON};
 use crate::edges::EdgeName;
@@ -217,7 +218,7 @@ fn parse_image_line(line: &str) -> u128 {
 
 #[cfg(test)]
 mod tests {
-    use helpers::parse_multiline_input;
+    use helpers::parse::parse_multiline_input;
 
     use super::*;
 

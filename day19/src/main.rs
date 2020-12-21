@@ -6,7 +6,7 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::process::exit;
 
-use helpers::ParseError;
+use helpers::parse_error::ParseError;
 
 use crate::rule::Rule;
 

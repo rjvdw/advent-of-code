@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::str::FromStr;
 
-use helpers::ParseError;
+use helpers::parse_error::ParseError;
 
 const INPUT_SEPARATOR: &str = " bags contain";
 
@@ -52,7 +52,7 @@ impl FromStr for InputRecord {
 
 #[cfg(test)]
 mod tests {
-    use helpers::parse_input;
+    use helpers::parse::parse_input;
 
     use super::*;
 

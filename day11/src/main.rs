@@ -3,7 +3,8 @@ extern crate helpers;
 use std::env;
 use std::process::exit;
 
-use helpers::{handle_result, read_multiline_input};
+use helpers::handle_result;
+use helpers::read::read_multiline_input;
 use seat_layout::SeatLayout;
 
 mod cardinal_direction;

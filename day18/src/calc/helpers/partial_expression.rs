@@ -1,4 +1,4 @@
-use helpers::ParseError;
+use helpers::parse_error::ParseError;
 
 pub trait PartialExpression {
     const OPEN_PAREN: char;

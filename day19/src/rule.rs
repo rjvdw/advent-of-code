@@ -1,7 +1,7 @@
 use std::collections::{HashMap, HashSet};
 use std::str::FromStr;
 
-use helpers::ParseError;
+use helpers::parse_error::ParseError;
 
 use crate::rules_map::RulesMap;
 use crate::splittable_and_parsable::SplittableAndParsable;

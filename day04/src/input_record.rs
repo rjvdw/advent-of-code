@@ -1,6 +1,7 @@
 use std::fmt;
 
-use helpers::{FromMultilineStr, ParseError};
+use helpers::from_multiline_str::FromMultilineStr;
+use helpers::parse_error::ParseError;
 
 use crate::validators::{
     valid_color, valid_eye_color, valid_height, valid_passport_id, valid_year,

@@ -1,7 +1,7 @@
 use std::num::ParseIntError;
 use std::str::FromStr;
 
-use helpers::ParseError;
+use helpers::parse_error::ParseError;
 
 const VALUE_SEPARATOR: &str = " = ";
 const SET_MASK_KEYWORD: &str = "mask";

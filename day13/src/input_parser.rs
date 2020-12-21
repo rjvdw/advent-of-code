@@ -1,7 +1,7 @@
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 
-use helpers::ParseError;
+use helpers::parse_error::ParseError;
 
 pub fn read(path: &str) -> Result<(u32, Vec<u32>), ParseError> {
     let file = File::open(path)?;

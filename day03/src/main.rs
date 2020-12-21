@@ -3,7 +3,8 @@ extern crate helpers;
 use std::env;
 use std::process::exit;
 
-use helpers::{handle_result, read_input};
+use helpers::handle_result;
+use helpers::read::read_input;
 use input_record::InputRecord;
 
 mod input_record;
@@ -54,7 +55,7 @@ fn solve(values: &[InputRecord], step_x: usize, step_y: usize) -> u64 {
 
 #[cfg(test)]
 mod tests {
-    use helpers::parse_input;
+    use helpers::parse::parse_input;
 
     use super::*;
 

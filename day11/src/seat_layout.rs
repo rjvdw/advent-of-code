@@ -1,6 +1,7 @@
 use std::fmt;
 
-use helpers::{FromMultilineStr, ParseError};
+use helpers::from_multiline_str::FromMultilineStr;
+use helpers::parse_error::ParseError;
 use Position::{Floor, Seat};
 use SeatState::{Empty, Occupied};
 

@@ -1,6 +1,6 @@
 use std::str::FromStr;
 
-use helpers::ParseError;
+use helpers::parse_error::ParseError;
 
 #[derive(Debug, Copy, Clone)]
 pub enum Operator {

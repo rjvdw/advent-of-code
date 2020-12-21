@@ -1,7 +1,8 @@
 use std::collections::HashMap;
 use std::fmt;
 
-use helpers::{FromMultilineStr, ParseError};
+use helpers::from_multiline_str::FromMultilineStr;
+use helpers::parse_error::ParseError;
 
 #[derive(Debug)]
 enum ParseState {

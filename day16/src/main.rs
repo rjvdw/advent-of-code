@@ -4,7 +4,8 @@ use std::collections::HashMap;
 use std::env;
 use std::process::exit;
 
-use helpers::{handle_result, read_multiline_input_as_single};
+use helpers::handle_result;
+use helpers::read::read_multiline_input_as_single;
 
 use crate::puzzle_input::PuzzleInput;
 
@@ -83,7 +84,7 @@ fn find_unique_solution(
 
 #[cfg(test)]
 mod tests {
-    use helpers::parse_multiline_input_as_single;
+    use helpers::parse::parse_multiline_input_as_single;
 
     use super::*;
 

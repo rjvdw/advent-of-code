@@ -4,7 +4,8 @@ use std::collections::{HashMap, HashSet};
 use std::env;
 use std::process::exit;
 
-use helpers::{handle_result, read_input};
+use helpers::handle_result;
+use helpers::read::read_input;
 use input_record::InputRecord;
 
 mod input_record;
@@ -66,7 +67,7 @@ fn solve_part_2(values: &[InputRecord], needle: &str) -> u32 {
 
 #[cfg(test)]
 mod tests {
-    use helpers::parse_input;
+    use helpers::parse::parse_input;
 
     use super::*;
 

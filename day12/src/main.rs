@@ -3,7 +3,8 @@ extern crate helpers;
 use std::env;
 use std::process::exit;
 
-use helpers::{handle_result, read_input};
+use helpers::handle_result;
+use helpers::read::read_input;
 
 use crate::coordinates::Coordinates;
 use crate::input_record::InputRecord;
@@ -56,7 +57,7 @@ fn travel_with_waypoint(instructions: &[InputRecord], waypoint: Coordinates) -> 
 
 #[cfg(test)]
 mod tests {
-    use helpers::parse_input;
+    use helpers::parse::parse_input;
 
     use super::*;
 
