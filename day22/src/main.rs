@@ -8,11 +8,10 @@ use helpers::handle_result;
 use helpers::read::read_multiline_input;
 
 use crate::player::Player;
+use crate::round::Round;
 
 mod player;
-
-/// A round consists of a card, and the current state of the player.
-type Round = (u8, Player);
+mod round;
 
 /// https://adventofcode.com/2020/day/22
 fn main() {

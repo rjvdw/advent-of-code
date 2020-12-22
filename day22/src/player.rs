@@ -1,6 +1,8 @@
 use helpers::from_multiline_str::FromMultilineStr;
 use helpers::parse_error::ParseError;
 
+use crate::round::Round;
+
 #[derive(Debug, Clone, Eq, PartialEq, Hash)]
 pub struct Player {
     pub nr: usize,
@@ -10,37 +12,25 @@ pub struct Player {
 impl Player {
     #[cfg(test)]
     pub fn new(nr: usize, cards: &[u8]) -> Player {
-        Player {
-            nr,
-            cards: cards.to_vec(),
-        }
+        let cards = cards.to_vec();
+        Player { nr, cards }
     }
 
-    pub fn draw_card(&self) -> Option<(u8, Player)> {
-        self.cards.split_first().map(|v| {
-            (
-                *v.0,
-                Player {
-                    nr: self.nr,
-                    cards: v.1.to_vec(),
-                },
-            )
-        })
+    pub fn draw_card(&self) -> Option<Round> {
+        self.cards
+            .split_first()
+            .map(|(card, cards)| (*card, self.with_cards(cards)))
     }
 
     pub fn add_cards(&self, cards: &[u8]) -> Player {
         let mut player = self.clone();
-        for &card in cards {
-            player.cards.push(card);
-        }
+        player.cards.extend_from_slice(cards);
         player
     }
 
     pub fn prepare_deck_for_sub_game(&self, nr_cards: usize) -> Player {
-        Player {
-            nr: self.nr,
-            cards: self.cards.iter().take(nr_cards).cloned().collect(),
-        }
+        let cards: Vec<u8> = self.cards.iter().take(nr_cards).cloned().collect();
+        self.with_cards(&cards)
     }
 
     pub fn is_eliminated(&self) -> bool {
@@ -52,11 +42,17 @@ impl Player {
     }
 
     pub fn score(&self) -> u64 {
-        let mut score = 0;
-        for (idx, &card) in self.cards.iter().rev().enumerate() {
-            score += (card as u64) * ((idx as u64) + 1);
-        }
-        score
+        self.cards
+            .iter()
+            .rev()
+            .enumerate()
+            .map(|(idx, &card)| (card as u64) * ((idx as u64) + 1))
+            .sum()
+    }
+
+    fn with_cards(&self, cards: &[u8]) -> Player {
+        let cards = cards.to_vec();
+        Player { nr: self.nr, cards }
     }
 }
 
