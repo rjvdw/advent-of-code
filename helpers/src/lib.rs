@@ -4,6 +4,7 @@ use std::process::exit;
 pub mod from_multiline_str;
 pub mod parse;
 pub mod parse_error;
+pub mod part;
 pub mod read;
 
 /// Helper method for dealing with results. If a result is an Err, it will print an error message

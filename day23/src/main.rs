@@ -4,13 +4,9 @@ use std::process::exit;
 use std::{env, iter};
 
 use helpers::handle_result;
+use helpers::part::Part;
 
 const BASE: u64 = 10;
-
-enum Part {
-    One,
-    Two,
-}
 
 /// https://adventofcode.com/2020/day/23
 fn main() {
@@ -27,14 +23,7 @@ fn main() {
     let initial_labeling = handle_result(args[1].parse::<u64>());
     let nr_moves = handle_result(args[2].replace('_', "").parse::<usize>());
     let nr_cups = handle_result(args[3].replace('_', "").parse::<u64>());
-    let part = if args[4] == *"part1" {
-        Part::One
-    } else if args[4] == *"part2" {
-        Part::Two
-    } else {
-        eprintln!("Invalid argument: {}", args[4]);
-        exit(1);
-    };
+    let part = handle_result(args[4].parse::<Part>());
 
     if initial_labeling == 0 {
         eprintln!("I cannot play without cups!");
@@ -45,11 +34,12 @@ fn main() {
     play(&mut linked_list, cups[0] - 1, nr_moves, nr_cups);
 
     println!(
-        "Starting with {} (nr cups: {}), after {} moves, the result is {}.",
+        "[{}] Starting with {} (nr cups: {}), after {} moves, the result is {}.",
+        part,
         initial_labeling,
         nr_cups,
         nr_moves,
-        as_answer(&linked_list, part)
+        as_answer(&linked_list, &part)
     );
 }
 
@@ -86,7 +76,7 @@ fn cups_from_labeling(mut labeling: u64, nr_cups: u64) -> (Vec<u64>, Vec<u64>) {
     (cups, linked_list)
 }
 
-fn as_answer(linked_list: &[u64], part: Part) -> u64 {
+fn as_answer(linked_list: &[u64], part: &Part) -> u64 {
     match part {
         Part::One => iter::successors(linked_list.get(0), |&&cup| linked_list.get(cup as usize))
             .take_while(|&&cup| cup != 0)
@@ -149,7 +139,7 @@ mod tests {
             let labeling = 389_125_467;
             let (cups, mut linked_list) = cups_from_labeling(labeling, 9);
             play(&mut linked_list, cups[0] - 1, 10, 9);
-            let answer = as_answer(&linked_list, PART);
+            let answer = as_answer(&linked_list, &PART);
 
             assert_eq!(answer, 92_658_374);
         }
@@ -159,7 +149,7 @@ mod tests {
             let labeling = 389_125_467;
             let (cups, mut linked_list) = cups_from_labeling(labeling, 9);
             play(&mut linked_list, cups[0] - 1, 100, 9);
-            let answer = as_answer(&linked_list, PART);
+            let answer = as_answer(&linked_list, &PART);
 
             assert_eq!(answer, 67_384_529);
         }
@@ -175,7 +165,7 @@ mod tests {
             let labeling = 389_125_467;
             let (cups, mut linked_list) = cups_from_labeling(labeling, 1_000_000);
             play(&mut linked_list, cups[0] - 1, 10_000_000, 1_000_000);
-            let answer = as_answer(&linked_list, PART);
+            let answer = as_answer(&linked_list, &PART);
 
             assert_eq!(answer, 149_245_887_792);
         }
