@@ -1,30 +1,32 @@
-mod traits_and_types;
-
 extern crate helpers;
 
-use std::collections::VecDeque;
-use std::env;
 use std::process::exit;
+use std::{env, iter};
 
-use crate::traits_and_types::{
-    CupNumber, Labeling, Part, PickedUpCups, WithContainsCup, WithCupsCount,
-};
 use helpers::handle_result;
 
-const BASE: Labeling = 10;
+const BASE: u64 = 10;
+
+enum Part {
+    One,
+    Two,
+}
 
 /// https://adventofcode.com/2020/day/23
 fn main() {
     let args: Vec<String> = env::args().collect();
 
     if args.len() < 5 {
-        eprintln!("Usage: {} <cups> <nr moves> <cap> <part1|part2>", &args[0]);
+        eprintln!(
+            "Usage: {} <cups> <nr moves> <nr cups> <part1|part2>",
+            &args[0]
+        );
         exit(1);
     }
 
-    let initial_labeling = handle_result(args[1].parse::<Labeling>());
+    let initial_labeling = handle_result(args[1].parse::<u64>());
     let nr_moves = handle_result(args[2].replace('_', "").parse::<usize>());
-    let cap = handle_result(args[3].replace('_', "").parse::<CupNumber>());
+    let nr_cups = handle_result(args[3].replace('_', "").parse::<u64>());
     let part = if args[4] == *"part1" {
         Part::One
     } else if args[4] == *"part2" {
@@ -39,138 +41,85 @@ fn main() {
         exit(1);
     }
 
+    let (cups, mut linked_list) = cups_from_labeling(initial_labeling, nr_cups);
+    play(&mut linked_list, cups[0] - 1, nr_moves, nr_cups);
+
     println!(
-        "Starting with {} (cap={}), after {} moves, the result is {}.",
+        "Starting with {} (nr cups: {}), after {} moves, the result is {}.",
         initial_labeling,
-        cap,
+        nr_cups,
         nr_moves,
-        play(initial_labeling, nr_moves, cap, part),
+        as_answer(&linked_list, part)
     );
 }
 
-fn play(initial_labeling: Labeling, moves: usize, cap: CupNumber, part: Part) -> Labeling {
-    let (mut cups, min, max) = convert_labeling_to_cups(initial_labeling, cap);
+fn cups_from_labeling(mut labeling: u64, nr_cups: u64) -> (Vec<u64>, Vec<u64>) {
+    let desired_len = nr_cups as usize;
 
-    for i in 0..moves {
-        if i % 0b100000000000000 == 0 {
-            println!("Progress: {:.2}%", 100f32 * (i as f32) / (moves as f32));
-        }
-        // println!("--- move {} ---", i + 1);
-        // println!("cups: {:?}", cups);
-        let current_cup = cups.pop_front().unwrap();
-        // println!("current cup: {}", current_cup);
-        let picked_up = take_cups(&mut cups);
-        // println!("pick up: {:?}", picked_up);
-        cups.push_front(current_cup);
-        let mut destination = safe_decrement(current_cup, min, max);
-        while picked_up.contains_cup(destination) {
-            destination = safe_decrement(destination, min, max);
-        }
-        // println!("destination: {}", destination);
-        place_cups(&mut cups, picked_up, destination);
-        cups.rotate_left(1);
-        // println!();
-    }
-
-    // println!("-- final --");
-    // println!("cups: {:?}", cups);
-
-    match part {
-        Part::One => convert_cups_to_labeling(&cups, 1),
-        Part::Two => get_product_of_next_n_cups(&cups, 2, 1),
-    }
-}
-
-fn convert_labeling_to_cups(
-    mut labeling: Labeling,
-    cap: CupNumber,
-) -> (VecDeque<CupNumber>, CupNumber, CupNumber) {
-    let mut cups = VecDeque::new();
-    let mut min = CupNumber::MAX;
-    let mut max = CupNumber::MIN;
-    while labeling > 0 {
-        let cup = (labeling % BASE) as CupNumber;
+    let mut cups: Vec<u64> = Vec::new();
+    while labeling != 0 {
+        cups.push(labeling % BASE);
         labeling /= BASE;
-
-        cups.push_front(cup);
-        if cup < min {
-            min = cup;
-        }
-        if cup > max {
-            max = cup;
-        }
     }
-    while cups.len() < (cap as usize) {
-        max += 1;
-        cups.push_back(max);
-    }
-    (cups, min, max)
-}
-
-fn convert_cups_to_labeling(cups: &VecDeque<CupNumber>, starting_cup: CupNumber) -> Labeling {
-    let mut labeling = 0;
-
-    if !cups.is_empty() {
-        let mut cups = cups.clone();
-        while let Some(cup) = cups.pop_front() {
-            if cup == starting_cup {
-                break;
-            } else {
-                cups.push_back(cup);
-            }
-        }
-        while let Some(cup) = cups.pop_front() {
-            labeling *= BASE;
-            labeling += cup as Labeling;
-        }
+    cups = cups.iter().rev().cloned().collect();
+    let labeling_len = cups.len();
+    while cups.len() < desired_len {
+        cups.push(cups.len() as u64 + 1);
     }
 
-    labeling
-}
-
-fn get_product_of_next_n_cups(cups: &VecDeque<CupNumber>, n: usize, after: CupNumber) -> Labeling {
-    let mut product = 1;
-    let mut index = find_next_cup_index(cups, after);
-    for _ in 0..n {
-        product *= cups[index];
-        index = (index + 1) % cups.len();
-    }
-    product
-}
-
-fn take_cups(cups: &mut VecDeque<CupNumber>) -> PickedUpCups {
-    (
-        cups.pop_front().unwrap(),
-        cups.pop_front().unwrap(),
-        cups.pop_front().unwrap(),
-    )
-}
-
-fn place_cups(cups: &mut VecDeque<CupNumber>, to_place: PickedUpCups, destination: CupNumber) {
-    for _ in 0..PickedUpCups::LEN {
-        cups.push_front(0);
-    }
-    for to_index in 0..cups.len() - PickedUpCups::LEN {
-        let from_index = to_index + PickedUpCups::LEN;
-        cups[to_index] = cups[from_index];
-        if cups[from_index] == destination {
-            cups[to_index + 1] = to_place.0;
-            cups[to_index + 2] = to_place.1;
-            cups[to_index + 3] = to_place.2;
-            break;
-        }
-    }
-}
-
-fn find_next_cup_index(cups: &VecDeque<CupNumber>, cup: CupNumber) -> usize {
-    (1 + cups.iter().position(|&c| c == cup).unwrap()) % cups.len()
-}
-
-fn safe_decrement(nr: CupNumber, min: CupNumber, max: CupNumber) -> CupNumber {
-    if nr == min {
-        max
+    let mut linked_list: Vec<u64> = Vec::with_capacity(desired_len);
+    linked_list.extend(1..=nr_cups);
+    let last_link = if labeling_len == desired_len {
+        cups.first().cloned().unwrap()
     } else {
-        nr - 1
+        (desired_len as u64) + 1
+    };
+    for (i, &x) in cups.iter().enumerate() {
+        let idx = (x as usize) - 1;
+        let cup = cups.get(i + 1).cloned().unwrap_or(last_link) - 1;
+        linked_list[idx] = cup;
+    }
+    if labeling_len != desired_len {
+        *linked_list.last_mut().unwrap() = cups[0] - 1;
+    }
+
+    (cups, linked_list)
+}
+
+fn as_answer(linked_list: &[u64], part: Part) -> u64 {
+    match part {
+        Part::One => iter::successors(linked_list.get(0), |&&cup| linked_list.get(cup as usize))
+            .take_while(|&&cup| cup != 0)
+            .fold(0, |acc, &cup| BASE * acc + cup + 1),
+        Part::Two => (linked_list[0] + 1) * (linked_list[linked_list[0] as usize] + 1),
+    }
+}
+
+fn play(linked_list: &mut [u64], mut current_cup: u64, moves: usize, nr_cups: u64) {
+    for _ in 0..moves {
+        // take three cups
+        let cup_a = linked_list[current_cup as usize];
+        let cup_b = linked_list[cup_a as usize];
+        let cup_c = linked_list[cup_b as usize];
+
+        let next_current_cup = linked_list[cup_c as usize];
+
+        // determine the destination
+        let destination = iter::successors(Some(current_cup), |&cup| {
+            Some(if cup == 0 { nr_cups - 1 } else { cup - 1 })
+        })
+        .skip(1)
+        .find(|&cup| cup != cup_a && cup != cup_b && cup != cup_c)
+        .unwrap();
+
+        // place the cups
+        let tmp = linked_list[destination as usize];
+        linked_list[current_cup as usize] = next_current_cup;
+        linked_list[destination as usize] = cup_a;
+        linked_list[cup_c as usize] = tmp;
+
+        // prepare for the next round
+        current_cup = next_current_cup;
     }
 }
 
@@ -179,99 +128,15 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_convert_labeling_to_cups_with_low_cap() {
-        let labeling = 6352714;
-        let expected = (as_vec_deque(&[6, 3, 5, 2, 7, 1, 4]), 1, 7);
-
-        let cups = convert_labeling_to_cups(labeling, 7);
-
-        assert_eq!(cups, expected);
-    }
-
-    #[test]
-    fn test_convert_labeling_to_cups_with_high_cap() {
-        let labeling = 6352714;
+    fn test_cups_from_labeling() {
+        let labeling = 389125467;
+        let actual = cups_from_labeling(labeling, 9);
         let expected = (
-            as_vec_deque(&[
-                6, 3, 5, 2, 7, 1, 4, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-            ]),
-            1,
-            20,
+            vec![3, 8, 9, 1, 2, 5, 4, 6, 7],
+            vec![1, 4, 7, 5, 3, 6, 2, 8, 0],
         );
 
-        let cups = convert_labeling_to_cups(labeling, 20);
-
-        assert_eq!(cups, expected);
-    }
-
-    #[test]
-    fn test_convert_cups_to_labeling() {
-        let cups = as_vec_deque(&[6, 3, 5, 2, 7, 1, 4]);
-        let expected = 463527;
-
-        let labeling = convert_cups_to_labeling(&cups, 1);
-
-        assert_eq!(labeling, expected);
-    }
-
-    #[test]
-    fn test_get_product_of_next_n_cups_middle() {
-        let cups = as_vec_deque(&[6, 3, 4, 2, 1, 5, 7]);
-        let expected = 35;
-
-        let actual = get_product_of_next_n_cups(&cups, 2, 1);
-
         assert_eq!(actual, expected);
-    }
-
-    #[test]
-    fn test_get_product_of_next_n_cups_end() {
-        let cups = as_vec_deque(&[7, 6, 3, 4, 2, 1, 5]);
-        let expected = 35;
-
-        let actual = get_product_of_next_n_cups(&cups, 2, 1);
-
-        assert_eq!(actual, expected);
-    }
-
-    #[test]
-    fn test_take_cups() {
-        let mut cups = as_vec_deque(&[6, 3, 5, 2, 7, 1, 4]);
-        let expected_cups = as_vec_deque(&[2, 7, 1, 4]);
-        let expected_taken = (6, 3, 5);
-
-        let taken = take_cups(&mut cups);
-
-        assert_eq!((cups, taken), (expected_cups, expected_taken));
-    }
-
-    #[test]
-    fn test_place_cups() {
-        let mut cups = as_vec_deque(&[6, 3, 1, 4]);
-        let taken = (5, 2, 7);
-        let destination = 1;
-        let expected = as_vec_deque(&[6, 3, 1, 5, 2, 7, 4]);
-
-        place_cups(&mut cups, taken, destination);
-
-        assert_eq!(cups, expected);
-    }
-
-    #[test]
-    fn test_find_next_cup_index() {
-        let cups = as_vec_deque(&[6, 3, 1, 4]);
-
-        assert_eq!(find_next_cup_index(&cups, 1), 3);
-        assert_eq!(find_next_cup_index(&cups, 3), 2);
-        assert_eq!(find_next_cup_index(&cups, 4), 0);
-        assert_eq!(find_next_cup_index(&cups, 6), 1);
-    }
-
-    #[test]
-    fn test_safe_decrement() {
-        assert_eq!(safe_decrement(1, 1, 5), 5);
-        assert_eq!(safe_decrement(3, 1, 5), 2);
-        assert_eq!(safe_decrement(5, 1, 5), 4);
     }
 
     mod part1 {
@@ -281,28 +146,38 @@ mod tests {
 
         #[test]
         fn test_play_10_moves() {
-            assert_eq!(play(389125467, 10, 9, PART), 92658374);
+            let labeling = 389_125_467;
+            let (cups, mut linked_list) = cups_from_labeling(labeling, 9);
+            play(&mut linked_list, cups[0] - 1, 10, 9);
+            let answer = as_answer(&linked_list, PART);
+
+            assert_eq!(answer, 92_658_374);
         }
 
         #[test]
         fn test_play_100_moves() {
-            assert_eq!(play(389125467, 100, 9, PART), 67384529);
+            let labeling = 389_125_467;
+            let (cups, mut linked_list) = cups_from_labeling(labeling, 9);
+            play(&mut linked_list, cups[0] - 1, 100, 9);
+            let answer = as_answer(&linked_list, PART);
+
+            assert_eq!(answer, 67_384_529);
         }
     }
 
-    // FIXME: Too slow...
-    // mod part2 {
-    //     use super::*;
-    //
-    //     const PART: Part = Part::Two;
-    //
-    //     #[test]
-    //     fn test_play() {
-    //         assert_eq!(play(389125467, 10000000, 1000000, PART), 149245887792);
-    //     }
-    // }
+    mod part2 {
+        use super::*;
 
-    fn as_vec_deque(nrs: &[CupNumber]) -> VecDeque<CupNumber> {
-        nrs.iter().cloned().collect()
+        const PART: Part = Part::Two;
+
+        #[test]
+        fn test_play() {
+            let labeling = 389_125_467;
+            let (cups, mut linked_list) = cups_from_labeling(labeling, 1_000_000);
+            play(&mut linked_list, cups[0] - 1, 10_000_000, 1_000_000);
+            let answer = as_answer(&linked_list, PART);
+
+            assert_eq!(answer, 149_245_887_792);
+        }
     }
 }
