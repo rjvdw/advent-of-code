@@ -6,7 +6,7 @@ use std::{env, iter};
 use helpers::handle_result;
 use helpers::part::Part;
 
-const BASE: u64 = 10;
+const BASE: usize = 10;
 
 /// https://adventofcode.com/2020/day/23
 fn main() {
@@ -20,9 +20,9 @@ fn main() {
         exit(1);
     }
 
-    let initial_labeling = handle_result(args[1].parse::<u64>());
+    let initial_labeling = handle_result(args[1].parse::<usize>());
     let nr_moves = handle_result(args[2].replace('_', "").parse::<usize>());
-    let nr_cups = handle_result(args[3].replace('_', "").parse::<u64>());
+    let nr_cups = handle_result(args[3].replace('_', "").parse::<usize>());
     let part = handle_result(args[4].parse::<Part>());
 
     if initial_labeling == 0 {
@@ -43,56 +43,54 @@ fn main() {
     );
 }
 
-fn cups_from_labeling(mut labeling: u64, nr_cups: u64) -> (Vec<u64>, Vec<u64>) {
-    let desired_len = nr_cups as usize;
-
-    let mut cups: Vec<u64> = Vec::new();
+fn cups_from_labeling(mut labeling: usize, nr_cups: usize) -> (Vec<usize>, Vec<usize>) {
+    let mut cups: Vec<usize> = Vec::new();
     while labeling != 0 {
         cups.push(labeling % BASE);
         labeling /= BASE;
     }
     cups = cups.iter().rev().cloned().collect();
     let labeling_len = cups.len();
-    while cups.len() < desired_len {
-        cups.push(cups.len() as u64 + 1);
+    while cups.len() < nr_cups {
+        cups.push(cups.len() + 1);
     }
 
-    let mut linked_list: Vec<u64> = Vec::with_capacity(desired_len);
+    let mut linked_list: Vec<usize> = Vec::with_capacity(nr_cups);
     linked_list.extend(1..=nr_cups);
-    let last_link = if labeling_len == desired_len {
+    let last_link = if labeling_len == nr_cups {
         cups.first().cloned().unwrap()
     } else {
-        (desired_len as u64) + 1
+        nr_cups + 1
     };
     for (i, &x) in cups.iter().enumerate() {
-        let idx = (x as usize) - 1;
+        let idx = x - 1;
         let cup = cups.get(i + 1).cloned().unwrap_or(last_link) - 1;
         linked_list[idx] = cup;
     }
-    if labeling_len != desired_len {
+    if labeling_len != nr_cups {
         *linked_list.last_mut().unwrap() = cups[0] - 1;
     }
 
     (cups, linked_list)
 }
 
-fn as_answer(linked_list: &[u64], part: &Part) -> u64 {
+fn as_answer(linked_list: &[usize], part: &Part) -> usize {
     match part {
-        Part::One => iter::successors(linked_list.get(0), |&&cup| linked_list.get(cup as usize))
+        Part::One => iter::successors(linked_list.get(0), |&&cup| linked_list.get(cup))
             .take_while(|&&cup| cup != 0)
             .fold(0, |acc, &cup| BASE * acc + cup + 1),
-        Part::Two => (linked_list[0] + 1) * (linked_list[linked_list[0] as usize] + 1),
+        Part::Two => (linked_list[0] + 1) * (linked_list[linked_list[0]] + 1),
     }
 }
 
-fn play(linked_list: &mut [u64], mut current_cup: u64, moves: usize, nr_cups: u64) {
+fn play(linked_list: &mut [usize], mut current_cup: usize, moves: usize, nr_cups: usize) {
     for _ in 0..moves {
         // take three cups
-        let cup_a = linked_list[current_cup as usize];
-        let cup_b = linked_list[cup_a as usize];
-        let cup_c = linked_list[cup_b as usize];
+        let cup_a = linked_list[current_cup];
+        let cup_b = linked_list[cup_a];
+        let cup_c = linked_list[cup_b];
 
-        let next_current_cup = linked_list[cup_c as usize];
+        let next_current_cup = linked_list[cup_c];
 
         // determine the destination
         let destination = iter::successors(Some(current_cup), |&cup| {
@@ -103,10 +101,10 @@ fn play(linked_list: &mut [u64], mut current_cup: u64, moves: usize, nr_cups: u6
         .unwrap();
 
         // place the cups
-        let tmp = linked_list[destination as usize];
-        linked_list[current_cup as usize] = next_current_cup;
-        linked_list[destination as usize] = cup_a;
-        linked_list[cup_c as usize] = tmp;
+        let tmp = linked_list[destination];
+        linked_list[current_cup] = next_current_cup;
+        linked_list[destination] = cup_a;
+        linked_list[cup_c] = tmp;
 
         // prepare for the next round
         current_cup = next_current_cup;
