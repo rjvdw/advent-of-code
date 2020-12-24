@@ -4,10 +4,12 @@ use std::str::FromStr;
 use helpers::parse_error::ParseError;
 
 #[derive(Debug, Eq, PartialEq, Hash, Copy, Clone)]
-pub struct Coord(pub i32, pub i32);
+pub struct Tile(pub i32, pub i32);
 
-impl Coord {
-    pub fn neighbours(self) -> [Coord; 6] {
+impl Tile {
+    const ORIGIN: Tile = Tile(0, 0);
+
+    pub fn neighbours(&self) -> [Tile; 6] {
         [
             Direction::East.walk(self),
             Direction::SouthEast.walk(self),
@@ -19,16 +21,15 @@ impl Coord {
     }
 }
 
-impl Add<(i32, i32)> for Coord {
-    type Output = Coord;
+impl Add<(i32, i32)> for Tile {
+    type Output = Tile;
 
     fn add(self, rhs: (i32, i32)) -> Self::Output {
-        Coord(self.0 + rhs.0, self.1 + rhs.1)
+        Tile(self.0 + rhs.0, self.1 + rhs.1)
     }
 }
 
-#[derive(Debug, Copy, Clone)]
-pub enum Direction {
+enum Direction {
     East,
     SouthEast,
     SouthWest,
@@ -38,36 +39,24 @@ pub enum Direction {
 }
 
 impl Direction {
-    fn walk(&self, position: Coord) -> Coord {
+    fn walk(&self, position: &Tile) -> Tile {
         match self {
-            Direction::East => position + (1, 0),
-            Direction::SouthEast => position + (0, -1),
-            Direction::SouthWest => position + (-1, -1),
-            Direction::West => position + (-1, 0),
-            Direction::NorthWest => position + (0, 1),
-            Direction::NorthEast => position + (1, 1),
+            Direction::East => position.add((1, 0)),
+            Direction::SouthEast => position.add((0, -1)),
+            Direction::SouthWest => position.add((-1, -1)),
+            Direction::West => position.add((-1, 0)),
+            Direction::NorthWest => position.add((0, 1)),
+            Direction::NorthEast => position.add((1, 1)),
         }
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct Path(Vec<Direction>);
-
-impl Path {
-    pub fn walk(&self, position: Coord) -> Coord {
-        self.0
-            .iter()
-            .fold(position, |position, step| step.walk(position))
-    }
-}
-
-impl FromStr for Path {
+impl FromStr for Tile {
     type Err = ParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let mut directions = Vec::new();
-
         let mut chars = s.chars();
+        let mut position = Tile::ORIGIN;
 
         while let Some(ch1) = chars.next() {
             if let Some(direction) = match ch1 {
@@ -88,13 +77,13 @@ impl FromStr for Path {
                 }
                 _ => None,
             } {
-                directions.push(direction);
+                position = direction.walk(&position);
             } else {
                 return Err(ParseError(format!("Invalid input line: {}", s)));
             }
         }
 
-        Ok(Path(directions))
+        Ok(position)
     }
 }
 
@@ -104,19 +93,19 @@ mod tests {
 
     #[test]
     fn test_1() {
-        let path = "esenee".parse::<Path>().unwrap();
-        assert_eq!(path.walk(Coord(0, 0)), Coord(3, 0));
+        let tile = "esenee".parse::<Tile>().unwrap();
+        assert_eq!(tile, Tile(3, 0));
     }
 
     #[test]
     fn test_2() {
-        let path = "esew".parse::<Path>().unwrap();
-        assert_eq!(path.walk(Coord(0, 0)), Coord(0, -1));
+        let tile = "esew".parse::<Tile>().unwrap();
+        assert_eq!(tile, Tile(0, -1));
     }
 
     #[test]
     fn test_3() {
-        let path = "nwwswee".parse::<Path>().unwrap();
-        assert_eq!(path.walk(Coord(0, 0)), Coord(0, 0));
+        let tile = "nwwswee".parse::<Tile>().unwrap();
+        assert_eq!(tile, Tile(0, 0));
     }
 }

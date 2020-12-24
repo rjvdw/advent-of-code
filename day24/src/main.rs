@@ -7,9 +7,11 @@ use std::process::exit;
 use helpers::handle_result;
 use helpers::read::read_input;
 
-use crate::tiling::{Coord, Path};
+use crate::tile::Tile;
+use crate::toggleable::Toggleable;
 
-mod tiling;
+mod tile;
+mod toggleable;
 
 /// https://adventofcode.com/2020/day/24
 fn main() {
@@ -20,10 +22,10 @@ fn main() {
         exit(1);
     }
 
-    let input = handle_result(read_input::<Path>(&args[1]));
+    let input_tiles = handle_result(read_input::<Tile>(&args[1]));
     let nr_days = handle_result(args[2].parse::<u32>());
 
-    let mut flipped_tiles = walk(&input, Coord(0, 0));
+    let mut flipped_tiles = walk(&input_tiles);
 
     println!(
         "After walking the path, there are {} tiles that have been flipped.",
@@ -41,23 +43,16 @@ fn main() {
     );
 }
 
-fn walk(input: &[Path], reference_tile: Coord) -> HashSet<Coord> {
+fn walk(input_tiles: &[Tile]) -> HashSet<Tile> {
     let mut flipped_tiles = HashSet::new();
-
-    for path in input {
-        let coords = path.walk(reference_tile);
-        if flipped_tiles.contains(&coords) {
-            flipped_tiles.remove(&coords);
-        } else {
-            flipped_tiles.insert(coords);
-        }
+    for tile in input_tiles {
+        flipped_tiles.toggle(tile);
     }
-
     flipped_tiles
 }
 
-fn next_day(flipped_tiles: &HashSet<Coord>) -> HashSet<Coord> {
-    let mut nr_flipped_neighbours: HashMap<Coord, usize> = HashMap::new();
+fn next_day(flipped_tiles: &HashSet<Tile>) -> HashSet<Tile> {
+    let mut nr_flipped_neighbours: HashMap<Tile, usize> = HashMap::new();
     for tile in flipped_tiles {
         for neighbour in &tile.neighbours() {
             *nr_flipped_neighbours.entry(*neighbour).or_insert(0) += 1;
@@ -65,8 +60,8 @@ fn next_day(flipped_tiles: &HashSet<Coord>) -> HashSet<Coord> {
     }
     nr_flipped_neighbours
         .iter()
-        .filter(|(coord, &count)| count == 2 || (count == 1 && flipped_tiles.contains(coord)))
-        .map(|(&coord, _)| coord)
+        .filter(|(tile, &count)| count == 2 || (count == 1 && flipped_tiles.contains(tile)))
+        .map(|(&tile, _)| tile)
         .collect()
 }
 
@@ -83,19 +78,19 @@ mod tests {
         fn test() {
             let input = get_input();
             let expected = get_expected(&[
-                (2, 0),
                 (-3, -3),
-                (0, 1),
-                (-2, 0),
-                (0, -2),
                 (-3, -2),
                 (-2, -1),
-                (3, 3),
-                (0, 0),
+                (-2, 0),
                 (-1, 1),
+                (0, -2),
+                (0, 0),
+                (0, 1),
+                (2, 0),
+                (3, 3),
             ]);
 
-            let flipped = walk(&input, Coord(0, 0));
+            let flipped = walk(&input);
 
             assert_eq!(flipped, expected);
         }
@@ -107,7 +102,7 @@ mod tests {
         #[test]
         fn test() {
             let input = get_input();
-            let mut flipped = walk(&input, Coord(0, 0));
+            let mut flipped = walk(&input);
 
             // after day 1
             flipped = next_day(&flipped);
@@ -205,7 +200,7 @@ mod tests {
         }
     }
 
-    fn get_input() -> Vec<Path> {
+    fn get_input() -> Vec<Tile> {
         parse_input(vec![
             "sesenwnenenewseeswwswswwnenewsewsw",
             "neeenesenwnwwswnenewnwwsewnenwseswesw",
@@ -231,9 +226,9 @@ mod tests {
         .unwrap()
     }
 
-    fn get_expected(coords: &[(i32, i32)]) -> HashSet<Coord> {
+    fn get_expected(coords: &[(i32, i32)]) -> HashSet<Tile> {
         let mut expected = HashSet::new();
-        expected.extend(coords.iter().map(|&c| Coord(c.0, c.1)));
+        expected.extend(coords.iter().map(|&c| Tile(c.0, c.1)));
         expected
     }
 }
