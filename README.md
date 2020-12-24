@@ -36,12 +36,6 @@ Check your code for common mistakes/code smells:
 cargo clippy
 ```
 
-Create a folder for the next day:
-
-```bash
-bin/next-day
-```
-
 ## To Do
 
 * For day 19, I feel the solution could be way faster. It currently runs in about 200ms on my laptop, but I think it can be done in less than 100ms.
