@@ -1,0 +1,18 @@
+name: "CI 2018"
+
+on:
+  push:
+    branches:
+      - '**'
+    paths:
+      - '2018/**'
+
+defaults:
+  run:
+    working-directory: 2018
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
