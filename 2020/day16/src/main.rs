@@ -1,11 +1,11 @@
-extern crate helpers;
+extern crate rdcl_aoc_helpers;
 
 use std::collections::HashMap;
 use std::env;
 use std::process::exit;
 
-use helpers::handle_result;
-use helpers::read::read_multiline_input_as_single;
+use rdcl_aoc_helpers::handle_result;
+use rdcl_aoc_helpers::read::read_multiline_input_as_single;
 
 use crate::puzzle_input::PuzzleInput;
 
@@ -84,7 +84,7 @@ fn find_unique_solution(
 
 #[cfg(test)]
 mod tests {
-    use helpers::parse::parse_multiline_input_as_single;
+    use rdcl_aoc_helpers::parse::parse_multiline_input_as_single;
 
     use super::*;
 

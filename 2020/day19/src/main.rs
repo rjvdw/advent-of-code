@@ -1,4 +1,4 @@
-extern crate helpers;
+extern crate rdcl_aoc_helpers;
 
 use std::collections::HashMap;
 use std::env;
@@ -6,7 +6,7 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::process::exit;
 
-use helpers::parse_error::ParseError;
+use rdcl_aoc_helpers::parse_error::ParseError;
 
 use crate::rule::Rule;
 

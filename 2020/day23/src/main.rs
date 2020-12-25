@@ -1,10 +1,10 @@
-extern crate helpers;
+extern crate rdcl_aoc_helpers;
 
 use std::process::exit;
 use std::{env, iter};
 
-use helpers::handle_result;
-use helpers::part::Part;
+use rdcl_aoc_helpers::handle_result;
+use rdcl_aoc_helpers::part::Part;
 
 const BASE: usize = 10;
 

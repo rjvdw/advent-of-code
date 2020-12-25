@@ -1,12 +1,12 @@
-extern crate helpers;
+extern crate rdcl_aoc_helpers;
 
 use std::cmp::Ordering;
 use std::collections::VecDeque;
 use std::env;
 use std::process::exit;
 
-use helpers::handle_result;
-use helpers::read::read_input;
+use rdcl_aoc_helpers::handle_result;
+use rdcl_aoc_helpers::read::read_input;
 
 /// https://adventofcode.com/2020/day/9
 fn main() {

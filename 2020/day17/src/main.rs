@@ -1,10 +1,10 @@
-extern crate helpers;
+extern crate rdcl_aoc_helpers;
 
 use std::collections::{HashMap, HashSet};
 use std::env;
 use std::process::exit;
 
-use helpers::handle_result;
+use rdcl_aoc_helpers::handle_result;
 
 use crate::cell::Cell;
 use crate::parser::read;

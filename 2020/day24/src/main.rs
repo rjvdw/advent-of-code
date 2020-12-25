@@ -1,11 +1,11 @@
-extern crate helpers;
+extern crate rdcl_aoc_helpers;
 
 use std::collections::{HashMap, HashSet};
 use std::env;
 use std::process::exit;
 
-use helpers::handle_result;
-use helpers::read::read_input;
+use rdcl_aoc_helpers::handle_result;
+use rdcl_aoc_helpers::read::read_input;
 
 use crate::tile::Tile;
 use crate::toggleable::Toggleable;
@@ -67,7 +67,7 @@ fn next_day(flipped_tiles: &HashSet<Tile>) -> HashSet<Tile> {
 
 #[cfg(test)]
 mod tests {
-    use helpers::parse::parse_input;
+    use rdcl_aoc_helpers::parse::parse_input;
 
     use super::*;
 

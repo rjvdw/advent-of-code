@@ -1,7 +1,7 @@
 use std::ops::Add;
 use std::str::FromStr;
 
-use helpers::parse_error::ParseError;
+use rdcl_aoc_helpers::parse_error::ParseError;
 
 #[derive(Debug, Eq, PartialEq, Hash, Copy, Clone)]
 pub struct Tile(pub i32, pub i32);

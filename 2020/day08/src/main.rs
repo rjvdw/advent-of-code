@@ -1,11 +1,11 @@
-extern crate helpers;
+extern crate rdcl_aoc_helpers;
 
 use std::env;
 use std::process::exit;
 
-use helpers::handle_result;
-use helpers::read::read_input;
 use input_record::InputRecord;
+use rdcl_aoc_helpers::handle_result;
+use rdcl_aoc_helpers::read::read_input;
 
 use crate::input_record::Operation;
 use crate::program_fixer::ProgramFixer;
@@ -85,7 +85,7 @@ fn jump(idx: usize, value: i32) -> usize {
 
 #[cfg(test)]
 mod tests {
-    use helpers::parse::parse_input;
+    use rdcl_aoc_helpers::parse::parse_input;
 
     use super::*;
 
