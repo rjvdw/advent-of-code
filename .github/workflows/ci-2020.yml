@@ -1,6 +1,10 @@
-name: CI
+name: "CI 2020"
 
 on: [push]
+
+defaults:
+  run:
+    working-directory: 2020
 
 jobs:
   build:
