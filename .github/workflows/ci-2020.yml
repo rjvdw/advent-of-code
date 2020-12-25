@@ -1,6 +1,11 @@
 name: "CI 2020"
 
-on: [push]
+on:
+  push:
+    branches:
+      - '**'
+    paths:
+      - '2020/**'
 
 defaults:
   run:
