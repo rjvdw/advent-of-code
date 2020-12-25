@@ -6,9 +6,9 @@ use std::process::exit;
 use helpers::handle_result;
 use helpers::read::read_input;
 
-use crate::key_pair::KeyPair;
-
-mod key_pair;
+const INITIAL_NUMBER: u64 = 1;
+const MODULUS: u64 = 20201227;
+const SUBJECT_NUMBER: u64 = 7;
 
 /// https://adventofcode.com/2020/day/25
 fn main() {
@@ -31,7 +31,25 @@ fn main() {
 }
 
 fn find_encryption_key(pub1: u64, pub2: u64) -> u64 {
-    KeyPair::new(pub1, pub2).find_encryption_key().unwrap()
+    let mut t = INITIAL_NUMBER;
+    let mut e1 = INITIAL_NUMBER;
+    let mut e2 = INITIAL_NUMBER;
+
+    while t != pub1 && t != pub2 {
+        t = transform(t, SUBJECT_NUMBER);
+        e1 = transform(e1, pub1);
+        e2 = transform(e2, pub2);
+    }
+
+    if t == pub1 {
+        e2
+    } else {
+        e1
+    }
+}
+
+fn transform(nr: u64, subject: u64) -> u64 {
+    (nr * subject) % MODULUS
 }
 
 #[cfg(test)]
@@ -40,6 +58,6 @@ mod tests {
 
     #[test]
     fn test() {
-        assert_eq!(find_encryption_key(5764801, 17807724), 14897079)
+        assert_eq!(find_encryption_key(5_764_801, 17_807_724), 14_897_079)
     }
 }
