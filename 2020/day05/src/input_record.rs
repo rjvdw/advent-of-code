@@ -1,6 +1,6 @@
 use std::str::FromStr;
 
-use helpers::parse_error::ParseError;
+use rdcl_aoc_helpers::parse_error::ParseError;
 
 #[rustfmt::skip]
 const BIT_FLAGS: [u8; 10] = [

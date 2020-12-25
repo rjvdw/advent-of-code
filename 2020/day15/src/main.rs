@@ -1,9 +1,9 @@
-extern crate helpers;
+extern crate rdcl_aoc_helpers;
 
 use std::env;
 use std::process::exit;
 
-use helpers::handle_result;
+use rdcl_aoc_helpers::handle_result;
 
 const SEEN_SIZE: usize = 100_000_000;
 

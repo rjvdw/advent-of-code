@@ -1,10 +1,10 @@
-extern crate helpers;
+extern crate rdcl_aoc_helpers;
 
 use std::env;
 use std::process::exit;
 
-use helpers::handle_result;
-use helpers::read::read_input;
+use rdcl_aoc_helpers::handle_result;
+use rdcl_aoc_helpers::read::read_input;
 
 use crate::coordinates::Coordinates;
 use crate::input_record::InputRecord;
@@ -57,7 +57,7 @@ fn travel_with_waypoint(instructions: &[InputRecord], waypoint: Coordinates) -> 
 
 #[cfg(test)]
 mod tests {
-    use helpers::parse::parse_input;
+    use rdcl_aoc_helpers::parse::parse_input;
 
     use super::*;
 

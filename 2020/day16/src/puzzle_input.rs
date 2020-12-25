@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 use std::fmt;
 
-use helpers::from_multiline_str::FromMultilineStr;
-use helpers::parse_error::ParseError;
+use rdcl_aoc_helpers::from_multiline_str::FromMultilineStr;
+use rdcl_aoc_helpers::parse_error::ParseError;
 
 #[derive(Debug)]
 enum ParseState {

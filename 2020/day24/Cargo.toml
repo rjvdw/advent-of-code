@@ -11,4 +11,4 @@ exclude = ["input"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-helpers = { path = "../helpers" }
+rdcl_aoc_helpers = "0.1.0"

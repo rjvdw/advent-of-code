@@ -1,4 +1,4 @@
-use helpers::parse::parse_multiline_input;
+use rdcl_aoc_helpers::parse::parse_multiline_input;
 
 use crate::seat_layout::SeatLayout;
 

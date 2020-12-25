@@ -12,4 +12,4 @@ exclude = ["input"]
 
 [dependencies]
 regex = "1"
-helpers = { path = "../helpers" }
+rdcl_aoc_helpers = "0.1.0"
