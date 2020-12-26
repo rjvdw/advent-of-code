@@ -7,6 +7,7 @@ My answers for the 2015 [Advent of Code](https://adventofcode.com/2015).
 ## To Do
 
 * For day 4, it might be smarter to compute the MD5 hash myself. Need to investigate...
+* Day 6 could use some additional unit tests. Also, it's a bit slow.
 
 
 [workflows-CI-badge]: https://github.com/rjvdw/advent-of-code/workflows/CI%202015/badge.svg
