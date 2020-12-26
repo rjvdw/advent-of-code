@@ -3,6 +3,7 @@ use std::str::FromStr;
 
 use crate::error::ParseError;
 
+/// Represents the parts of advent of code challenges.
 pub enum Part {
     One,
     Two,

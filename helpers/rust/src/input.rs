@@ -1,9 +1,9 @@
-use std::io::{BufRead, BufReader, Lines, Read};
-
-use crate::error::WithOrExit;
 use std::fs::File;
+use std::io::{BufRead, BufReader, Lines, Read};
 use std::str::FromStr;
 use std::{fmt, io, marker, mem};
+
+use crate::error::WithOrExit;
 
 /// Iterator over the lines that have been mapped to the requested type.
 pub struct MappedLines<T: FromStr, R: Read> {
@@ -27,6 +27,7 @@ where
     }
 }
 
+/// This trait allows you to easily read lines from a Readable object.
 pub trait WithReadLines<R: Read> {
     /// Read lines from a given Readable object, and parse each line to the requested type.
     fn read_lines<T: FromStr>(self, exit_code_on_fail: i32) -> MappedLines<T, R>;
@@ -49,6 +50,7 @@ impl WithReadLines<File> for io::Result<File> {
     }
 }
 
+/// This trait allows you to easily convert an object to a vec of items of the required type.
 pub trait WithAsRecords {
     /// Convert to a list of records of the requested type.
     fn as_records<T: FromStr>(&self) -> Result<Vec<T>, <T as FromStr>::Err>;
@@ -117,8 +119,9 @@ where
     }
 }
 
+/// This trait allows you to easily read lines from a Readable object.
 pub trait WithReadMultiLines<R: Read> {
-    /// Read lines from a given Readable object, and parse each line to the requested type.
+    /// Read lines from a given Readable object, and parse its lines to the requested type.
     fn read_multi_lines<T: MultilineFromStr>(
         self,
         exit_code_on_fail: i32,
@@ -149,6 +152,7 @@ impl WithReadMultiLines<File> for io::Result<File> {
     }
 }
 
+/// This trait allows you to easily convert an object to a vec of items of the required type.
 pub trait WithAsMultilineRecords {
     /// Convert to a list of records of the requested type.
     fn as_multiline_records<T: MultilineFromStr>(
@@ -171,5 +175,60 @@ impl<'a> WithAsMultilineRecords for Vec<&'a str> {
         }
         records.push(record);
         Ok(records)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::error::ParseError;
+
+    use super::*;
+
+    #[test]
+    fn test_simple() {
+        let input = vec!["1", "2", "3", "4", "5"].as_records::<u8>().unwrap();
+
+        assert_eq!(input, vec![1, 2, 3, 4, 5]);
+    }
+
+    #[test]
+    fn test_multiline() {
+        let input = vec!["1", "2", "", "3", "4", "", "5"]
+            .as_multiline_records::<Record>()
+            .unwrap();
+
+        assert_eq!(
+            input,
+            vec![
+                Record { items: vec![1, 2] },
+                Record { items: vec![3, 4] },
+                Record { items: vec![5] },
+            ]
+        );
+    }
+
+    #[derive(Debug, Eq, PartialEq)]
+    pub struct Record {
+        items: Vec<u8>,
+    }
+
+    impl MultilineFromStr for Record {
+        type Err = ParseError;
+
+        fn new() -> Self {
+            Record { items: Vec::new() }
+        }
+
+        fn indicates_new_record(&self, line: &str) -> bool {
+            line.is_empty()
+        }
+
+        fn parse(&mut self, line: &str) -> Result<(), Self::Err> {
+            if !line.is_empty() {
+                self.items.push(line.parse::<u8>()?);
+            }
+
+            Ok(())
+        }
     }
 }

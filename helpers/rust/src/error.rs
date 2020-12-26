@@ -37,6 +37,7 @@ impl<T> WithOrExit<T> for Option<T> {
 pub struct ParseError(pub String);
 
 impl ParseError {
+    /// Produces a `ParseError` from a `&str`.
     pub fn of(s: &str) -> ParseError {
         ParseError(s.to_string())
     }
