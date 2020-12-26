@@ -1,7 +1,7 @@
 use std::fmt;
 use std::str::FromStr;
 
-use crate::parse_error::ParseError;
+use crate::error::ParseError;
 
 pub enum Part {
     One,
