@@ -1,8 +1,11 @@
+/// Processing of command line arguments.
+pub mod args;
+
 /// Error handling.
 pub mod error;
 
 /// I/O operations.
 pub mod input;
 
-/// Parts
+/// Parts;
 pub mod part;

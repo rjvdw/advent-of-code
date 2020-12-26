@@ -2,6 +2,23 @@
 
 This crate contains some helper methods that I regularly use in my [Advent of Code][aoc] solutions.
 
+## Processing of command line arguments
+
+### `args::get_args`
+
+Reads the command line arguments and checks whether the correct number of arguments are present.
+
+#### Example
+
+```rust
+use rdcl_aoc_helpers::args::get_args;
+
+fn main() {
+    let args = get_args(&["<input file>", "<init>"], 1);
+    println!("{:?}", args);
+}
+```
+
 ## Error handling
 
 ### `error::WithOrExit`
