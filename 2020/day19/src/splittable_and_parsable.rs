@@ -1,6 +1,6 @@
 use std::str::FromStr;
 
-use rdcl_aoc_helpers::parse_error::ParseError;
+use rdcl_aoc_helpers::error::ParseError;
 
 pub trait SplittableAndParsable {
     fn split_at_and_parse<L: FromStr, R: FromStr>(&self, mid: usize) -> Result<(L, R), ParseError>

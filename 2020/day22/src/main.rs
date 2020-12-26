@@ -2,10 +2,10 @@ extern crate rdcl_aoc_helpers;
 
 use std::collections::HashSet;
 use std::env;
+use std::fs::File;
 use std::process::exit;
 
-use rdcl_aoc_helpers::handle_result;
-use rdcl_aoc_helpers::read::read_multiline_input;
+use rdcl_aoc_helpers::input::WithReadMultiLines;
 
 use crate::player::Player;
 use crate::round::Round;
@@ -22,7 +22,10 @@ fn main() {
         exit(1);
     }
 
-    let game_state = handle_result(read_multiline_input::<Player>(&args[1]));
+    let game_state = File::open(&args[1])
+        .read_multi_lines(1)
+        .skip(1)
+        .collect::<Vec<Player>>();
 
     match play_combat(&game_state) {
         Some(winner) => println!(

@@ -1,16 +1,16 @@
 use std::str::FromStr;
 
-use rdcl_aoc_helpers::parse_error::ParseError;
+use rdcl_aoc_helpers::error::ParseError;
 
 #[derive(Debug)]
-pub struct InputRecord {
+pub struct Password {
     idx1: usize,
     idx2: usize,
     character: char,
     password: String,
 }
 
-impl InputRecord {
+impl Password {
     pub fn valid_according_to_old_job(&self) -> bool {
         let count = self
             .password
@@ -37,7 +37,7 @@ impl InputRecord {
     }
 }
 
-impl FromStr for InputRecord {
+impl FromStr for Password {
     type Err = ParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
@@ -53,7 +53,7 @@ impl FromStr for InputRecord {
         }?;
         let password = s.chars().skip(p3 + 2).collect();
 
-        Ok(InputRecord {
+        Ok(Password {
             idx1,
             idx2,
             character,

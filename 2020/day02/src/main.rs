@@ -1,13 +1,14 @@
 extern crate rdcl_aoc_helpers;
 
 use std::env;
+use std::fs::File;
 use std::process::exit;
 
-use input_record::InputRecord;
-use rdcl_aoc_helpers::handle_result;
-use rdcl_aoc_helpers::read::read_input;
+use rdcl_aoc_helpers::input::WithReadLines;
 
-mod input_record;
+use password::Password;
+
+mod password;
 
 /// https://adventofcode.com/2020/day/2
 fn main() {
@@ -18,22 +19,25 @@ fn main() {
         exit(1);
     }
 
-    let path = &args[1];
-    let values: Vec<InputRecord> = handle_result(read_input(path));
+    let passwords = File::open(&args[1]).read_lines::<Password>(1);
+
+    let mut counts = (0, 0);
+    for password in passwords {
+        if password.valid_according_to_old_job() {
+            counts.0 += 1;
+        }
+        if password.valid_according_to_corporate_policy() {
+            counts.1 += 1;
+        }
+    }
 
     println!(
         "Number of valid passwords according to old job: {}",
-        values
-            .iter()
-            .filter(|v| v.valid_according_to_old_job())
-            .count()
+        counts.0
     );
     println!(
         "Number of valid passwords according to corporate policy: {}",
-        values
-            .iter()
-            .filter(|v| v.valid_according_to_corporate_policy())
-            .count()
+        counts.1
     );
 }
 
@@ -41,33 +45,25 @@ fn main() {
 mod tests {
     use super::*;
 
-    mod part1 {
-        use super::*;
+    #[test]
+    fn test_old_password_policy() {
+        let pw1 = "1-3 a: abcde".parse::<Password>().unwrap();
+        let pw2 = "1-3 b: cdefg".parse::<Password>().unwrap();
+        let pw3 = "2-9 c: ccccccccc".parse::<Password>().unwrap();
 
-        #[test]
-        fn test() {
-            let input1 = "1-3 a: abcde".parse::<InputRecord>().unwrap();
-            let input2 = "1-3 b: cdefg".parse::<InputRecord>().unwrap();
-            let input3 = "2-9 c: ccccccccc".parse::<InputRecord>().unwrap();
-
-            assert!(input1.valid_according_to_old_job());
-            assert!(!input2.valid_according_to_old_job());
-            assert!(input3.valid_according_to_old_job());
-        }
+        assert!(pw1.valid_according_to_old_job());
+        assert!(!pw2.valid_according_to_old_job());
+        assert!(pw3.valid_according_to_old_job());
     }
 
-    mod part2 {
-        use super::*;
+    #[test]
+    fn test_corporate_password_policy() {
+        let pw1 = "1-3 a: abcde".parse::<Password>().unwrap();
+        let pw2 = "1-3 b: cdefg".parse::<Password>().unwrap();
+        let pw3 = "2-9 c: ccccccccc".parse::<Password>().unwrap();
 
-        #[test]
-        fn test() {
-            let input1 = "1-3 a: abcde".parse::<InputRecord>().unwrap();
-            let input2 = "1-3 b: cdefg".parse::<InputRecord>().unwrap();
-            let input3 = "2-9 c: ccccccccc".parse::<InputRecord>().unwrap();
-
-            assert!(input1.valid_according_to_old_job());
-            assert!(!input2.valid_according_to_corporate_policy());
-            assert!(!input3.valid_according_to_corporate_policy());
-        }
+        assert!(pw1.valid_according_to_corporate_policy());
+        assert!(!pw2.valid_according_to_corporate_policy());
+        assert!(!pw3.valid_according_to_corporate_policy());
     }
 }

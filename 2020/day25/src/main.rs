@@ -1,10 +1,10 @@
 extern crate rdcl_aoc_helpers;
 
 use std::env;
+use std::fs::File;
 use std::process::exit;
 
-use rdcl_aoc_helpers::handle_result;
-use rdcl_aoc_helpers::read::read_input;
+use rdcl_aoc_helpers::input::WithReadLines;
 
 const INITIAL_NUMBER: u64 = 1;
 const MODULUS: u64 = 20201227;
@@ -19,7 +19,7 @@ fn main() {
         exit(1);
     }
 
-    let public_keys = handle_result(read_input::<u64>(&args[1]));
+    let public_keys = File::open(&args[1]).read_lines(1).collect::<Vec<u64>>();
     if public_keys.len() != 2 {
         eprintln!("Input file must contain exactly two lines.");
         exit(1);

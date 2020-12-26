@@ -1,16 +1,17 @@
 extern crate rdcl_aoc_helpers;
 
 use std::env;
+use std::fs::File;
 use std::process::exit;
 
-use rdcl_aoc_helpers::handle_result;
-use rdcl_aoc_helpers::read::read_input;
+use rdcl_aoc_helpers::error::WithOrExit;
+use rdcl_aoc_helpers::input::WithReadLines;
 
 use crate::coordinates::Coordinates;
-use crate::input_record::InputRecord;
+use crate::instruction::Instruction;
 
 mod coordinates;
-mod input_record;
+mod instruction;
 
 /// https://adventofcode.com/2020/day/12
 fn main() {
@@ -21,8 +22,10 @@ fn main() {
         exit(1);
     }
 
-    let instructions: Vec<InputRecord> = handle_result(read_input(&args[1]));
-    let waypoint = handle_result(args[2].parse::<Coordinates>());
+    let instructions = File::open(&args[1])
+        .read_lines(1)
+        .collect::<Vec<Instruction>>();
+    let waypoint = args[2].parse::<Coordinates>().or_exit_with(1);
 
     println!(
         "Manhattan distance without using waypoint: {}",
@@ -35,7 +38,7 @@ fn main() {
     );
 }
 
-fn travel(instructions: &[InputRecord]) -> Coordinates {
+fn travel(instructions: &[Instruction]) -> Coordinates {
     instructions
         .iter()
         .fold(
@@ -45,7 +48,7 @@ fn travel(instructions: &[InputRecord]) -> Coordinates {
         .0
 }
 
-fn travel_with_waypoint(instructions: &[InputRecord], waypoint: Coordinates) -> Coordinates {
+fn travel_with_waypoint(instructions: &[Instruction], waypoint: Coordinates) -> Coordinates {
     instructions
         .iter()
         .fold(
@@ -57,36 +60,28 @@ fn travel_with_waypoint(instructions: &[InputRecord], waypoint: Coordinates) -> 
 
 #[cfg(test)]
 mod tests {
-    use rdcl_aoc_helpers::parse::parse_input;
+    use rdcl_aoc_helpers::input::WithAsRecords;
 
     use super::*;
 
-    mod part1 {
-        use super::*;
-
-        #[test]
-        fn test() {
-            let instructions =
-                parse_input::<InputRecord>(vec!["F10", "N3", "F7", "R90", "F11"]).unwrap();
-
-            assert_eq!(travel(&instructions).manhattan_distance(), 25);
-        }
+    #[test]
+    fn test_travel() {
+        let instructions = vec!["F10", "N3", "F7", "R90", "F11"]
+            .as_records::<Instruction>()
+            .unwrap();
+        assert_eq!(travel(&instructions).manhattan_distance(), 25);
     }
 
-    mod part2 {
-        use super::*;
+    #[test]
+    fn test_travel_with_waypoint() {
+        let instructions = vec!["F10", "N3", "F7", "R90", "F11"]
+            .as_records::<Instruction>()
+            .unwrap();
+        let waypoint = Coordinates(10, 1);
 
-        #[test]
-        fn test() {
-            let instructions =
-                parse_input::<InputRecord>(vec!["F10", "N3", "F7", "R90", "F11"]).unwrap();
-
-            let waypoint = Coordinates(10, 1);
-
-            assert_eq!(
-                travel_with_waypoint(&instructions, waypoint).manhattan_distance(),
-                286,
-            );
-        }
+        assert_eq!(
+            travel_with_waypoint(&instructions, waypoint).manhattan_distance(),
+            286,
+        );
     }
 }

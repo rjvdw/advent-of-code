@@ -2,10 +2,11 @@ extern crate rdcl_aoc_helpers;
 
 use std::collections::HashMap;
 use std::env;
+use std::fs::File;
 use std::process::exit;
 
-use rdcl_aoc_helpers::handle_result;
-use rdcl_aoc_helpers::read::read_multiline_input_as_single;
+use rdcl_aoc_helpers::error::WithOrExit;
+use rdcl_aoc_helpers::input::WithReadMultiLines;
 
 use crate::puzzle_input::PuzzleInput;
 
@@ -20,11 +21,14 @@ fn main() {
         exit(1);
     }
 
-    let mut input = handle_result(read_multiline_input_as_single::<PuzzleInput>(&args[1]));
+    let mut input = File::open(&args[1])
+        .read_multi_lines::<PuzzleInput>(1)
+        .next()
+        .or_exit_with(1);
     let invalid_values = input.filter_out_invalid_nearby_tickets();
     println!("The sum of all invalid values is: {}", invalid_values);
 
-    match solve(&input) {
+    match decode_train_ticket(&input) {
         Some(mapping) => {
             let mut prd = 1;
             for (k, v) in mapping {
@@ -34,11 +38,11 @@ fn main() {
             }
             println!("The product of all the departure information is: {}", prd);
         }
-        None => eprintln!("No solution found"),
+        None => eprintln!("Could not decode the train ticket"),
     }
 }
 
-fn solve(input: &PuzzleInput) -> Option<HashMap<String, usize>> {
+fn decode_train_ticket(input: &PuzzleInput) -> Option<HashMap<String, usize>> {
     let mut mapping: HashMap<String, usize> = HashMap::new();
 
     while mapping.keys().len() != input.possible_field_values.keys().len() {
@@ -84,63 +88,63 @@ fn find_unique_solution(
 
 #[cfg(test)]
 mod tests {
-    use rdcl_aoc_helpers::parse::parse_multiline_input_as_single;
+    use rdcl_aoc_helpers::input::WithAsMultilineRecords;
 
     use super::*;
 
-    mod part1 {
-        use super::*;
+    #[test]
+    fn test_filter_out_invalid_nearby_tickets() {
+        let mut input = vec![
+            "class: 1-3 or 5-7",
+            "row: 6-11 or 33-44",
+            "seat: 13-40 or 45-50",
+            "",
+            "your ticket:",
+            "7,1,14",
+            "",
+            "nearby tickets:",
+            "7,3,47",
+            "40,4,50",
+            "55,2,20",
+            "38,6,12",
+        ]
+        .as_multiline_records::<PuzzleInput>()
+        .unwrap()
+        .first()
+        .cloned()
+        .unwrap();
 
-        #[test]
-        fn test() {
-            let mut input = parse_multiline_input_as_single::<PuzzleInput>(vec![
-                "class: 1-3 or 5-7",
-                "row: 6-11 or 33-44",
-                "seat: 13-40 or 45-50",
-                "",
-                "your ticket:",
-                "7,1,14",
-                "",
-                "nearby tickets:",
-                "7,3,47",
-                "40,4,50",
-                "55,2,20",
-                "38,6,12",
-            ])
-            .unwrap();
+        let invalid_values = input.filter_out_invalid_nearby_tickets();
 
-            let invalid_values = input.filter_out_invalid_nearby_tickets();
-
-            assert_eq!(invalid_values, 71);
-        }
+        assert_eq!(invalid_values, 71);
     }
 
-    mod part2 {
-        use super::*;
+    #[test]
+    fn test_decode_train_ticket() {
+        let mut input = vec![
+            "class: 0-1 or 4-19",
+            "row: 0-5 or 8-19",
+            "seat: 0-13 or 16-19",
+            "",
+            "your ticket:",
+            "11,12,13",
+            "",
+            "nearby tickets:",
+            "3,9,18",
+            "15,1,5",
+            "5,14,9",
+        ]
+        .as_multiline_records::<PuzzleInput>()
+        .unwrap()
+        .first()
+        .cloned()
+        .unwrap();
 
-        #[test]
-        fn test() {
-            let mut input = parse_multiline_input_as_single::<PuzzleInput>(vec![
-                "class: 0-1 or 4-19",
-                "row: 0-5 or 8-19",
-                "seat: 0-13 or 16-19",
-                "",
-                "your ticket:",
-                "11,12,13",
-                "",
-                "nearby tickets:",
-                "3,9,18",
-                "15,1,5",
-                "5,14,9",
-            ])
-            .unwrap();
+        input.filter_out_invalid_nearby_tickets();
+        let mapping = decode_train_ticket(&input).unwrap();
 
-            input.filter_out_invalid_nearby_tickets();
-            let mapping = solve(&input).unwrap();
-
-            assert_eq!(mapping.get("row"), Some(&0));
-            assert_eq!(mapping.get("class"), Some(&1));
-            assert_eq!(mapping.get("seat"), Some(&2));
-        }
+        assert_eq!(mapping.get("row"), Some(&0));
+        assert_eq!(mapping.get("class"), Some(&1));
+        assert_eq!(mapping.get("seat"), Some(&2));
     }
 }

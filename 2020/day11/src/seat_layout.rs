@@ -1,7 +1,8 @@
 use std::fmt;
 
-use rdcl_aoc_helpers::from_multiline_str::FromMultilineStr;
-use rdcl_aoc_helpers::parse_error::ParseError;
+use rdcl_aoc_helpers::error::ParseError;
+use rdcl_aoc_helpers::input::MultilineFromStr;
+
 use Position::{Floor, Seat};
 use SeatState::{Empty, Occupied};
 
@@ -158,16 +159,14 @@ impl fmt::Display for SeatLayout {
     }
 }
 
-impl FromMultilineStr for SeatLayout {
-    const DISCARD_FIRST_RECORD: bool = false;
-
+impl MultilineFromStr for SeatLayout {
     type Err = ParseError;
 
     fn new() -> Self {
         SeatLayout::new(0, 0)
     }
 
-    fn indicates_new_record(_line: &str) -> bool {
+    fn indicates_new_record(&self, _line: &str) -> bool {
         false
     }
 

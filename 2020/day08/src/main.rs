@@ -1,17 +1,24 @@
 extern crate rdcl_aoc_helpers;
 
 use std::env;
+use std::fs::File;
 use std::process::exit;
 
-use input_record::InputRecord;
-use rdcl_aoc_helpers::handle_result;
-use rdcl_aoc_helpers::read::read_input;
+use rdcl_aoc_helpers::input::WithReadLines;
 
-use crate::input_record::Operation;
+use instruction::Instruction;
+
 use crate::program_fixer::ProgramFixer;
 
-mod input_record;
+mod instruction;
 mod program_fixer;
+
+/// The state of the program, consisting of an accumulator and an index pointer.
+pub type ProgramState = (i32, usize);
+
+/// The end state of the program, consisting of a boolean indicating whether the program terminated
+/// correctly, and the final value of the accumulator.
+pub type ProgramEndState = (bool, i32);
 
 /// https://adventofcode.com/2020/day/8
 fn main() {
@@ -22,10 +29,11 @@ fn main() {
         exit(1);
     }
 
-    let path = &args[1];
-    let instructions: Vec<InputRecord> = handle_result(read_input(path));
+    let instructions = File::open(&args[1])
+        .read_lines(1)
+        .collect::<Vec<Instruction>>();
 
-    let (terminated, acc) = solve(&instructions);
+    let (terminated, acc) = run_program(&instructions);
     if terminated {
         println!("Program terminated correctly. Final value is {}", acc);
     } else {
@@ -33,7 +41,7 @@ fn main() {
             "Program did not terminate correctly. Final value is {}",
             acc
         );
-        let fixer = ProgramFixer::new(&instructions, solve);
+        let fixer = ProgramFixer::new(&instructions, run_program);
         for (i, acc) in fixer {
             println!(
                 "Terminated correctly by altering instruction at line {}, final value is {}",
@@ -44,82 +52,53 @@ fn main() {
     }
 }
 
-fn solve(instructions: &[InputRecord]) -> (bool, i32) {
+fn run_program(instructions: &[Instruction]) -> ProgramEndState {
     let mut seen: Vec<bool> = Vec::with_capacity(instructions.len());
-    let mut acc = 0;
-    let mut idx = 0;
+    let mut state = (0, 0);
     seen.resize(instructions.len(), false);
 
-    while idx < instructions.len() {
-        if seen[idx] {
-            return (false, acc);
+    while state.1 < instructions.len() {
+        if seen[state.1] {
+            return (false, state.0);
         }
-
-        seen[idx] = true;
-        let instruction = &instructions[idx];
-
-        match instruction.op {
-            Operation::ACC => {
-                acc += instruction.value;
-                idx += 1;
-            }
-            Operation::JMP => {
-                idx = jump(idx, instruction.value);
-            }
-            Operation::NOP => {
-                idx += 1;
-            }
-        }
+        seen[state.1] = true;
+        state = instructions[state.1].run(state);
     }
 
-    (true, acc)
-}
-
-fn jump(idx: usize, value: i32) -> usize {
-    if value >= 0 {
-        idx + (value as usize)
-    } else {
-        idx - ((-value) as usize)
-    }
+    (true, state.0)
 }
 
 #[cfg(test)]
 mod tests {
-    use rdcl_aoc_helpers::parse::parse_input;
+    use rdcl_aoc_helpers::input::WithAsRecords;
 
     use super::*;
 
-    mod part1 {
-        use super::*;
+    #[test]
+    fn test_run() {
+        let values = vec![
+            "nop +0", "acc +1", "jmp +4", "acc +3", "jmp -3", "acc -99", "acc +1", "jmp -4",
+            "acc +6",
+        ]
+        .as_records::<Instruction>()
+        .unwrap();
 
-        #[test]
-        fn test() {
-            let values = parse_input::<InputRecord>(vec![
-                "nop +0", "acc +1", "jmp +4", "acc +3", "jmp -3", "acc -99", "acc +1", "jmp -4",
-                "acc +6",
-            ])
-            .unwrap();
-
-            assert_eq!(solve(&values), (false, 5));
-        }
+        assert_eq!(run_program(&values), (false, 5));
     }
 
-    mod part2 {
-        use super::*;
+    #[test]
+    fn test_fix() {
+        let values = vec![
+            "nop +0", "acc +1", "jmp +4", "acc +3", "jmp -3", "acc -99", "acc +1", "jmp -4",
+            "acc +6",
+        ]
+        .as_records::<Instruction>()
+        .unwrap();
 
-        #[test]
-        fn test() {
-            let values = parse_input::<InputRecord>(vec![
-                "nop +0", "acc +1", "jmp +4", "acc +3", "jmp -3", "acc -99", "acc +1", "jmp -4",
-                "acc +6",
-            ])
-            .unwrap();
+        let fixer = ProgramFixer::new(&values, run_program);
+        let fixes: Vec<(usize, i32)> = fixer.collect();
 
-            let fixer = ProgramFixer::new(&values, solve);
-            let fixes: Vec<(usize, i32)> = fixer.collect();
-
-            assert_eq!(fixes.len(), 1);
-            assert_eq!(fixes[0], (7, 8));
-        }
+        assert_eq!(fixes.len(), 1);
+        assert_eq!(fixes[0], (7, 8));
     }
 }

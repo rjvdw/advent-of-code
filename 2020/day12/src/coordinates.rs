@@ -2,6 +2,8 @@ use std::fmt;
 use std::ops::{Add, Mul, Sub};
 use std::str::FromStr;
 
+use rdcl_aoc_helpers::error::ParseError;
+
 pub const ORIGIN: Coordinates = Coordinates(0, 0);
 
 #[derive(Clone, Copy, PartialEq, PartialOrd, Eq, Ord, Debug, Hash)]
@@ -77,17 +79,6 @@ impl Mul<Coordinates> for i32 {
     }
 }
 
-#[derive(Debug)]
-pub struct ParseError {
-    msg: String,
-}
-
-impl fmt::Display for ParseError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.msg)
-    }
-}
-
 impl FromStr for Coordinates {
     type Err = ParseError;
 
@@ -101,9 +92,7 @@ impl FromStr for Coordinates {
             }
         }
 
-        Err(ParseError {
-            msg: format!("Invalid coordinates '{}'", s),
-        })
+        Err(ParseError(format!("Invalid coordinates '{}'", s)))
     }
 }
 

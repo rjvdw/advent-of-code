@@ -2,10 +2,10 @@ extern crate rdcl_aoc_helpers;
 
 use std::collections::HashMap;
 use std::env;
+use std::fs::File;
 use std::process::exit;
 
-use rdcl_aoc_helpers::handle_result;
-use rdcl_aoc_helpers::read::read_multiline_input;
+use rdcl_aoc_helpers::input::WithReadMultiLines;
 
 use crate::dragon::{DRAGON_IMAGE, DRAGON_IMAGE_WIDTH, NR_ACTIVE_PIXELS_IN_DRAGON};
 use crate::edges::EdgeName;
@@ -28,7 +28,10 @@ fn main() {
         exit(1);
     }
 
-    let tiles: Vec<Tile> = handle_result(read_multiline_input(&args[1]));
+    let tiles = File::open(&args[1])
+        .read_multi_lines(1)
+        .skip(1)
+        .collect::<Vec<Tile>>();
     let tiles = make_map(&tiles);
     let corner_tiles = find_corner_tiles(&tiles);
 
@@ -220,7 +223,7 @@ fn parse_image_line(line: &str) -> u128 {
 
 #[cfg(test)]
 mod tests {
-    use rdcl_aoc_helpers::parse::parse_multiline_input;
+    use rdcl_aoc_helpers::input::WithAsMultilineRecords;
 
     use super::*;
 
@@ -335,7 +338,7 @@ mod tests {
     }
 
     fn get_test_input() -> TilesById {
-        let tiles = parse_multiline_input(vec![
+        let tiles: Vec<Tile> = vec![
             "Tile 2311:",
             "..##.#..#.",
             "##..#.....",
@@ -443,8 +446,13 @@ mod tests {
             "..#.###...",
             "..#.......",
             "..#.###...",
-        ])
-        .unwrap();
+        ]
+        .as_multiline_records()
+        .unwrap()
+        .iter()
+        .skip(1)
+        .cloned()
+        .collect();
 
         make_map(&tiles)
     }

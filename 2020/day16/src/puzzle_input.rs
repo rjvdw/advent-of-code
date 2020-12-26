@@ -1,16 +1,17 @@
 use std::collections::HashMap;
 use std::fmt;
 
-use rdcl_aoc_helpers::from_multiline_str::FromMultilineStr;
-use rdcl_aoc_helpers::parse_error::ParseError;
+use rdcl_aoc_helpers::error::ParseError;
+use rdcl_aoc_helpers::input::MultilineFromStr;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 enum ParseState {
     FieldValues,
     YourTicket,
     NearbyTickets,
 }
 
+#[derive(Clone)]
 pub struct PuzzleInput {
     pub possible_field_values: HashMap<String, Vec<(u32, u32)>>,
     pub your_ticket: Vec<u32>,
@@ -112,9 +113,7 @@ impl PuzzleInput {
     }
 }
 
-impl FromMultilineStr for PuzzleInput {
-    const DISCARD_FIRST_RECORD: bool = false;
-
+impl MultilineFromStr for PuzzleInput {
     type Err = ParseError;
 
     fn new() -> Self {
@@ -126,7 +125,7 @@ impl FromMultilineStr for PuzzleInput {
         }
     }
 
-    fn indicates_new_record(_line: &str) -> bool {
+    fn indicates_new_record(&self, _line: &str) -> bool {
         false
     }
 

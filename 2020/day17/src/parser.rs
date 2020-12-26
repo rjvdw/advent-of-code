@@ -1,7 +1,7 @@
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 
-use rdcl_aoc_helpers::parse_error::ParseError;
+use rdcl_aoc_helpers::error::ParseError;
 
 pub fn read(path: &str) -> Result<Vec<(i32, i32)>, ParseError> {
     let file = File::open(path)?;

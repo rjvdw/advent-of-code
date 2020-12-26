@@ -1,7 +1,7 @@
 use std::num::ParseIntError;
 use std::str::FromStr;
 
-use rdcl_aoc_helpers::parse_error::ParseError;
+use rdcl_aoc_helpers::error::ParseError;
 
 const VALUE_SEPARATOR: &str = " = ";
 const SET_MASK_KEYWORD: &str = "mask";

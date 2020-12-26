@@ -1,19 +1,20 @@
-use crate::input_record::{InputRecord, Operation};
+use crate::instruction::{Instruction, Operation};
+use crate::ProgramEndState;
 
 pub struct ProgramFixer<'a> {
-    instructions: &'a [InputRecord],
-    solve: fn(&[InputRecord]) -> (bool, i32),
+    instructions: &'a [Instruction],
+    run_program: fn(&[Instruction]) -> ProgramEndState,
     idx: usize,
 }
 
 impl ProgramFixer<'_> {
     pub fn new(
-        instructions: &[InputRecord],
-        solve: fn(&[InputRecord]) -> (bool, i32),
+        instructions: &[Instruction],
+        solve: fn(&[Instruction]) -> ProgramEndState,
     ) -> ProgramFixer {
         ProgramFixer {
             instructions,
-            solve,
+            run_program: solve,
             idx: 0,
         }
     }
@@ -23,28 +24,22 @@ impl Iterator for ProgramFixer<'_> {
     type Item = (usize, i32);
 
     fn next(&mut self) -> Option<Self::Item> {
-        for (i, instruction) in self.instructions.iter().skip(self.idx).enumerate() {
+        for (i, &Instruction(op, value)) in self.instructions.iter().skip(self.idx).enumerate() {
             let i = self.idx + i;
-            let (terminated, acc) = match instruction.op {
+            let (terminated, acc) = match op {
                 Operation::NOP => {
-                    if -instruction.value > (i as i32) {
+                    if -value > (i as i32) {
                         (false, 0)
                     } else {
                         let mut altered = self.instructions.to_vec();
-                        altered[i] = InputRecord {
-                            op: Operation::JMP,
-                            value: instruction.value,
-                        };
-                        (self.solve)(&altered)
+                        altered[i] = Instruction(Operation::JMP, value);
+                        (self.run_program)(&altered)
                     }
                 }
                 Operation::JMP => {
                     let mut altered = self.instructions.to_vec();
-                    altered[i] = InputRecord {
-                        op: Operation::NOP,
-                        value: instruction.value,
-                    };
-                    (self.solve)(&altered)
+                    altered[i] = Instruction(Operation::NOP, value);
+                    (self.run_program)(&altered)
                 }
                 _ => (false, 0),
             };

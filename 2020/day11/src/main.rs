@@ -1,10 +1,12 @@
 extern crate rdcl_aoc_helpers;
 
 use std::env;
+use std::fs::File;
 use std::process::exit;
 
-use rdcl_aoc_helpers::handle_result;
-use rdcl_aoc_helpers::read::read_multiline_input;
+use rdcl_aoc_helpers::error::WithOrExit;
+use rdcl_aoc_helpers::input::WithReadMultiLines;
+
 use seat_layout::SeatLayout;
 
 mod cardinal_direction;
@@ -24,13 +26,13 @@ fn main() {
         exit(1);
     }
 
-    let input: Vec<SeatLayout> = handle_result(read_multiline_input(&args[1]));
-    let view_distance = handle_result(args[2].parse::<usize>());
-    let seat_threshold = handle_result(args[3].parse::<usize>());
-    if let Some(state) = input.first() {
+    let mut input = File::open(&args[1]).read_multi_lines::<SeatLayout>(1);
+    let view_distance = args[2].parse::<usize>().or_exit_with(1);
+    let seat_threshold = args[3].parse::<usize>().or_exit_with(1);
+    if let Some(state) = input.next() {
         println!(
             "Number of occupied seats in the final state: {}",
-            solve(state.clone(), view_distance, seat_threshold)
+            solve(state, view_distance, seat_threshold)
         );
     } else {
         eprintln!("Failed to process input");
@@ -38,8 +40,7 @@ fn main() {
     }
 }
 
-fn solve(initial_state: SeatLayout, view_distance: usize, seat_threshold: usize) -> usize {
-    let mut state = initial_state;
+fn solve(mut state: SeatLayout, view_distance: usize, seat_threshold: usize) -> usize {
     loop {
         let (next, changed) = state.next(view_distance, seat_threshold);
         if changed {

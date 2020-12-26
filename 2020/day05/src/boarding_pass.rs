@@ -1,6 +1,6 @@
 use std::str::FromStr;
 
-use rdcl_aoc_helpers::parse_error::ParseError;
+use rdcl_aoc_helpers::error::ParseError;
 
 #[rustfmt::skip]
 const BIT_FLAGS: [u8; 10] = [
@@ -19,19 +19,16 @@ const BIT_FLAGS: [u8; 10] = [
     0b00000001,
 ];
 
-#[derive(Debug)]
-pub struct InputRecord {
-    pub row: u8,
-    pub col: u8,
-}
+#[derive(Debug, Eq, PartialEq)]
+pub struct BoardingPass(pub u8, pub u8);
 
-impl InputRecord {
+impl BoardingPass {
     pub fn get_seat_id(&self) -> u16 {
-        (self.row as u16) * 8 + (self.col as u16)
+        (self.0 as u16) * 8 + (self.1 as u16)
     }
 }
 
-impl FromStr for InputRecord {
+impl FromStr for BoardingPass {
     type Err = ParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
@@ -45,6 +42,6 @@ impl FromStr for InputRecord {
             }
         }
 
-        Ok(InputRecord { row, col })
+        Ok(BoardingPass(row, col))
     }
 }

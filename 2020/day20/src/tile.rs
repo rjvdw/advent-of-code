@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 use std::fmt;
 
-use rdcl_aoc_helpers::from_multiline_str::FromMultilineStr;
-use rdcl_aoc_helpers::parse_error::ParseError;
+use rdcl_aoc_helpers::error::ParseError;
+use rdcl_aoc_helpers::input::MultilineFromStr;
 
 use crate::edges::{EdgeName, Edges};
 use crate::orientation_helpers::{get_orientation, orient_x_y};
@@ -137,9 +137,7 @@ impl fmt::Display for Tile {
     }
 }
 
-impl FromMultilineStr for Tile {
-    const DISCARD_FIRST_RECORD: bool = true;
-
+impl MultilineFromStr for Tile {
     type Err = ParseError;
 
     fn new() -> Self {
@@ -161,7 +159,7 @@ impl FromMultilineStr for Tile {
         }
     }
 
-    fn indicates_new_record(line: &str) -> bool {
+    fn indicates_new_record(&self, line: &str) -> bool {
         line.starts_with("Tile")
     }
 
@@ -216,7 +214,7 @@ impl FromMultilineStr for Tile {
 
 #[cfg(test)]
 mod tests {
-    use rdcl_aoc_helpers::parse::parse_multiline_input_as_single;
+    use rdcl_aoc_helpers::input::WithAsMultilineRecords;
 
     use super::*;
 
@@ -225,7 +223,7 @@ mod tests {
 
         #[test]
         fn test_identity() {
-            let tile = parse_multiline_input_as_single::<Tile>(vec![
+            let tile = tile_of(vec![
                 "#.#...#...",
                 "###..#...#",
                 ".....##...",
@@ -236,15 +234,14 @@ mod tests {
                 "#.#......#",
                 "##........",
                 "########.#",
-            ])
-            .unwrap();
+            ]);
 
             assert_eq!(tile.orient(0b000), tile);
         }
 
         #[test]
         fn test_flip() {
-            let tile = parse_multiline_input_as_single::<Tile>(vec![
+            let tile = tile_of(vec![
                 "#.#...#...",
                 "###..#...#",
                 ".....##...",
@@ -255,10 +252,9 @@ mod tests {
                 "#.#......#",
                 "##........",
                 "########.#",
-            ])
-            .unwrap();
+            ]);
 
-            let flipped = parse_multiline_input_as_single::<Tile>(vec![
+            let flipped = tile_of(vec![
                 "##.....###",
                 ".#..#...##",
                 "##.#...#.#",
@@ -269,15 +265,14 @@ mod tests {
                 ".....#...#",
                 "...#.#....",
                 ".#..####.#",
-            ])
-            .unwrap();
+            ]);
 
             assert_eq!(tile.orient(0b100), flipped);
         }
 
         #[test]
         fn test_flip_twice() {
-            let tile = parse_multiline_input_as_single::<Tile>(vec![
+            let tile = tile_of(vec![
                 "#.#...#...",
                 "###..#...#",
                 ".....##...",
@@ -288,15 +283,14 @@ mod tests {
                 "#.#......#",
                 "##........",
                 "########.#",
-            ])
-            .unwrap();
+            ]);
 
             assert_eq!(tile.orient(0b100).orient(0b100), tile);
         }
 
         #[test]
         fn test_rotate_once() {
-            let tile = parse_multiline_input_as_single::<Tile>(vec![
+            let tile = tile_of(vec![
                 "#.#...#...",
                 "###..#...#",
                 ".....##...",
@@ -307,10 +301,9 @@ mod tests {
                 "#.#......#",
                 "##........",
                 "########.#",
-            ])
-            .unwrap();
+            ]);
 
-            let rotated = parse_multiline_input_as_single::<Tile>(vec![
+            let rotated = tile_of(vec![
                 ".#..####.#",
                 "...#.#....",
                 ".....#...#",
@@ -321,15 +314,14 @@ mod tests {
                 "##.#...#.#",
                 ".#..#...##",
                 "##.....###",
-            ])
-            .unwrap();
+            ]);
 
             assert_eq!(tile.orient(0b001), rotated);
         }
 
         #[test]
         fn test_rotate_twice() {
-            let tile = parse_multiline_input_as_single::<Tile>(vec![
+            let tile = tile_of(vec![
                 "#.#...#...",
                 "###..#...#",
                 ".....##...",
@@ -340,10 +332,9 @@ mod tests {
                 "#.#......#",
                 "##........",
                 "########.#",
-            ])
-            .unwrap();
+            ]);
 
-            let rotated = parse_multiline_input_as_single::<Tile>(vec![
+            let rotated = tile_of(vec![
                 "#.########",
                 "........##",
                 "#......#.#",
@@ -354,15 +345,14 @@ mod tests {
                 "...##.....",
                 "#...#..###",
                 "...#...#.#",
-            ])
-            .unwrap();
+            ]);
 
             assert_eq!(tile.orient(0b010), rotated);
         }
 
         #[test]
         fn test_rotate_thrice() {
-            let tile = parse_multiline_input_as_single::<Tile>(vec![
+            let tile = tile_of(vec![
                 "#.#...#...",
                 "###..#...#",
                 ".....##...",
@@ -373,10 +363,9 @@ mod tests {
                 "#.#......#",
                 "##........",
                 "########.#",
-            ])
-            .unwrap();
+            ]);
 
-            let rotated = parse_multiline_input_as_single::<Tile>(vec![
+            let rotated = tile_of(vec![
                 "###.....##",
                 "##...#..#.",
                 "#.#...#.##",
@@ -387,15 +376,14 @@ mod tests {
                 "#...#.....",
                 "....#.#...",
                 "#.####..#.",
-            ])
-            .unwrap();
+            ]);
 
             assert_eq!(tile.orient(0b011), rotated);
         }
 
         #[test]
         fn test_rotate_quad() {
-            let tile = parse_multiline_input_as_single::<Tile>(vec![
+            let tile = tile_of(vec![
                 "#.#...#...",
                 "###..#...#",
                 ".....##...",
@@ -406,8 +394,7 @@ mod tests {
                 "#.#......#",
                 "##........",
                 "########.#",
-            ])
-            .unwrap();
+            ]);
 
             assert_eq!(tile.orient(0b010).orient(0b010), tile);
         }
@@ -415,7 +402,7 @@ mod tests {
 
     #[test]
     fn test_edges() {
-        let tile = parse_multiline_input_as_single::<Tile>(vec![
+        let tile = tile_of(vec![
             "#.#...#...",
             "###..#...#",
             ".....##...",
@@ -426,8 +413,7 @@ mod tests {
             "#.#......#",
             "##........",
             "########.#",
-        ])
-        .unwrap();
+        ]);
 
         assert_eq!(
             tile.edges,
@@ -443,5 +429,13 @@ mod tests {
                 left_rev: 0b1110000011,
             }
         );
+    }
+
+    fn tile_of(vec: Vec<&str>) -> Tile {
+        vec.as_multiline_records::<Tile>()
+            .unwrap()
+            .first()
+            .cloned()
+            .unwrap()
     }
 }
