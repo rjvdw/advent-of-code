@@ -3,7 +3,7 @@ name: 'CI Rust Helpers'
 on:
   push:
     branches:
-      - '*'
+      - '**'
     paths:
       - 'helpers/rust/**'
       - '.github/workflows/ci-helpers-rust.yml'
