@@ -13,8 +13,13 @@ Reads the command line arguments and checks whether the correct number of argume
 ```rust
 use rdcl_aoc_helpers::args::get_args;
 
-fn main() {
+fn example1() {
     let args = get_args(&["<input file>", "<init>"], 1);
+    println!("{:?}", args);
+}
+
+fn example2() {
+    let args = get_args_repeating(&["<input file>", "<x1> ... <xn>"], 1);
     println!("{:?}", args);
 }
 ```
