@@ -1,16 +1,16 @@
-name: "CI 2020"
+name: 'CI Rust Helpers'
 
 on:
   push:
     branches:
-      - '**'
+      - '*'
     paths:
-      - '2020/**'
-      - '.github/workflows/ci-2020.yml'
+      - 'helpers/rust/**'
+      - '.github/workflows/ci-helpers-rust.yml'
 
 defaults:
   run:
-    working-directory: 2020
+    working-directory: helpers/rust
 
 jobs:
   build:
