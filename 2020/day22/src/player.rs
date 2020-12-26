@@ -1,5 +1,5 @@
-use rdcl_aoc_helpers::from_multiline_str::FromMultilineStr;
-use rdcl_aoc_helpers::parse_error::ParseError;
+use rdcl_aoc_helpers::error::ParseError;
+use rdcl_aoc_helpers::input::MultilineFromStr;
 
 use crate::round::Round;
 
@@ -56,8 +56,7 @@ impl Player {
     }
 }
 
-impl FromMultilineStr for Player {
-    const DISCARD_FIRST_RECORD: bool = true;
+impl MultilineFromStr for Player {
     type Err = ParseError;
 
     fn new() -> Self {
@@ -67,7 +66,7 @@ impl FromMultilineStr for Player {
         }
     }
 
-    fn indicates_new_record(line: &str) -> bool {
+    fn indicates_new_record(&self, line: &str) -> bool {
         line.starts_with("Player")
     }
 

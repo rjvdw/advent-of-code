@@ -1,20 +1,20 @@
 use std::fmt;
 
-use rdcl_aoc_helpers::from_multiline_str::FromMultilineStr;
-use rdcl_aoc_helpers::parse_error::ParseError;
+use rdcl_aoc_helpers::error::ParseError;
+use rdcl_aoc_helpers::input::MultilineFromStr;
 
 use crate::validators::{
     valid_color, valid_eye_color, valid_height, valid_passport_id, valid_year,
 };
 
-struct InputRecordField {
+struct PassportField {
     value: Option<String>,
     validator: fn(&String) -> bool,
 }
 
-impl InputRecordField {
+impl PassportField {
     fn none(validator: fn(&String) -> bool) -> Self {
-        InputRecordField {
+        PassportField {
             value: None,
             validator,
         }
@@ -37,31 +37,31 @@ impl InputRecordField {
     }
 }
 
-impl fmt::Display for InputRecordField {
+impl fmt::Display for PassportField {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{:?}", self.value)
     }
 }
 
-impl fmt::Debug for InputRecordField {
+impl fmt::Debug for PassportField {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{:?}", self.value)
     }
 }
 
 #[derive(Debug)]
-pub struct InputRecord {
-    byr: InputRecordField,
-    iyr: InputRecordField,
-    eyr: InputRecordField,
-    hgt: InputRecordField,
-    hcl: InputRecordField,
-    ecl: InputRecordField,
-    pid: InputRecordField,
-    cid: InputRecordField,
+pub struct Passport {
+    byr: PassportField,
+    iyr: PassportField,
+    eyr: PassportField,
+    hgt: PassportField,
+    hcl: PassportField,
+    ecl: PassportField,
+    pid: PassportField,
+    cid: PassportField,
 }
 
-impl InputRecord {
+impl Passport {
     pub fn has_required_fields(&self) -> bool {
         self.byr.is_present()
             && self.iyr.is_present()
@@ -84,25 +84,23 @@ impl InputRecord {
     }
 }
 
-impl FromMultilineStr for InputRecord {
-    const DISCARD_FIRST_RECORD: bool = false;
-
+impl MultilineFromStr for Passport {
     type Err = ParseError;
 
     fn new() -> Self {
-        InputRecord {
-            byr: InputRecordField::none(|v| valid_year(v, 1920, 2002)),
-            iyr: InputRecordField::none(|v| valid_year(v, 2010, 2020)),
-            eyr: InputRecordField::none(|v| valid_year(v, 2020, 2030)),
-            hgt: InputRecordField::none(|v| valid_height(v, 59, 76, 150, 193)),
-            hcl: InputRecordField::none(|v| valid_color(v)),
-            ecl: InputRecordField::none(|v| valid_eye_color(v)),
-            pid: InputRecordField::none(|v| valid_passport_id(v)),
-            cid: InputRecordField::none(|_| true),
+        Passport {
+            byr: PassportField::none(|v| valid_year(v, 1920, 2002)),
+            iyr: PassportField::none(|v| valid_year(v, 2010, 2020)),
+            eyr: PassportField::none(|v| valid_year(v, 2020, 2030)),
+            hgt: PassportField::none(|v| valid_height(v, 59, 76, 150, 193)),
+            hcl: PassportField::none(|v| valid_color(v)),
+            ecl: PassportField::none(|v| valid_eye_color(v)),
+            pid: PassportField::none(|v| valid_passport_id(v)),
+            cid: PassportField::none(|_| true),
         }
     }
 
-    fn indicates_new_record(line: &str) -> bool {
+    fn indicates_new_record(&self, line: &str) -> bool {
         line.is_empty()
     }
 

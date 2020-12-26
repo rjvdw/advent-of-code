@@ -3,7 +3,7 @@ extern crate rdcl_aoc_helpers;
 use std::env;
 use std::process::exit;
 
-use rdcl_aoc_helpers::handle_result;
+use rdcl_aoc_helpers::error::WithOrExit;
 
 const SEEN_SIZE: usize = 100_000_000;
 
@@ -19,7 +19,7 @@ fn main() {
     let mut args = args
         .iter()
         .skip(1)
-        .map(|x| handle_result(x.parse::<usize>()));
+        .map(|x| x.parse::<usize>().or_exit_with(1));
 
     let index = args.next().unwrap();
     let inputs = args.collect::<Vec<usize>>();

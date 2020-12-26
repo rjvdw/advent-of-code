@@ -2,10 +2,10 @@ extern crate rdcl_aoc_helpers;
 
 use std::collections::{HashMap, HashSet};
 use std::env;
+use std::fs::File;
 use std::process::exit;
 
-use rdcl_aoc_helpers::handle_result;
-use rdcl_aoc_helpers::read::read_input;
+use rdcl_aoc_helpers::input::WithReadLines;
 
 use crate::food::Food;
 
@@ -20,7 +20,7 @@ fn main() {
         exit(1);
     }
 
-    let foods: Vec<Food> = handle_result(read_input(&args[1]));
+    let foods = File::open(&args[1]).read_lines(1).collect::<Vec<Food>>();
     let possible_ingredients_per_allergen = find_possible_ingredients_per_allergen(&foods);
     let safe_ingredients = find_safe_ingredients(&foods, &possible_ingredients_per_allergen);
 
@@ -146,7 +146,7 @@ fn find_dangerous_ingredients(
 
 #[cfg(test)]
 mod tests {
-    use rdcl_aoc_helpers::parse::parse_input;
+    use rdcl_aoc_helpers::input::WithAsRecords;
 
     use super::*;
 
@@ -213,12 +213,13 @@ mod tests {
     }
 
     fn get_input() -> Vec<Food> {
-        parse_input(vec![
+        vec![
             "mxmxvkd kfcds sqjhc nhms (contains dairy, fish)",
             "trh fvjkl sbzzf mxmxvkd (contains dairy)",
             "sqjhc fvjkl (contains soy)",
             "sqjhc mxmxvkd sbzzf (contains fish)",
-        ])
+        ]
+        .as_records::<Food>()
         .unwrap()
     }
 }

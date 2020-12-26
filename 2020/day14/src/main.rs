@@ -2,10 +2,10 @@ extern crate rdcl_aoc_helpers;
 
 use std::collections::HashMap;
 use std::env;
+use std::fs::File;
 use std::process::exit;
 
-use rdcl_aoc_helpers::handle_result;
-use rdcl_aoc_helpers::read::read_input;
+use rdcl_aoc_helpers::input::WithReadLines;
 
 use crate::instruction::Instruction;
 
@@ -22,7 +22,9 @@ fn main() {
         exit(1);
     }
 
-    let instructions: Vec<Instruction> = handle_result(read_input(&args[1]));
+    let instructions = File::open(&args[1])
+        .read_lines(1)
+        .collect::<Vec<Instruction>>();
 
     let mut memory: HashMap<usize, u64> = HashMap::new();
     match v1::run_program(&instructions, &mut memory) {
@@ -45,45 +47,39 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
-    use rdcl_aoc_helpers::parse::parse_input;
+    use rdcl_aoc_helpers::input::WithAsRecords;
 
     use super::*;
 
-    mod part1 {
-        use super::*;
+    #[test]
+    fn test_v1() {
+        let instructions = vec![
+            "mask = XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X",
+            "mem[8] = 11",
+            "mem[7] = 101",
+            "mem[8] = 0",
+        ]
+        .as_records::<Instruction>()
+        .unwrap();
+        let mut memory: HashMap<usize, u64> = HashMap::new();
 
-        #[test]
-        fn test() {
-            let instructions = parse_input::<Instruction>(vec![
-                "mask = XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X",
-                "mem[8] = 11",
-                "mem[7] = 101",
-                "mem[8] = 0",
-            ])
-            .unwrap();
-            let mut memory: HashMap<usize, u64> = HashMap::new();
-
-            assert_eq!(v1::run_program(&instructions, &mut memory), Ok(()));
-            assert_eq!(memory.values().sum::<u64>(), 165);
-        }
+        assert_eq!(v1::run_program(&instructions, &mut memory), Ok(()));
+        assert_eq!(memory.values().sum::<u64>(), 165);
     }
 
-    mod part2 {
-        use super::*;
+    #[test]
+    fn test_v2() {
+        let instructions = vec![
+            "mask = 000000000000000000000000000000X1001X",
+            "mem[42] = 100",
+            "mask = 00000000000000000000000000000000X0XX",
+            "mem[26] = 1",
+        ]
+        .as_records::<Instruction>()
+        .unwrap();
+        let mut memory: HashMap<usize, u64> = HashMap::new();
 
-        #[test]
-        fn test() {
-            let instructions = parse_input::<Instruction>(vec![
-                "mask = 000000000000000000000000000000X1001X",
-                "mem[42] = 100",
-                "mask = 00000000000000000000000000000000X0XX",
-                "mem[26] = 1",
-            ])
-            .unwrap();
-            let mut memory: HashMap<usize, u64> = HashMap::new();
-
-            assert_eq!(v2::run_program(&instructions, &mut memory), Ok(()));
-            assert_eq!(memory.values().sum::<u64>(), 208);
-        }
+        assert_eq!(v2::run_program(&instructions, &mut memory), Ok(()));
+        assert_eq!(memory.values().sum::<u64>(), 208);
     }
 }

@@ -1,13 +1,15 @@
 extern crate rdcl_aoc_helpers;
 
 use std::env;
+use std::fs::File;
 use std::process::exit;
 
-use input_record::InputRecord;
-use rdcl_aoc_helpers::handle_result;
-use rdcl_aoc_helpers::read::read_input;
+use rdcl_aoc_helpers::error::WithOrExit;
+use rdcl_aoc_helpers::input::WithReadLines;
 
-mod input_record;
+use map_row::MapRow;
+
+mod map_row;
 
 /// https://adventofcode.com/2020/day/3
 fn main() {
@@ -18,18 +20,17 @@ fn main() {
         exit(1);
     }
 
-    let path = &args[1];
-    let values: Vec<InputRecord> = handle_result(read_input(path));
+    let rows = File::open(&args[1]).read_lines(1).collect::<Vec<MapRow>>();
 
     let mut result = 1;
     for entry in args.iter().skip(2) {
         let vec = entry
             .split(',')
-            .map(|c| handle_result(c.parse::<usize>()))
+            .map(|c| c.parse::<usize>().or_exit_with(1))
             .collect::<Vec<usize>>();
 
         if let [x, y] = &vec[..] {
-            result *= solve(&values, *x, *y);
+            result *= count_trees_in_path(&rows, *x, *y);
         } else {
             eprintln!("Invalid input: {}", entry);
             exit(1);
@@ -39,7 +40,7 @@ fn main() {
     println!("{}", result);
 }
 
-fn solve(values: &[InputRecord], step_x: usize, step_y: usize) -> u64 {
+fn count_trees_in_path(values: &[MapRow], step_x: usize, step_y: usize) -> u64 {
     let mut nr_trees = 0;
     let mut pos = 0;
 
@@ -55,13 +56,13 @@ fn solve(values: &[InputRecord], step_x: usize, step_y: usize) -> u64 {
 
 #[cfg(test)]
 mod tests {
-    use rdcl_aoc_helpers::parse::parse_input;
+    use rdcl_aoc_helpers::input::WithAsRecords;
 
     use super::*;
 
     #[test]
     fn test() {
-        let input = parse_input::<InputRecord>(vec![
+        let input = vec![
             "..##.......",
             "#...#...#..",
             ".#....#..#.",
@@ -73,13 +74,14 @@ mod tests {
             "#.##...#...",
             "#...##....#",
             ".#..#...#.#",
-        ])
+        ]
+        .as_records::<MapRow>()
         .unwrap();
 
-        assert_eq!(solve(&input, 1, 1), 2);
-        assert_eq!(solve(&input, 3, 1), 7);
-        assert_eq!(solve(&input, 5, 1), 3);
-        assert_eq!(solve(&input, 7, 1), 4);
-        assert_eq!(solve(&input, 1, 2), 2);
+        assert_eq!(count_trees_in_path(&input, 1, 1), 2);
+        assert_eq!(count_trees_in_path(&input, 3, 1), 7);
+        assert_eq!(count_trees_in_path(&input, 5, 1), 3);
+        assert_eq!(count_trees_in_path(&input, 7, 1), 4);
+        assert_eq!(count_trees_in_path(&input, 1, 2), 2);
     }
 }

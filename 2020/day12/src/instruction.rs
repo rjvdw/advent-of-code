@@ -1,6 +1,6 @@
 use std::str::FromStr;
 
-use rdcl_aoc_helpers::parse_error::ParseError;
+use rdcl_aoc_helpers::error::ParseError;
 
 use crate::coordinates::Coordinates;
 
@@ -16,12 +16,12 @@ enum Action {
 }
 
 #[derive(Debug)]
-pub struct InputRecord {
+pub struct Instruction {
     action: Action,
     value: i32,
 }
 
-impl InputRecord {
+impl Instruction {
     pub fn travel(&self, ship: Coordinates, heading: i32) -> (Coordinates, i32) {
         match self.action {
             Action::NORTH => (ship + (0, self.value), heading),
@@ -57,7 +57,7 @@ impl InputRecord {
     }
 }
 
-impl FromStr for InputRecord {
+impl FromStr for Instruction {
     type Err = ParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
@@ -78,6 +78,6 @@ impl FromStr for InputRecord {
             _ => value,
         };
 
-        Ok(InputRecord { action, value })
+        Ok(Instruction { action, value })
     }
 }

@@ -2,10 +2,11 @@ extern crate rdcl_aoc_helpers;
 
 use std::collections::{HashMap, HashSet};
 use std::env;
+use std::fs::File;
 use std::process::exit;
 
-use rdcl_aoc_helpers::handle_result;
-use rdcl_aoc_helpers::read::read_input;
+use rdcl_aoc_helpers::error::WithOrExit;
+use rdcl_aoc_helpers::input::WithReadLines;
 
 use crate::tile::Tile;
 use crate::toggleable::Toggleable;
@@ -22,8 +23,8 @@ fn main() {
         exit(1);
     }
 
-    let input_tiles = handle_result(read_input::<Tile>(&args[1]));
-    let nr_days = handle_result(args[2].parse::<u32>());
+    let input_tiles = File::open(&args[1]).read_lines(1).collect::<Vec<Tile>>();
+    let nr_days = args[2].parse::<u32>().or_exit_with(1);
 
     let mut flipped_tiles = walk(&input_tiles);
 
@@ -67,141 +68,133 @@ fn next_day(flipped_tiles: &HashSet<Tile>) -> HashSet<Tile> {
 
 #[cfg(test)]
 mod tests {
-    use rdcl_aoc_helpers::parse::parse_input;
+    use rdcl_aoc_helpers::input::WithAsRecords;
 
     use super::*;
 
-    mod part1 {
-        use super::*;
+    #[test]
+    fn test_walk() {
+        let input = get_input();
+        let expected = get_expected(&[
+            (-3, -3),
+            (-3, -2),
+            (-2, -1),
+            (-2, 0),
+            (-1, 1),
+            (0, -2),
+            (0, 0),
+            (0, 1),
+            (2, 0),
+            (3, 3),
+        ]);
 
-        #[test]
-        fn test() {
-            let input = get_input();
-            let expected = get_expected(&[
-                (-3, -3),
-                (-3, -2),
-                (-2, -1),
-                (-2, 0),
-                (-1, 1),
-                (0, -2),
-                (0, 0),
-                (0, 1),
-                (2, 0),
-                (3, 3),
-            ]);
+        let flipped = walk(&input);
 
-            let flipped = walk(&input);
-
-            assert_eq!(flipped, expected);
-        }
+        assert_eq!(flipped, expected);
     }
 
-    mod part2 {
-        use super::*;
+    #[test]
+    fn test_next_day() {
+        let input = get_input();
+        let mut flipped = walk(&input);
 
-        #[test]
-        fn test() {
-            let input = get_input();
-            let mut flipped = walk(&input);
+        // after day 1
+        flipped = next_day(&flipped);
+        assert_eq!(flipped.len(), 15);
 
-            // after day 1
+        // after day 2
+        flipped = next_day(&flipped);
+        assert_eq!(flipped.len(), 12);
+
+        // after day 3
+        flipped = next_day(&flipped);
+        assert_eq!(flipped.len(), 25);
+
+        // after day 4
+        flipped = next_day(&flipped);
+        assert_eq!(flipped.len(), 14);
+
+        // after day 5
+        flipped = next_day(&flipped);
+        assert_eq!(flipped.len(), 23);
+
+        // after day 6
+        flipped = next_day(&flipped);
+        assert_eq!(flipped.len(), 28);
+
+        // after day 7
+        flipped = next_day(&flipped);
+        assert_eq!(flipped.len(), 41);
+
+        // after day 8
+        flipped = next_day(&flipped);
+        assert_eq!(flipped.len(), 37);
+
+        // after day 9
+        flipped = next_day(&flipped);
+        assert_eq!(flipped.len(), 49);
+
+        // after day 10
+        flipped = next_day(&flipped);
+        assert_eq!(flipped.len(), 37);
+
+        // after day 20
+        for _ in 0..10 {
             flipped = next_day(&flipped);
-            assert_eq!(flipped.len(), 15);
-
-            // after day 2
-            flipped = next_day(&flipped);
-            assert_eq!(flipped.len(), 12);
-
-            // after day 3
-            flipped = next_day(&flipped);
-            assert_eq!(flipped.len(), 25);
-
-            // after day 4
-            flipped = next_day(&flipped);
-            assert_eq!(flipped.len(), 14);
-
-            // after day 5
-            flipped = next_day(&flipped);
-            assert_eq!(flipped.len(), 23);
-
-            // after day 6
-            flipped = next_day(&flipped);
-            assert_eq!(flipped.len(), 28);
-
-            // after day 7
-            flipped = next_day(&flipped);
-            assert_eq!(flipped.len(), 41);
-
-            // after day 8
-            flipped = next_day(&flipped);
-            assert_eq!(flipped.len(), 37);
-
-            // after day 9
-            flipped = next_day(&flipped);
-            assert_eq!(flipped.len(), 49);
-
-            // after day 10
-            flipped = next_day(&flipped);
-            assert_eq!(flipped.len(), 37);
-
-            // after day 20
-            for _ in 0..10 {
-                flipped = next_day(&flipped);
-            }
-            assert_eq!(flipped.len(), 132);
-
-            // after day 30
-            for _ in 0..10 {
-                flipped = next_day(&flipped);
-            }
-            assert_eq!(flipped.len(), 259);
-
-            // after day 40
-            for _ in 0..10 {
-                flipped = next_day(&flipped);
-            }
-            assert_eq!(flipped.len(), 406);
-
-            // after day 50
-            for _ in 0..10 {
-                flipped = next_day(&flipped);
-            }
-            assert_eq!(flipped.len(), 566);
-
-            // after day 60
-            for _ in 0..10 {
-                flipped = next_day(&flipped);
-            }
-            assert_eq!(flipped.len(), 788);
-
-            // after day 70
-            for _ in 0..10 {
-                flipped = next_day(&flipped);
-            }
-            assert_eq!(flipped.len(), 1106);
-
-            // after day 80
-            for _ in 0..10 {
-                flipped = next_day(&flipped);
-            }
-            assert_eq!(flipped.len(), 1373);
-
-            // after day 90
-            for _ in 0..10 {
-                flipped = next_day(&flipped);
-            }
-            assert_eq!(flipped.len(), 1844);
-
-            // after day 100
-            for _ in 0..10 {
-                flipped = next_day(&flipped);
-            }
-            assert_eq!(flipped.len(), 2208);
         }
+        assert_eq!(flipped.len(), 132);
+
+        // after day 30
+        for _ in 0..10 {
+            flipped = next_day(&flipped);
+        }
+        assert_eq!(flipped.len(), 259);
+
+        // after day 40
+        for _ in 0..10 {
+            flipped = next_day(&flipped);
+        }
+        assert_eq!(flipped.len(), 406);
+
+        // after day 50
+        for _ in 0..10 {
+            flipped = next_day(&flipped);
+        }
+        assert_eq!(flipped.len(), 566);
+
+        // after day 60
+        for _ in 0..10 {
+            flipped = next_day(&flipped);
+        }
+        assert_eq!(flipped.len(), 788);
+
+        // after day 70
+        for _ in 0..10 {
+            flipped = next_day(&flipped);
+        }
+        assert_eq!(flipped.len(), 1106);
+
+        // after day 80
+        for _ in 0..10 {
+            flipped = next_day(&flipped);
+        }
+        assert_eq!(flipped.len(), 1373);
+
+        // after day 90
+        for _ in 0..10 {
+            flipped = next_day(&flipped);
+        }
+        assert_eq!(flipped.len(), 1844);
+
+        // after day 100
+        for _ in 0..10 {
+            flipped = next_day(&flipped);
+        }
+        assert_eq!(flipped.len(), 2208);
     }
 
     fn get_input() -> Vec<Tile> {
-        parse_input(vec![
+        vec![
             "sesenwnenenewseeswwswswwnenewsewsw",
             "neeenesenwnwwswnenewnwwsewnenwseswesw",
             "seswneswswsenwwnwse",
@@ -222,7 +215,8 @@ mod tests {
             "eneswnwswnwsenenwnwnwwseeswneewsenese",
             "neswnwewnwnwseenwseesewsenwsweewe",
             "wseweeenwnesenwwwswnew",
-        ])
+        ]
+        .as_records::<Tile>()
         .unwrap()
     }
 

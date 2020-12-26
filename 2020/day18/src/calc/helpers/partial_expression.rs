@@ -1,4 +1,4 @@
-use rdcl_aoc_helpers::parse_error::ParseError;
+use rdcl_aoc_helpers::error::ParseError;
 
 pub trait PartialExpression {
     const OPEN_PAREN: char;

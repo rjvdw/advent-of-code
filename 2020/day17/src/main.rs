@@ -4,7 +4,7 @@ use std::collections::{HashMap, HashSet};
 use std::env;
 use std::process::exit;
 
-use rdcl_aoc_helpers::handle_result;
+use rdcl_aoc_helpers::error::WithOrExit;
 
 use crate::cell::Cell;
 use crate::parser::read;
@@ -21,8 +21,8 @@ fn main() {
         exit(1);
     }
 
-    let input = handle_result(read(&args[1]));
-    let steps = handle_result(args[2].parse::<usize>());
+    let input = read(&args[1]).or_exit_with(1);
+    let steps = args[2].parse::<usize>().or_exit_with(1);
 
     println!(
         "[3d] After {} steps, there are {} active cells.",
@@ -74,13 +74,13 @@ mod tests {
     use super::*;
 
     #[test]
-    fn part1() {
+    fn test_3d() {
         let input = vec![(1, 0), (2, 1), (0, 2), (1, 2), (2, 2)];
         assert_eq!(solve::<(i32, i32, i32)>(&input, 6), 112);
     }
 
     #[test]
-    fn part2() {
+    fn test_4d() {
         let input = vec![(1, 0), (2, 1), (0, 2), (1, 2), (2, 2)];
         assert_eq!(solve::<(i32, i32, i32, i32)>(&input, 6), 848);
     }

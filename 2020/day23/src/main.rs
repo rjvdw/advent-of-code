@@ -3,7 +3,7 @@ extern crate rdcl_aoc_helpers;
 use std::process::exit;
 use std::{env, iter};
 
-use rdcl_aoc_helpers::handle_result;
+use rdcl_aoc_helpers::error::WithOrExit;
 use rdcl_aoc_helpers::part::Part;
 
 const BASE: usize = 10;
@@ -20,10 +20,10 @@ fn main() {
         exit(1);
     }
 
-    let initial_labeling = handle_result(args[1].parse::<usize>());
-    let nr_moves = handle_result(args[2].replace('_', "").parse::<usize>());
-    let nr_cups = handle_result(args[3].replace('_', "").parse::<usize>());
-    let part = handle_result(args[4].parse::<Part>());
+    let initial_labeling = args[1].parse::<usize>().or_exit_with(1);
+    let nr_moves = args[2].replace('_', "").parse::<usize>().or_exit_with(1);
+    let nr_cups = args[3].replace('_', "").parse::<usize>().or_exit_with(1);
+    let part = args[4].parse::<Part>().or_exit_with(1);
 
     if initial_labeling == 0 {
         eprintln!("I cannot play without cups!");

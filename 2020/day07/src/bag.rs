@@ -1,17 +1,17 @@
 use std::collections::HashMap;
 use std::str::FromStr;
 
-use rdcl_aoc_helpers::parse_error::ParseError;
+use rdcl_aoc_helpers::error::ParseError;
 
 const INPUT_SEPARATOR: &str = " bags contain";
 
 #[derive(Debug)]
-pub struct InputRecord {
+pub struct Bag {
     pub color: String,
     pub contains: HashMap<String, u32>,
 }
 
-impl FromStr for InputRecord {
+impl FromStr for Bag {
     type Err = ParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
@@ -43,7 +43,7 @@ impl FromStr for InputRecord {
                     }
                 }
 
-                Ok(InputRecord { color, contains })
+                Ok(Bag { color, contains })
             }
             None => error(),
         }
@@ -52,13 +52,13 @@ impl FromStr for InputRecord {
 
 #[cfg(test)]
 mod tests {
-    use rdcl_aoc_helpers::parse::parse_input;
+    use rdcl_aoc_helpers::input::WithAsRecords;
 
     use super::*;
 
     #[test]
     fn test() {
-        let values = parse_input::<InputRecord>(vec![
+        let values = vec![
             "light red bags contain 1 bright white bag, 2 muted yellow bags.",
             "dark orange bags contain 3 bright white bags, 4 muted yellow bags.",
             "bright white bags contain 1 shiny gold bag.",
@@ -68,7 +68,8 @@ mod tests {
             "vibrant plum bags contain 5 faded blue bags, 6 dotted black bags.",
             "faded blue bags contain no other bags.",
             "dotted black bags contain no other bags.",
-        ])
+        ]
+        .as_records::<Bag>()
         .unwrap();
 
         assert_eq!(values[0].color, "light red");
