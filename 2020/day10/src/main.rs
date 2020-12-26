@@ -1,20 +1,14 @@
 extern crate rdcl_aoc_helpers;
 
-use std::env;
 use std::fs::File;
-use std::process::exit;
 
+use rdcl_aoc_helpers::args::get_args;
 use rdcl_aoc_helpers::error::WithOrExit;
 use rdcl_aoc_helpers::input::WithReadLines;
 
 /// https://adventofcode.com/2020/day/10
 fn main() {
-    let args: Vec<String> = env::args().collect();
-
-    if args.len() != 3 {
-        eprintln!("Usage: {} <input file> <max jolt difference>", &args[0]);
-        exit(1);
-    }
+    let args = get_args(&["<input file>", "<max jolt difference>"], 1);
 
     let joltage_ratings = File::open(&args[1]).read_lines(1).collect::<Vec<u32>>();
     let max_jolt_difference = args[2].parse::<u32>().or_exit_with(1);
@@ -96,7 +90,7 @@ mod tests {
             assert_eq!(
                 calculate_nr_of_min_jolt_differences_times_nr_of_max_jolt_differences(
                     &joltage_ratings,
-                    3
+                    3,
                 ),
                 Some(35)
             );
@@ -112,7 +106,7 @@ mod tests {
             assert_eq!(
                 calculate_nr_of_min_jolt_differences_times_nr_of_max_jolt_differences(
                     &joltage_ratings,
-                    3
+                    3,
                 ),
                 Some(220)
             );
@@ -125,7 +119,7 @@ mod tests {
             assert_eq!(
                 calculate_nr_of_min_jolt_differences_times_nr_of_max_jolt_differences(
                     &joltage_ratings,
-                    3
+                    3,
                 ),
                 Some(0)
             );
@@ -138,7 +132,7 @@ mod tests {
             assert_eq!(
                 calculate_nr_of_min_jolt_differences_times_nr_of_max_jolt_differences(
                     &joltage_ratings,
-                    3
+                    3,
                 ),
                 None
             );

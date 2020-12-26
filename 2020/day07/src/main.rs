@@ -1,10 +1,9 @@
 extern crate rdcl_aoc_helpers;
 
 use std::collections::{HashMap, HashSet};
-use std::env;
 use std::fs::File;
-use std::process::exit;
 
+use rdcl_aoc_helpers::args::get_args;
 use rdcl_aoc_helpers::input::WithReadLines;
 
 use bag::Bag;
@@ -13,12 +12,7 @@ mod bag;
 
 /// https://adventofcode.com/2020/day/7
 fn main() {
-    let args: Vec<String> = env::args().collect();
-
-    if args.len() != 3 {
-        eprintln!("Usage: {} <input file> <color>", &args[0]);
-        exit(1);
-    }
+    let args = get_args(&["<input file>", "<color>"], 1);
 
     let bags = File::open(&args[1]).read_lines(1).collect::<Vec<Bag>>();
     let color = &args[2];

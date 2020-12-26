@@ -1,20 +1,13 @@
 extern crate rdcl_aoc_helpers;
 
-use std::env;
-use std::process::exit;
-
+use rdcl_aoc_helpers::args::get_args_repeating;
 use rdcl_aoc_helpers::error::WithOrExit;
 
 const SEEN_SIZE: usize = 100_000_000;
 
 /// https://adventofcode.com/2020/day/15
 fn main() {
-    let args: Vec<String> = env::args().collect();
-
-    if args.len() < 2 {
-        eprintln!("Usage: {} <index> ...<inputs>", &args[0]);
-        exit(1);
-    }
+    let args = get_args_repeating(&["<index>", "...<inputs>"], 1);
 
     let mut args = args
         .iter()

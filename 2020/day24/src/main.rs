@@ -1,10 +1,9 @@
 extern crate rdcl_aoc_helpers;
 
 use std::collections::{HashMap, HashSet};
-use std::env;
 use std::fs::File;
-use std::process::exit;
 
+use rdcl_aoc_helpers::args::get_args;
 use rdcl_aoc_helpers::error::WithOrExit;
 use rdcl_aoc_helpers::input::WithReadLines;
 
@@ -16,12 +15,7 @@ mod toggleable;
 
 /// https://adventofcode.com/2020/day/24
 fn main() {
-    let args: Vec<String> = env::args().collect();
-
-    if args.len() < 3 {
-        eprintln!("Usage: {} <input file> <nr days>", &args[0]);
-        exit(1);
-    }
+    let args = get_args(&["<input file>", "<nr days>"], 1);
 
     let input_tiles = File::open(&args[1]).read_lines(1).collect::<Vec<Tile>>();
     let nr_days = args[2].parse::<u32>().or_exit_with(1);

@@ -1,8 +1,9 @@
 extern crate rdcl_aoc_helpers;
 
+use std::iter;
 use std::process::exit;
-use std::{env, iter};
 
+use rdcl_aoc_helpers::args::get_args;
 use rdcl_aoc_helpers::error::WithOrExit;
 use rdcl_aoc_helpers::part::Part;
 
@@ -10,15 +11,7 @@ const BASE: usize = 10;
 
 /// https://adventofcode.com/2020/day/23
 fn main() {
-    let args: Vec<String> = env::args().collect();
-
-    if args.len() < 5 {
-        eprintln!(
-            "Usage: {} <cups> <nr moves> <nr cups> <part1|part2>",
-            &args[0]
-        );
-        exit(1);
-    }
+    let args = get_args(&["<cups>", "<nr moves>", "<nr cups>", "<part1|part2>"], 1);
 
     let initial_labeling = args[1].parse::<usize>().or_exit_with(1);
     let nr_moves = args[2].replace('_', "").parse::<usize>().or_exit_with(1);

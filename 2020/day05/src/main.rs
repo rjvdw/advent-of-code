@@ -1,9 +1,9 @@
 extern crate rdcl_aoc_helpers;
 
-use std::env;
 use std::fs::File;
 use std::process::exit;
 
+use rdcl_aoc_helpers::args::get_args;
 use rdcl_aoc_helpers::input::WithReadLines;
 
 use boarding_pass::BoardingPass;
@@ -12,12 +12,7 @@ mod boarding_pass;
 
 /// https://adventofcode.com/2020/day/5
 fn main() {
-    let args: Vec<String> = env::args().collect();
-
-    if args.len() != 2 {
-        eprintln!("Usage: {} <input file>", &args[0]);
-        exit(1);
-    }
+    let args = get_args(&["<input file>"], 1);
 
     let mut seat_ids = File::open(&args[1])
         .read_lines::<BoardingPass>(1)

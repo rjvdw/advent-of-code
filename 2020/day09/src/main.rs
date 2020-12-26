@@ -2,21 +2,15 @@ extern crate rdcl_aoc_helpers;
 
 use std::cmp::Ordering;
 use std::collections::VecDeque;
-use std::env;
 use std::fs::File;
-use std::process::exit;
 
+use rdcl_aoc_helpers::args::get_args;
 use rdcl_aoc_helpers::error::WithOrExit;
 use rdcl_aoc_helpers::input::WithReadLines;
 
 /// https://adventofcode.com/2020/day/9
 fn main() {
-    let args: Vec<String> = env::args().collect();
-
-    if args.len() != 3 {
-        eprintln!("Usage: {} <input file> <preamble size>", &args[0]);
-        exit(1);
-    }
+    let args = get_args(&["<input file>", "<preamble size>"], 1);
 
     let numbers = File::open(&args[1]).read_lines(1).collect::<Vec<u64>>();
     let preamble_size = args[2].parse::<usize>().or_exit_with(1);

@@ -1,9 +1,9 @@
 extern crate rdcl_aoc_helpers;
 
-use std::env;
 use std::fs::File;
 use std::process::exit;
 
+use rdcl_aoc_helpers::args::get_args;
 use rdcl_aoc_helpers::error::WithOrExit;
 use rdcl_aoc_helpers::input::WithReadMultiLines;
 
@@ -16,15 +16,7 @@ mod test_helpers;
 
 /// https://adventofcode.com/2020/day/11
 fn main() {
-    let args: Vec<String> = env::args().collect();
-
-    if args.len() != 4 {
-        eprintln!(
-            "Usage: {} <input file> <view distance>, <seat threshold>",
-            &args[0]
-        );
-        exit(1);
-    }
+    let args = get_args(&["<input file>", "<view distance>", "<seat threshold>"], 1);
 
     let mut input = File::open(&args[1]).read_multi_lines::<SeatLayout>(1);
     let view_distance = args[2].parse::<usize>().or_exit_with(1);

@@ -1,10 +1,9 @@
 extern crate rdcl_aoc_helpers;
 
 use std::collections::HashMap;
-use std::env;
 use std::fs::File;
-use std::process::exit;
 
+use rdcl_aoc_helpers::args::get_args;
 use rdcl_aoc_helpers::error::WithOrExit;
 use rdcl_aoc_helpers::input::WithReadMultiLines;
 
@@ -14,12 +13,7 @@ mod puzzle_input;
 
 /// https://adventofcode.com/2020/day/16
 fn main() {
-    let args: Vec<String> = env::args().collect();
-
-    if args.len() < 2 {
-        eprintln!("Usage: {} <input file>", &args[0]);
-        exit(1);
-    }
+    let args = get_args(&["<input file>"], 1);
 
     let mut input = File::open(&args[1])
         .read_multi_lines::<PuzzleInput>(1)

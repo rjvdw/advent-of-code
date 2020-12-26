@@ -199,9 +199,9 @@ checksum = "0ee1c47aaa256ecabcaea351eae4a9b01ef39ed810004e298d2511ed284b1525"
 
 [[package]]
 name = "rdcl_aoc_helpers"
-version = "0.2.1"
+version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "78f665d7e7d8619d4f45f405d4b7792684b70366242847c0d6ca19132d66a7b2"
+checksum = "91fb4e4eadbc1b40980b84f004c096f7761215b1b32c127980e8e462996b8541"
 
 [[package]]
 name = "regex"

@@ -1,11 +1,10 @@
 extern crate rdcl_aoc_helpers;
 
 use std::collections::HashMap;
-use std::env;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
-use std::process::exit;
 
+use rdcl_aoc_helpers::args::get_args;
 use rdcl_aoc_helpers::error::ParseError;
 
 use crate::rule::Rule;
@@ -16,12 +15,7 @@ mod splittable_and_parsable;
 
 /// https://adventofcode.com/2020/day/19
 fn main() {
-    let args: Vec<String> = env::args().collect();
-
-    if args.len() < 2 {
-        eprintln!("Usage: {} <input file>", &args[0]);
-        exit(1);
-    }
+    let args = get_args(&["<input file>"], 1);
 
     match read(&args[1]) {
         Ok(result) => println!("The result is: {}", result),
