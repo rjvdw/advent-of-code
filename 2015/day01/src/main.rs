@@ -8,7 +8,7 @@ fn main() {
 
     let input = File::open(&args[1]).read_lines::<String>(1).next().unwrap();
 
-    println!("Santa ends up on floor {}", floor_count(&input));
+    println!("Santa ends up on floor {}.", floor_count(&input));
     match find_first_basement_position(&input) {
         Some(pos) => println!(
             "The first position that leads Santa into the basement is {}.",
