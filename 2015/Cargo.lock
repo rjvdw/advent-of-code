@@ -84,6 +84,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "day09"
+version = "0.1.0"
+dependencies = [
+ "rdcl_aoc_helpers",
+]
+
+[[package]]
 name = "fancy-regex"
 version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"

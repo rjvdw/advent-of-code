@@ -8,6 +8,7 @@ My answers for the 2015 [Advent of Code](https://adventofcode.com/2015).
 
 * For day 4, it might be smarter to compute the MD5 hash myself. Need to investigate...
 * Day 6 could use some additional unit tests. Also, it's a bit slow.
+* Day 9 could be made a bit faster by computing the shortest and the longest path in one go. Or maybe just by using memoization.
 
 
 [workflows-CI-badge]: https://github.com/rjvdw/advent-of-code/workflows/CI%202015/badge.svg
