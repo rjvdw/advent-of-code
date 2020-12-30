@@ -10,6 +10,7 @@ My answers for the 2015 [Advent of Code](https://adventofcode.com/2015).
 * Day 6 could use some additional unit tests. Also, it's a bit slow.
 * Day 9 could be made a bit faster by computing the shortest and the longest path in one go. Or maybe just by using memoization.
 * There might be a more memory efficient implementation for the grid from day 18 than a `Vec<bool>`.
+* For day 24, I should verify if the grouping that is found for part 2 is actually valid (i.e. that the remaining packages can be split up in three equal groups).
 
 
 [workflows-CI-badge]: https://github.com/rjvdw/advent-of-code/workflows/CI%202015/badge.svg
