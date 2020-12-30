@@ -58,6 +58,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "day09"
+version = "0.1.0"
+dependencies = [
+ "rdcl_aoc_helpers",
+]
+
+[[package]]
 name = "fuchsia-cprng"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
