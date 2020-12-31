@@ -2,11 +2,9 @@ extern crate rdcl_aoc_helpers;
 
 use rdcl_aoc_helpers::args::get_args;
 use rdcl_aoc_helpers::error::WithOrExit;
-
-use crate::math::solve_crt;
+use rdcl_aoc_helpers::math::solve_crt;
 
 mod input_parser;
-mod math;
 
 /// https://adventofcode.com/2020/day/13
 fn main() {
