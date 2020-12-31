@@ -1,0 +1,10 @@
+[package]
+name = "day21"
+version = "0.1.0"
+authors = ["Ruud van der Weide <rj@rdcl.dev>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+rdcl_aoc_helpers = "0.2.6"
