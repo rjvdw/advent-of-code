@@ -79,8 +79,10 @@ impl FromStr for Ingredient {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         if let Some(idx) = s.find(':') {
-            let mut ingredient = Ingredient::default();
-            ingredient.name = s[..idx].to_string();
+            let mut ingredient = Ingredient {
+                name: s[..idx].to_string(),
+                ..Default::default()
+            };
             for property in s[idx + 2..].split(", ") {
                 if let Some(idx) = property.find(' ') {
                     let value = property[idx + 1..].parse::<i32>()?;
