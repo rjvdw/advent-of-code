@@ -1,3 +1,4 @@
+use std::char::ParseCharError;
 use std::fmt;
 use std::process::exit;
 
@@ -57,6 +58,12 @@ impl From<std::io::Error> for ParseError {
 
 impl From<std::num::ParseIntError> for ParseError {
     fn from(err: std::num::ParseIntError) -> Self {
+        ParseError(format!("{:?}", err))
+    }
+}
+
+impl From<std::char::ParseCharError> for ParseError {
+    fn from(err: ParseCharError) -> Self {
         ParseError(format!("{:?}", err))
     }
 }
