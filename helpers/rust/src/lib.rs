@@ -7,5 +7,8 @@ pub mod error;
 /// I/O operations.
 pub mod input;
 
-/// Parts;
+/// Math.
+pub mod math;
+
+/// Parts.
 pub mod part;

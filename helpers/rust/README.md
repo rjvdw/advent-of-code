@@ -191,6 +191,70 @@ mod tests {
 }
 ```
 
+## Math
+
+### `math::gcd`
+
+Computes the greatest common divisor of two numbers.
+
+#### Example
+
+```rust
+use rdcl_aoc_helpers::math::gcd;
+
+fn main() {
+    let a = 35;
+    let b = 49;
+    println!("gcd({}, {}) = {}", a, b, gcd(a, b));
+}
+```
+
+### `math::lcm`
+
+Computes the least common multiple of two numbers.
+
+#### Example
+
+```rust
+use rdcl_aoc_helpers::math::lcm;
+
+fn main() {
+    let a = 35;
+    let b = 49;
+    println!("lcm({}, {}) = {}", a, b, lcm(a, b));
+}
+```
+
+### `math::solve_crt`
+
+Solve the chinese remainder theorem for (n1, a1) and (n2, a2). We assume that:
+* n1 and n2 are coprime
+* n1 and n2 are no more than 63 bits (as they are converted to i64)
+
+#### Example
+
+```rust
+use rdcl_aoc_helpers::math::solve_crt;
+
+fn main() {
+    println!("solve_crt((3, 1), (5, 4)) = {}", solve_crt((3, 1), (5, 4)));
+}
+```
+
+### `math::bezout_coefficients`
+
+Find t and s, such that ta + sb = gcd(p, q).
+
+#### Example
+
+```rust
+use rdcl_aoc_helpers::math::bezout_coefficients;
+
+fn main() {
+    println!("bezout_coefficients(3, 4) = {}", bezout_coefficients(3, 4));
+}
+```
+
 ## Parts
 
 ### `part::Part`
