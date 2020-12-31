@@ -7,6 +7,7 @@ My answers for the 2016 [Advent of Code](https://adventofcode.com/2016).
 ## To Do
 
 * I feel the solution to day 11 could probably be optimized further. See [this reddit post][day-11-spoilers-1] for some ideas.
+* Both day 5 and day 14 require you to compute a lot of MD5 hashes. Surely there must be a faster way to do this... Also, some tests for these days have been disabled, because they run very slow unless you specify `--release`. Probably need to do something with cargo profiles to fix this.
 
 
 [workflows-CI-badge]: https://github.com/rjvdw/advent-of-code/workflows/CI%202016/badge.svg
