@@ -1,13 +1,11 @@
 use std::collections::HashMap;
-use std::convert::TryFrom;
 use std::fs::File;
 
 use rdcl_aoc_helpers::args::get_args;
 use rdcl_aoc_helpers::input::WithReadLines;
 
-use crate::instruction::Instruction;
-
-mod instruction;
+use shared::instruction::Instruction;
+use shared::program::execute;
 
 fn main() {
     let args = get_args(&["<input file>"], 1);
@@ -29,20 +27,6 @@ fn main() {
         "If we first set register c to 1, then the value at register a is: {}",
         registers.get(&'a').unwrap_or(&0)
     );
-}
-
-fn execute(instructions: &[Instruction], registers: &mut HashMap<char, i32>) {
-    let mut idx = 0;
-    while let Some(instruction) = safe_get(instructions, idx) {
-        idx += instruction.run(registers);
-    }
-}
-
-fn safe_get(instructions: &[Instruction], idx: i32) -> Option<&Instruction> {
-    match usize::try_from(idx) {
-        Ok(idx) => instructions.get(idx),
-        _ => None,
-    }
 }
 
 #[cfg(test)]

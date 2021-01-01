@@ -8,3 +8,4 @@ edition = "2018"
 
 [dependencies]
 rdcl_aoc_helpers = "0.2.4"
+shared = { path = "../shared" }
