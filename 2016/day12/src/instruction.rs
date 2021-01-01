@@ -9,6 +9,15 @@ pub enum Value {
     Register(char),
 }
 
+impl Value {
+    fn get_value(&self, registers: &HashMap<char, i32>) -> i32 {
+        match self {
+            Value::Raw(v) => *v,
+            Value::Register(reg) => *registers.get(reg).unwrap_or(&0),
+        }
+    }
+}
+
 impl FromStr for Value {
     type Err = ParseError;
 
@@ -29,18 +38,14 @@ pub enum Instruction {
     Copy(Value, char),
     Increment(char),
     Decrement(char),
-    JumpNotZero(Value, i32),
+    JumpNotZero(Value, Value),
 }
 
 impl Instruction {
     pub fn run(&self, registers: &mut HashMap<char, i32>) -> i32 {
         match self {
-            Instruction::Copy(Value::Raw(v), reg) => {
-                registers.insert(*reg, *v);
-                1
-            }
-            Instruction::Copy(Value::Register(reg_from), reg_to) => {
-                registers.insert(*reg_to, *registers.get(reg_from).unwrap_or(&0));
+            Instruction::Copy(v, reg) => {
+                registers.insert(*reg, v.get_value(registers));
                 1
             }
             Instruction::Increment(reg) => {
@@ -51,18 +56,11 @@ impl Instruction {
                 *registers.entry(*reg).or_insert(0) -= 1;
                 1
             }
-            Instruction::JumpNotZero(Value::Raw(v), offset) => {
-                if *v == 0 {
+            Instruction::JumpNotZero(v, offset) => {
+                if v.get_value(registers) == 0 {
                     1
                 } else {
-                    *offset
-                }
-            }
-            Instruction::JumpNotZero(Value::Register(reg), offset) => {
-                if *registers.get(reg).unwrap_or(&0) == 0 {
-                    1
-                } else {
-                    *offset
+                    offset.get_value(registers)
                 }
             }
         }
