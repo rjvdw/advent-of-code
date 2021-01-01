@@ -4,6 +4,8 @@ use std::str::{FromStr, SplitWhitespace};
 
 use rdcl_aoc_helpers::error::ParseError;
 
+use crate::output_receiver::OutputReceiver;
+
 #[derive(Debug, Clone)]
 pub enum Value {
     Raw(i32),
@@ -50,10 +52,14 @@ pub enum Instruction {
     Decrement(char),
     JumpNotZero(Value, Value),
     Toggle(Value),
+    Out(Value),
 }
 
 impl Instruction {
-    pub fn run(&self, registers: &mut HashMap<char, i32>) -> i32 {
+    pub fn run<T>(&self, registers: &mut HashMap<char, i32>, output_receiver: &mut T) -> i32
+    where
+        T: OutputReceiver,
+    {
         match self {
             Instruction::Copy(v, reg) => {
                 registers.insert(*reg, v.get_value(registers));
@@ -75,6 +81,13 @@ impl Instruction {
                 }
             }
             Instruction::Toggle(offset) => offset.get_value(registers),
+            Instruction::Out(signal) => {
+                if output_receiver.receive(signal.get_value(registers), registers) {
+                    i32::MIN // abort
+                } else {
+                    1
+                }
+            }
         }
     }
 }
@@ -87,6 +100,7 @@ impl fmt::Display for Instruction {
             Instruction::Decrement(a) => write!(f, "dec {}", a),
             Instruction::JumpNotZero(a, b) => write!(f, "jnz {} {}", a, b),
             Instruction::Toggle(a) => write!(f, "tgl {}", a),
+            Instruction::Out(a) => write!(f, "out {}", a),
         }
     }
 }
@@ -129,6 +143,8 @@ impl FromStr for Instruction {
             Ok(Instruction::JumpNotZero(value1, value2))
         } else if let Some(r) = s.strip_prefix("tgl ") {
             Ok(Instruction::Toggle(r.parse()?))
+        } else if let Some(r) = s.strip_prefix("out ") {
+            Ok(Instruction::Out(r.parse()?))
         } else {
             error(s, "Unrecognized operation")
         }

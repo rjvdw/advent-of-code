@@ -2,8 +2,15 @@ use std::collections::HashMap;
 use std::convert::TryFrom;
 
 use crate::instruction::{Instruction, Value};
+use crate::output_receiver::OutputReceiver;
 
-pub fn execute(instructions: &[Instruction], registers: &mut HashMap<char, i32>) {
+pub fn execute<T>(
+    instructions: &[Instruction],
+    registers: &mut HashMap<char, i32>,
+    output_receiver: &mut T,
+) where
+    T: OutputReceiver,
+{
     let mut instructions = instructions.to_vec();
     let mut idx = 0;
     while let Some(instruction) = safe_get(&instructions, idx) {
@@ -12,7 +19,7 @@ pub fn execute(instructions: &[Instruction], registers: &mut HashMap<char, i32>)
         } else {
             match instruction {
                 Instruction::Toggle(_) => {
-                    let target_idx = idx + instruction.run(registers);
+                    let target_idx = idx + instruction.run(registers, output_receiver);
                     let target_idx_opt = match usize::try_from(target_idx) {
                         Ok(idx) => Some(idx),
                         Err(_) => None,
@@ -46,7 +53,7 @@ pub fn execute(instructions: &[Instruction], registers: &mut HashMap<char, i32>)
                     idx += 1;
                 }
                 _ => {
-                    idx += instruction.run(registers);
+                    idx += instruction.run(registers, output_receiver);
                 }
             }
         }

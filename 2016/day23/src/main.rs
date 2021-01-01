@@ -6,6 +6,7 @@ use rdcl_aoc_helpers::error::WithOrExit;
 use rdcl_aoc_helpers::input::WithReadLines;
 
 use shared::instruction::Instruction;
+use shared::output_receiver::NoopOutputReceiver;
 use shared::program::execute;
 
 fn main() {
@@ -18,7 +19,7 @@ fn main() {
 
     let mut registers = HashMap::new();
     registers.insert('a', plain_eggs);
-    execute(&instructions, &mut registers);
+    execute(&instructions, &mut registers, &mut NoopOutputReceiver);
     println!(
         "Starting with {}, the value at register a is: {}",
         plain_eggs,
@@ -27,7 +28,7 @@ fn main() {
 
     let mut registers = HashMap::new();
     registers.insert('a', colored_eggs);
-    execute(&instructions, &mut registers);
+    execute(&instructions, &mut registers, &mut NoopOutputReceiver);
     println!(
         "Starting with {}, the value at register a is: {}",
         colored_eggs,
@@ -51,7 +52,7 @@ mod tests {
 
         let mut registers = HashMap::new();
         registers.insert('a', 7);
-        execute(&instructions, &mut registers);
+        execute(&instructions, &mut registers, &mut NoopOutputReceiver);
 
         assert_eq!(*registers.get(&'a').unwrap_or(&0), 3);
     }
