@@ -37,14 +37,8 @@ fn next_row(row: u128, bit_mask: u128) -> u128 {
     ((row << 1) ^ (row >> 1)) & bit_mask
 }
 
-fn count_safe_tiles(row: u128, bit_mask: u128) -> u128 {
-    let mut count = 0;
-    let mut reg = row ^ bit_mask;
-    while reg > 0 {
-        count += reg % 2;
-        reg >>= 1;
-    }
-    count
+fn count_safe_tiles(row: u128, bit_mask: u128) -> u32 {
+    (row ^ bit_mask).count_ones()
 }
 
 fn parse_input(path: &str) -> Result<(u128, u128), ParseError> {
