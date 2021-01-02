@@ -45,7 +45,8 @@ pub trait Navigable {
                     point = p;
                     path.push(p.clone());
                 }
-                return Some(path.iter().rev().cloned().collect());
+                path.reverse();
+                return Some(path);
             }
 
             open_set.remove(current);
