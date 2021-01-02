@@ -1,6 +1,9 @@
 /// Processing of command line arguments.
 pub mod args;
 
+/// Bit-related operations.
+pub mod bit;
+
 /// Error handling.
 pub mod error;
 
