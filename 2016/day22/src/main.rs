@@ -1,12 +1,14 @@
-use std::collections::{HashMap, HashSet};
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 
 use rdcl_aoc_helpers::args::get_args;
 use rdcl_aoc_helpers::error::{ParseError, WithOrExit};
+use rdcl_aoc_helpers::search::Navigable;
 
+use crate::grid::Grid;
 use crate::node::Node;
 
+mod grid;
 mod node;
 
 fn main() {
@@ -43,93 +45,10 @@ fn find_path(nodes: &[Node]) -> Option<usize> {
     // "blockades" in the way. However, due to assumption #3, we can simply compute the number of
     // moves in the second step, which is 5 * (width - 1).
 
-    let mut width = 0; // placeholder
-    let mut start = nodes.get(0).unwrap(); // placeholder
-    let mut target = start; // placeholder
-
-    for node in nodes {
-        let (x, y) = node.get_xy();
-        if node.is_empty() {
-            start = node;
-        }
-        if y == 0 && x + 1 > width {
-            width = x + 1;
-            target = node;
-        }
-    }
-
-    find_shortest_path(nodes, start, target).map(|v| v + 5 * (width - 2))
-}
-
-/// Find the shortest path using [A*](https://en.wikipedia.org/wiki/A*_search_algorithm).
-fn find_shortest_path(nodes: &[Node], start: &Node, target: &Node) -> Option<usize> {
-    let mut nodes_map: HashMap<(usize, usize), Node> = HashMap::new();
-    for node in nodes {
-        nodes_map.insert(node.get_xy(), node.clone());
-    }
-
-    let mut open_set: HashSet<Node> = HashSet::new();
-    open_set.insert(start.clone());
-
-    let mut came_from: HashMap<Node, Node> = HashMap::new();
-
-    let mut g_score: HashMap<Node, usize> = HashMap::new();
-    g_score.insert(start.clone(), 0);
-
-    let mut f_score: HashMap<Node, usize> = HashMap::new();
-    f_score.insert(start.clone(), start.distance(target));
-
-    while !open_set.is_empty() {
-        let current = open_set
-            .iter()
-            .min_by_key(|node| f_score.get(node).unwrap_or(&usize::MAX))
-            .cloned()
-            .unwrap();
-
-        if current.eq(target) {
-            let mut node = current;
-            let mut distance = 0;
-            while let Some(n) = came_from.get(&node) {
-                node = n.clone();
-                distance += 1;
-            }
-            return Some(distance);
-        }
-
-        open_set.remove(&current);
-
-        for neighbour in get_neighbours(&nodes_map, start, &current) {
-            let score = *g_score.get(&current).unwrap_or(&usize::MAX) + 1;
-            if score < *g_score.get(&neighbour).unwrap_or(&usize::MAX) {
-                came_from.insert(neighbour.clone(), current.clone());
-                g_score.insert(neighbour.clone(), score);
-                f_score.insert(neighbour.clone(), score + neighbour.distance(target));
-                open_set.insert(neighbour.clone());
-            }
-        }
-    }
-
-    None
-}
-
-fn get_neighbours(nodes: &HashMap<(usize, usize), Node>, start: &Node, node: &Node) -> Vec<Node> {
-    let (x, y) = node.get_xy();
-    let mut neighbours: Vec<(usize, usize)> = vec![(x + 1, y), (x, y + 1)];
-    if x > 0 {
-        neighbours.push((x - 1, y))
-    }
-    if y > 0 {
-        neighbours.push((x, y - 1))
-    }
-
-    neighbours
-        .iter()
-        .map(|xy| nodes.get(xy))
-        .filter(|node_opt| node_opt.is_some())
-        .map(|node_opt| node_opt.unwrap())
-        .filter(|node1| node1.fits_on(start))
-        .cloned()
-        .collect()
+    let grid = Grid::new(nodes);
+    grid.find_shortest_path(&grid.start, &grid.target)
+        .map(|p| p.len() - 1)
+        .map(|v| v + 5 * (grid.width - 2))
 }
 
 fn find_viable_pairs(nodes: &[Node]) -> Vec<(Node, Node)> {

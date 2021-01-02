@@ -11,7 +11,6 @@ My answers for the 2016 [Advent of Code](https://adventofcode.com/2016).
 * For day 21 I had to do some hardcoding, to get the reverse of the "rotate based on" instruction. I am not sure if this can be done without doing this, as this operation cannot be reversed if the input has a length of greater than 8.
 * For day 22, I feel that the solution is not yet completely robust. Specifically, the second `filter` in `get_neighbours` feels like it could fail in specific edge cases.
 * For day 24, I feel that there are some heuristics that can be applied on the `flood_fill` method. Right now I am doing an exhaustive search, but I think some branches can be ignored.
-* I should really move the implementation of A* to the rust helpers...
 
 
 [workflows-CI-badge]: https://github.com/rjvdw/advent-of-code/workflows/CI%202016/badge.svg
