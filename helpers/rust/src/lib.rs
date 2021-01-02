@@ -12,3 +12,6 @@ pub mod math;
 
 /// Parts.
 pub mod part;
+
+/// Searching algorithms.
+pub mod search;
