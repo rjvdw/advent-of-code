@@ -276,8 +276,15 @@ fn main() {
 }
 ```
 
+## Search
+
+### `search::Navigable`
+
+Implement this trait to be able to use [A*] to find the shortest path between two points.
+
 
 [aoc]: https://adventofcode.com
+[A*]: https://en.wikipedia.org/wiki/A*_search_algorithm
 [Result]: https://doc.rust-lang.org/std/result/enum.Result.html
 [Option]: https://doc.rust-lang.org/std/option/enum.Option.html
 [fmt::Debug]: https://doc.rust-lang.org/std/fmt/trait.Debug.html
