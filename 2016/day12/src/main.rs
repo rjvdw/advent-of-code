@@ -1,12 +1,12 @@
-use std::collections::HashMap;
 use std::fs::File;
 
 use rdcl_aoc_helpers::args::get_args;
 use rdcl_aoc_helpers::input::WithReadLines;
+use rdcl_aoc_helpers::machine::register::MachineRegister;
+use rdcl_aoc_helpers::machine::Machine;
 
 use shared::instruction::Instruction;
-use shared::output_receiver::NoopOutputReceiver;
-use shared::program::execute;
+use shared::program::Hook;
 
 fn main() {
     let args = get_args(&["<input file>"], 1);
@@ -14,19 +14,16 @@ fn main() {
         .read_lines(1)
         .collect::<Vec<Instruction>>();
 
-    let mut registers = HashMap::new();
-    execute(&instructions, &mut registers, &mut NoopOutputReceiver);
-    println!(
-        "The value at register a is: {}",
-        registers.get(&'a').unwrap_or(&0)
-    );
+    let mut machine = Machine::new_simple_machine(&instructions);
+    machine.run(&mut Hook);
+    println!("The value at register a is: {}", machine.register.read('a'));
 
-    let mut registers = HashMap::new();
-    registers.insert('c', 1);
-    execute(&instructions, &mut registers, &mut NoopOutputReceiver);
+    let mut machine = Machine::new_simple_machine(&instructions);
+    machine.register.write('c', 1);
+    machine.run(&mut Hook);
     println!(
         "If we first set register c to 1, then the value at register a is: {}",
-        registers.get(&'a').unwrap_or(&0)
+        machine.register.read('a')
     );
 }
 
@@ -42,9 +39,9 @@ mod tests {
             .as_records::<Instruction>()
             .unwrap();
 
-        let mut registers = HashMap::new();
-        execute(&instructions, &mut registers, &mut NoopOutputReceiver);
+        let mut machine = Machine::new_simple_machine(&instructions);
+        machine.run(&mut Hook);
 
-        assert_eq!(*registers.get(&'a').unwrap_or(&0), 42);
+        assert_eq!(machine.register.read('a'), 42);
     }
 }

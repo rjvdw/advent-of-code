@@ -1,13 +1,13 @@
-use std::collections::HashMap;
 use std::fs::File;
 
 use rdcl_aoc_helpers::args::get_args;
 use rdcl_aoc_helpers::error::WithOrExit;
 use rdcl_aoc_helpers::input::WithReadLines;
+use rdcl_aoc_helpers::machine::register::MachineRegister;
+use rdcl_aoc_helpers::machine::Machine;
 
 use shared::instruction::Instruction;
-use shared::output_receiver::NoopOutputReceiver;
-use shared::program::execute;
+use shared::program::Hook;
 
 fn main() {
     let args = get_args(&["<input file>", "<plain eggs>", "<colored eggs>"], 1);
@@ -17,22 +17,22 @@ fn main() {
     let plain_eggs = args[2].parse().or_exit_with(1);
     let colored_eggs = args[3].parse().or_exit_with(1);
 
-    let mut registers = HashMap::new();
-    registers.insert('a', plain_eggs);
-    execute(&instructions, &mut registers, &mut NoopOutputReceiver);
+    let mut machine = Machine::new_simple_machine(&instructions);
+    machine.register.write('a', plain_eggs);
+    machine.run(&mut Hook);
     println!(
         "Starting with {}, the value at register a is: {}",
         plain_eggs,
-        registers.get(&'a').unwrap_or(&0)
+        machine.register.read('a')
     );
 
-    let mut registers = HashMap::new();
-    registers.insert('a', colored_eggs);
-    execute(&instructions, &mut registers, &mut NoopOutputReceiver);
+    let mut machine = Machine::new_simple_machine(&instructions);
+    machine.register.write('a', colored_eggs);
+    machine.run(&mut Hook);
     println!(
         "Starting with {}, the value at register a is: {}",
         colored_eggs,
-        registers.get(&'a').unwrap_or(&0)
+        machine.register.read('a')
     );
 }
 
@@ -50,10 +50,10 @@ mod tests {
         .as_records::<Instruction>()
         .unwrap();
 
-        let mut registers = HashMap::new();
-        registers.insert('a', 7);
-        execute(&instructions, &mut registers, &mut NoopOutputReceiver);
+        let mut machine = Machine::new_simple_machine(&instructions);
+        machine.register.write('a', 7);
+        machine.run(&mut Hook);
 
-        assert_eq!(*registers.get(&'a').unwrap_or(&0), 3);
+        assert_eq!(machine.register.read('a'), 3);
     }
 }

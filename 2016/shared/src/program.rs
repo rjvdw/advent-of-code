@@ -1,70 +1,58 @@
-use std::collections::HashMap;
-use std::convert::TryFrom;
+use rdcl_aoc_helpers::machine::hook::{HookResult, PreExecuteHook};
+use rdcl_aoc_helpers::machine::instruction::{MachineInstruction, Value};
+use rdcl_aoc_helpers::machine::output_receiver::OutputReceiver;
+use rdcl_aoc_helpers::machine::register::MachineRegister;
+use rdcl_aoc_helpers::machine::Machine;
 
-use crate::instruction::{Instruction, Value};
-use crate::output_receiver::OutputReceiver;
+use crate::instruction::Instruction;
 
-pub fn execute<T>(
-    instructions: &[Instruction],
-    registers: &mut HashMap<char, i32>,
-    output_receiver: &mut T,
-) where
-    T: OutputReceiver,
-{
-    let mut instructions = instructions.to_vec();
-    let mut idx = 0;
-    while let Some(instruction) = safe_get(&instructions, idx) {
-        if apply_optimization(&instructions, idx, registers) {
-            idx += 6;
+pub struct Hook;
+
+impl PreExecuteHook<Instruction> for Hook {
+    fn run<R: MachineRegister, O: OutputReceiver<R>>(
+        &mut self,
+        machine: &mut Machine<Instruction, R, O>,
+        instruction: &Instruction,
+        _idx: usize,
+    ) -> HookResult {
+        if apply_optimization(machine) {
+            HookResult::Goto(machine.get_counter() + 6)
         } else {
             match instruction {
                 Instruction::Toggle(_) => {
-                    let target_idx = idx + instruction.run(registers, output_receiver);
-                    let target_idx_opt = match usize::try_from(target_idx) {
-                        Ok(idx) => Some(idx),
-                        Err(_) => None,
-                    };
-                    if let Some(instruction) =
-                        target_idx_opt.and_then(|idx| instructions.get_mut(idx))
-                    {
-                        match &instruction {
+                    let target_idx = machine.get_counter()
+                        + instruction.execute(&mut machine.register, &mut machine.output_receiver);
+
+                    if let Some((_, instruction)) = machine.get_instruction(target_idx) {
+                        let new_instruction = match instruction {
                             Instruction::Copy(a, b) => {
-                                *instruction =
-                                    Instruction::JumpNotZero(a.clone(), Value::Register(*b));
+                                Instruction::JumpNotZero(a, Value::Register(b))
                             }
-                            Instruction::Increment(a) => {
-                                *instruction = Instruction::Decrement(*a);
-                            }
-                            Instruction::Decrement(a) => {
-                                *instruction = Instruction::Increment(*a);
-                            }
+                            Instruction::Increment(a) => Instruction::Decrement(a),
+                            Instruction::Decrement(a) => Instruction::Increment(a),
                             Instruction::JumpNotZero(a, Value::Register(b)) => {
-                                *instruction = Instruction::Copy(a.clone(), *b);
+                                Instruction::Copy(a, b)
                             }
-                            Instruction::Toggle(Value::Register(a)) => {
-                                *instruction = Instruction::Increment(*a);
-                            }
-                            _ => {
-                                eprintln!("Cannot transform instruction '{:?}'.", instruction);
-                                panic!("cannot transform instruction");
-                            }
-                        }
+                            Instruction::Toggle(Value::Register(a)) => Instruction::Increment(a),
+                            _ => panic!("cannot transform instruction '{}'", instruction),
+                        };
+
+                        machine.set_instruction(target_idx, &new_instruction);
                     }
-                    idx += 1;
+
+                    HookResult::Skip
                 }
-                _ => {
-                    idx += instruction.run(registers, output_receiver);
-                }
+                _ => HookResult::Proceed,
             }
         }
     }
 }
 
-fn apply_optimization(
-    instructions: &[Instruction],
-    idx: i32,
-    registers: &mut HashMap<char, i32>,
-) -> bool {
+fn apply_optimization<R, O>(machine: &mut Machine<Instruction, R, O>) -> bool
+where
+    R: MachineRegister,
+    O: OutputReceiver<R>,
+{
     // If the next 6 lines are:
     //   cpy b c
     //   inc a
@@ -77,80 +65,65 @@ fn apply_optimization(
     //   * Clear register c.
     //   * Clear register d.
 
-    match usize::try_from(idx) {
-        Ok(idx) => {
-            if idx + 5 < instructions.len() {
-                // cpy b c
-                let (val_b, c) = if let Some(Instruction::Copy(a, b)) = instructions.get(idx) {
-                    (a.get_value(registers), *b)
-                } else {
-                    return false;
-                };
+    let idx = machine.get_counter();
 
-                // inc a
-                let a = if let Some(Instruction::Increment(a)) = instructions.get(idx + 1) {
-                    *a
-                } else {
-                    return false;
-                };
+    // cpy b c
+    let (val_b, c) = if let Some((_, Instruction::Copy(a, b))) = machine.get_instruction(idx) {
+        (a.get(&machine.register), b)
+    } else {
+        return false;
+    };
 
-                // dec c
-                if let Some(Instruction::Decrement(ch)) = instructions.get(idx + 2) {
-                    if *ch != c {
-                        return false;
-                    }
-                } else {
-                    return false;
-                };
+    // inc a
+    let a = if let Some((_, Instruction::Increment(a))) = machine.get_instruction(idx + 1) {
+        a
+    } else {
+        return false;
+    };
 
-                // jnz c -2
-                if let Some(Instruction::JumpNotZero(Value::Register(ch), Value::Raw(-2))) =
-                    instructions.get(idx + 3)
-                {
-                    if *ch != c {
-                        return false;
-                    }
-                } else {
-                    return false;
-                };
-
-                // dec d
-                let d = if let Some(Instruction::Decrement(d)) = instructions.get(idx + 4) {
-                    *d
-                } else {
-                    return false;
-                };
-
-                // jnz d -5
-                if let Some(Instruction::JumpNotZero(Value::Register(ch), Value::Raw(-5))) =
-                    instructions.get(idx + 5)
-                {
-                    if *ch != d {
-                        return false;
-                    }
-                } else {
-                    return false;
-                };
-
-                let val_a = *registers.get(&a).unwrap_or(&0);
-                let val_d = *registers.get(&d).unwrap_or(&0);
-
-                registers.insert(a, val_a + val_b * val_d);
-                registers.insert(c, 0);
-                registers.insert(d, 0);
-
-                true
-            } else {
-                false
-            }
+    // dec c
+    if let Some((_, Instruction::Decrement(ch))) = machine.get_instruction(idx + 2) {
+        if ch != c {
+            return false;
         }
-        _ => false,
-    }
-}
+    } else {
+        return false;
+    };
 
-fn safe_get(instructions: &[Instruction], idx: i32) -> Option<&Instruction> {
-    match usize::try_from(idx) {
-        Ok(idx) => instructions.get(idx),
-        _ => None,
-    }
+    // jnz c -2
+    if let Some((_, Instruction::JumpNotZero(Value::Register(ch), Value::Raw(-2)))) =
+        machine.get_instruction(idx + 3)
+    {
+        if ch != c {
+            return false;
+        }
+    } else {
+        return false;
+    };
+
+    // dec d
+    let d = if let Some((_, Instruction::Decrement(d))) = machine.get_instruction(idx + 4) {
+        d
+    } else {
+        return false;
+    };
+
+    // jnz d -5
+    if let Some((_, Instruction::JumpNotZero(Value::Register(ch), Value::Raw(-5)))) =
+        machine.get_instruction(idx + 5)
+    {
+        if ch != d {
+            return false;
+        }
+    } else {
+        return false;
+    };
+
+    let val_d = machine.register.read(d);
+
+    machine.register.increment(a, val_b * val_d);
+    machine.register.write(c, 0);
+    machine.register.write(d, 0);
+
+    true
 }

@@ -1,12 +1,15 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 use std::fs::File;
 
 use rdcl_aoc_helpers::args::get_args;
 use rdcl_aoc_helpers::input::WithReadLines;
+use rdcl_aoc_helpers::machine::instruction::Value;
+use rdcl_aoc_helpers::machine::output_receiver::OutputReceiver;
+use rdcl_aoc_helpers::machine::register::{HashMapRegister, MachineRegister};
+use rdcl_aoc_helpers::machine::Machine;
 
-use shared::instruction::{Instruction, Value};
-use shared::output_receiver::OutputReceiver;
-use shared::program::execute;
+use shared::instruction::Instruction;
+use shared::program::Hook;
 
 fn main() {
     let args = get_args(&["<input file>", "<use alternate solution? yes/no>"], 1);
@@ -18,16 +21,18 @@ fn main() {
         let mut a = 0;
         let signal;
         loop {
-            let mut registers = HashMap::new();
-            registers.insert('a', a);
-            registers.insert('b', 0);
-            registers.insert('c', 0);
-            registers.insert('d', 0);
-            let mut antenna = Antenna::new();
-            execute(&instructions, &mut registers, &mut antenna);
+            let mut register = HashMapRegister::new();
+            register.write('a', a);
+            register.write('b', 0);
+            register.write('c', 0);
+            register.write('d', 0);
 
-            if antenna.has_correct_signal() {
-                signal = antenna.signal;
+            let antenna = Antenna::new();
+            let mut machine = Machine::new_machine(&instructions, register, antenna);
+            machine.run(&mut Hook);
+
+            if machine.output_receiver.has_correct_signal() {
+                signal = machine.output_receiver.signal;
                 break;
             } else {
                 a += 1;
@@ -67,6 +72,7 @@ fn alternate_solution(instructions: &[Instruction]) -> Option<i32> {
     Some(a - threshold)
 }
 
+#[derive(Debug)]
 struct Antenna {
     seen: HashSet<String>,
     signal: String,
@@ -89,24 +95,11 @@ impl Antenna {
         }
         true
     }
-
-    fn hash_key(&self, registers: &HashMap<char, i32>) -> String {
-        let mut keys = registers.keys().copied().collect::<Vec<char>>();
-        keys.sort_unstable();
-        let mut hash_key = String::new();
-        for key in keys {
-            if !hash_key.is_empty() {
-                hash_key.push(',');
-            }
-            hash_key.push_str(&format!("{}={}", key, registers.get(&key).unwrap_or(&0)));
-        }
-        hash_key
-    }
 }
 
-impl OutputReceiver for Antenna {
-    fn receive(&mut self, output: i32, registers: &HashMap<char, i32>) -> bool {
-        let hash_key = self.hash_key(registers);
+impl<T: MachineRegister> OutputReceiver<T> for Antenna {
+    fn receive(&mut self, output: i32, register: &T) -> bool {
+        let hash_key = format!("{}", register);
         if self.seen.contains(&hash_key) {
             true
         } else {
@@ -114,7 +107,7 @@ impl OutputReceiver for Antenna {
                 self.signal.push(',');
             }
             self.signal.push_str(&output.to_string());
-            // println!("{}, {}", output, hash_key);
+            // println!("{}, {}", output, register);
             self.seen.insert(hash_key);
             false
         }

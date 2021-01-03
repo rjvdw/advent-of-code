@@ -1,49 +1,10 @@
-use std::collections::HashMap;
 use std::fmt;
-use std::str::{FromStr, SplitWhitespace};
+use std::str::FromStr;
 
 use rdcl_aoc_helpers::error::ParseError;
-
-use crate::output_receiver::OutputReceiver;
-
-#[derive(Debug, Clone)]
-pub enum Value {
-    Raw(i32),
-    Register(char),
-}
-
-impl Value {
-    pub fn get_value(&self, registers: &HashMap<char, i32>) -> i32 {
-        match self {
-            Value::Raw(v) => *v,
-            Value::Register(reg) => *registers.get(reg).unwrap_or(&0),
-        }
-    }
-}
-
-impl fmt::Display for Value {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Value::Raw(i) => write!(f, "{}", i),
-            Value::Register(reg) => write!(f, "{}", reg),
-        }
-    }
-}
-
-impl FromStr for Value {
-    type Err = ParseError;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if s.len() == 1 {
-            let ch = s.chars().next().unwrap();
-            if ch.is_alphabetic() {
-                return Ok(Value::Register(ch));
-            }
-        }
-
-        Ok(Value::Raw(s.parse()?))
-    }
-}
+use rdcl_aoc_helpers::machine::instruction::{MachineInstruction, ParsedMachineInstruction, Value};
+use rdcl_aoc_helpers::machine::output_receiver::OutputReceiver;
+use rdcl_aoc_helpers::machine::register::MachineRegister;
 
 #[derive(Debug, Clone)]
 pub enum Instruction {
@@ -55,39 +16,60 @@ pub enum Instruction {
     Out(Value),
 }
 
-impl Instruction {
-    pub fn run<T>(&self, registers: &mut HashMap<char, i32>, output_receiver: &mut T) -> i32
-    where
-        T: OutputReceiver,
-    {
+impl MachineInstruction for Instruction {
+    fn execute<R: MachineRegister, O: OutputReceiver<R>>(
+        &self,
+        register: &mut R,
+        output_receiver: &mut O,
+    ) -> i32 {
         match self {
             Instruction::Copy(v, reg) => {
-                registers.insert(*reg, v.get_value(registers));
+                register.write(*reg, v.get(register));
                 1
             }
             Instruction::Increment(reg) => {
-                *registers.entry(*reg).or_insert(0) += 1;
+                register.increment(*reg, 1);
                 1
             }
             Instruction::Decrement(reg) => {
-                *registers.entry(*reg).or_insert(0) -= 1;
+                register.increment(*reg, -1);
                 1
             }
             Instruction::JumpNotZero(v, offset) => {
-                if v.get_value(registers) == 0 {
+                if v.get(register) == 0 {
                     1
                 } else {
-                    offset.get_value(registers)
+                    offset.get(register)
                 }
             }
-            Instruction::Toggle(offset) => offset.get_value(registers),
+            Instruction::Toggle(offset) => offset.get(register),
             Instruction::Out(signal) => {
-                if output_receiver.receive(signal.get_value(registers), registers) {
+                if output_receiver.receive(signal.get(register), register) {
                     i32::MIN // abort
                 } else {
                     1
                 }
             }
+        }
+    }
+
+    fn from_parsed_machine_instruction(
+        parsed: &ParsedMachineInstruction,
+    ) -> Result<Self, ParseError> {
+        match parsed.get_command() {
+            "cpy" => Ok(Instruction::Copy(
+                parsed.get_argument(0)?,
+                parsed.get_argument(1)?,
+            )),
+            "inc" => Ok(Instruction::Increment(parsed.get_argument(0)?)),
+            "dec" => Ok(Instruction::Decrement(parsed.get_argument(0)?)),
+            "jnz" => Ok(Instruction::JumpNotZero(
+                parsed.get_argument(0)?,
+                parsed.get_argument(1)?,
+            )),
+            "tgl" => Ok(Instruction::Toggle(parsed.get_argument(0)?)),
+            "out" => Ok(Instruction::Out(parsed.get_argument(0)?)),
+            _ => Err(ParseError(format!("Unknown command: {}", parsed))),
         }
     }
 }
@@ -109,62 +91,6 @@ impl FromStr for Instruction {
     type Err = ParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if let Some(r) = s.strip_prefix("cpy ") {
-            let mut parts = r.split_whitespace();
-            let value = part_as(s, &mut parts)?;
-            let register = if let Some(v) = parts.next().filter(|v| v.len() == 1) {
-                v.chars().next().unwrap()
-            } else {
-                error(s, "Invalid register")?
-            };
-            if parts.next().is_some() {
-                error(s, "Unexpected value")?
-            }
-            Ok(Instruction::Copy(value, register))
-        } else if let Some(r) = s.strip_prefix("inc ") {
-            if r.len() == 1 {
-                Ok(Instruction::Increment(r.chars().next().unwrap()))
-            } else {
-                error(s, "Invalid register")?
-            }
-        } else if let Some(r) = s.strip_prefix("dec ") {
-            if r.len() == 1 {
-                Ok(Instruction::Decrement(r.chars().next().unwrap()))
-            } else {
-                error(s, "Invalid register")?
-            }
-        } else if let Some(r) = s.strip_prefix("jnz ") {
-            let mut parts = r.split_whitespace();
-            let value1 = part_as(s, &mut parts)?;
-            let value2 = part_as(s, &mut parts)?;
-            if parts.next().is_some() {
-                error(s, "Unexpected value")?
-            }
-            Ok(Instruction::JumpNotZero(value1, value2))
-        } else if let Some(r) = s.strip_prefix("tgl ") {
-            Ok(Instruction::Toggle(r.parse()?))
-        } else if let Some(r) = s.strip_prefix("out ") {
-            Ok(Instruction::Out(r.parse()?))
-        } else {
-            error(s, "Unrecognized operation")
-        }
+        <Self as MachineInstruction>::from_str(s)
     }
-}
-
-fn part_as<T: FromStr>(line: &str, parts: &mut SplitWhitespace) -> Result<T, ParseError>
-where
-    ParseError: From<<T as FromStr>::Err>,
-{
-    if let Some(v) = parts.next() {
-        Ok(v.parse::<T>()?)
-    } else {
-        error(line, "Could not parse value")
-    }
-}
-
-fn error<T>(line: &str, msg: &str) -> Result<T, ParseError> {
-    Err(ParseError(format!(
-        "Invalid instruction {} - {}",
-        line, msg
-    )))
 }
