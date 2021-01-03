@@ -13,7 +13,7 @@ pub enum HookResult {
     Skip,
 
     /// Go to a specific instruction.
-    Goto(i32),
+    Goto(i64),
 
     /// Abort the entire program.
     Abort,

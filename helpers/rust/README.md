@@ -238,7 +238,7 @@ fn parse_input() -> Result<Vec<Instruction>, ParseError> {
 
 enum Instruction {
     Add(Value, Value, char),
-    Jump(i32),
+    Jump(i64),
 }
 
 impl MachineInstruction for Instruction {
@@ -246,7 +246,7 @@ impl MachineInstruction for Instruction {
         &self,
         register: &mut R,
         _output_receiver: &mut O,
-    ) -> i32 {
+    ) -> i64 {
         match self {
             Instruction::Add(v1, v2, reg) => {
                 register.write(*reg, v1.get(register), v2.get(register));

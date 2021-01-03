@@ -21,7 +21,7 @@ pub struct Machine<I: MachineInstruction, R: MachineRegister, O: OutputReceiver<
     instructions: Vec<I>,
     pub register: R,
     pub output_receiver: O,
-    counter: i32,
+    counter: i64,
 }
 
 impl<I: MachineInstruction> Machine<I, HashMapRegister, NoopOutputReceiver> {
@@ -76,12 +76,12 @@ where
     }
 
     /// Returns the program counter.
-    pub fn get_counter(&self) -> i32 {
+    pub fn get_counter(&self) -> i64 {
         self.counter
     }
 
     /// Fetch the instruction at position `idx`, if any.
-    pub fn get_instruction(&self, idx: i32) -> Option<(usize, I)> {
+    pub fn get_instruction(&self, idx: i64) -> Option<(usize, I)> {
         usize::try_from(idx).ok().and_then(|idx| {
             self.instructions
                 .get(idx)
@@ -90,7 +90,7 @@ where
     }
 
     /// Replaces the instruction at position `idx`, if any.
-    pub fn set_instruction(&mut self, idx: i32, new_instruction: &I) {
+    pub fn set_instruction(&mut self, idx: i64, new_instruction: &I) {
         usize::try_from(idx).ok().and_then(|idx| {
             self.instructions
                 .get_mut(idx)
@@ -129,7 +129,7 @@ mod tests {
             &self,
             register: &mut R,
             _output_receiver: &mut O,
-        ) -> i32 {
+        ) -> i64 {
             register.increment('a', 10);
             1
         }

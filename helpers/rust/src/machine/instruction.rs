@@ -13,13 +13,13 @@ pub trait MachineInstruction: Sized + Clone {
     /// the current instruction". If this offset causes the program counter to point to a
     /// non-existing instruction (i.e. either the counter becomes negative, or greater than the
     /// number of instructions), this will cause the program to halt. If you want to abort the
-    /// program, you can just return `i32::MIN`. This will always cause the program counter to
+    /// program, you can just return `i64::MIN`. This will always cause the program counter to
     /// become negative, and will thus halt the program.
     fn execute<R: MachineRegister, O: OutputReceiver<R>>(
         &self,
         register: &mut R,
         output_receiver: &mut O,
-    ) -> i32;
+    ) -> i64;
 
     /// Implement this method to be able to use the provided `from_str` method to parse
     /// instructions.
@@ -218,7 +218,7 @@ mod tests {
         let parsed = "add 5 -10".parse::<ParsedMachineInstruction>().unwrap();
         assert_eq!(parsed.get_command(), "add");
         assert_eq!(parsed.arguments.len(), 2);
-        assert_eq!(parsed.get_argument::<i32>(0), Ok(5));
-        assert_eq!(parsed.get_argument::<i32>(1), Ok(-10));
+        assert_eq!(parsed.get_argument::<i64>(0), Ok(5));
+        assert_eq!(parsed.get_argument::<i64>(1), Ok(-10));
     }
 }
