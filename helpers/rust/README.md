@@ -191,6 +191,97 @@ mod tests {
 }
 ```
 
+## Assembly machine
+
+This module provides a machine that can process assembly-like instructions.
+A machine consist of three parts:
+* Instructions (must implement `MachineInstruction`)
+* A register (must implement `MachineRegister`)
+* An output receiver (must implement `OutputReceiver`)
+
+When the machine is run, it will start executing the instructions one by one.
+Each instruction specifies what the next instruction is (usually the next line, but you can also jump to some other spot).
+As soon as the program counter reaches a non-existent instruction, the machine will halt.
+Instructions may use the register to keep track of values, and may use the output receiver to send output to some (imaginary) output device, such as [an antenna](https://adventofcode.com/2016/day/25).
+When running the machine, you also get to specify a pre-execute hook (`PreExecuteHook`).
+For each instructions, the machine will call this hook before actually executing it.
+This allows you to manipulate the normal flow of the program.
+For example:
+* [Apply optimizations](https://adventofcode.com/2016/day/23)
+* [Detect loops](https://adventofcode.com/2020/day/8)
+
+To more easily parse instructions from your input file, this library provides:
+* `machine::instruction::Value` - Represents either a raw value or a reference to a register.
+* `machine::instruction::ParsedMachineInstruction` - Represents a single parsed line. Allows you to easily access to command (`.get_command()`) or specific arguments, which will be parsed to the correct type (`.get_argument::<T>(idx)`).
+
+### Example
+
+```rust
+use rdcl_aoc_helpers::error::ParseError;
+use rdcl_aoc_helpers::machine::hook::NoopHook;
+use rdcl_aoc_helpers::machine::instruction::{MachineInstruction, ParsedMachineInstruction, Value};
+use rdcl_aoc_helpers::machine::output_receiver::OutputReceiver;
+use rdcl_aoc_helpers::machine::register::MachineRegister;
+use rdcl_aoc_helpers::machine::Machine;
+
+fn main() {
+    let instructions = parse_input().unwrap();
+    let mut machine = Machine::new_simple_machine(&instructions);
+    machine.run(&mut NoopHook);
+
+    println!("Final register state: {}", machine.register);
+}
+
+fn parse_input() -> Result<Vec<Instruction>, ParseError> {
+    /* ... */
+}
+
+enum Instruction {
+    Add(Value, Value, char),
+    Jump(i32),
+}
+
+impl MachineInstruction for Instruction {
+    fn execute<R: MachineRegister, O: OutputReceiver>(
+        &self,
+        register: &mut R,
+        _output_receiver: &mut O,
+    ) -> i32 {
+        match self {
+            Instruction::Add(v1, v2, reg) => {
+                register.write(*reg, v1.get(register), v2.get(register));
+                1
+            }
+            Instruction::Jump(by) => by,
+        }
+    }
+
+    fn from_parsed_machine_instruction(
+        parsed: &ParsedMachineInstruction,
+    ) -> Result<Self, ParseError> {
+        match parsed.get_command() {
+            "add" => Ok(Instruction::Add(
+                parsed.get_argument(0)?,
+                parsed.get_argument(1)?,
+                parsed.get_argument(2)?
+            )),
+            "jmp" => Ok(Instruction::Jump(
+                parsed.get_argument(0)?
+            )),
+        }
+    }
+}
+
+impl FromStr for Instruction {
+    type Err = ParseError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        <Self as MachineInstruction>::from_str(s)
+    }
+}
+```
+
+
 ## Math
 
 ### `math::gcd`
