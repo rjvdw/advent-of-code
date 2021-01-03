@@ -1,5 +1,5 @@
+use crate::instruction::Instruction;
 use rdcl_aoc_helpers::machine::hook::{HookResult, PreExecuteHook};
-use rdcl_aoc_helpers::machine::instruction::MachineInstruction;
 use rdcl_aoc_helpers::machine::output_receiver::OutputReceiver;
 use rdcl_aoc_helpers::machine::register::MachineRegister;
 use rdcl_aoc_helpers::machine::Machine;
@@ -22,11 +22,11 @@ impl LoopDetector {
     }
 }
 
-impl PreExecuteHook for LoopDetector {
-    fn run<I: MachineInstruction, R: MachineRegister, O: OutputReceiver>(
+impl PreExecuteHook<Instruction> for LoopDetector {
+    fn run<R: MachineRegister, O: OutputReceiver<R>>(
         &mut self,
-        _machine: &mut Machine<I, R, O>,
-        _instruction: &I,
+        _machine: &mut Machine<Instruction, R, O>,
+        _instruction: &Instruction,
         idx: usize,
     ) -> HookResult {
         if self.seen[idx] {

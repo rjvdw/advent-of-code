@@ -28,7 +28,7 @@ impl Instruction {
 }
 
 impl MachineInstruction for Instruction {
-    fn execute<R: MachineRegister, O: OutputReceiver>(
+    fn execute<R: MachineRegister, O: OutputReceiver<R>>(
         &self,
         register: &mut R,
         _output_receiver: &mut O,
