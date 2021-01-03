@@ -1,8 +1,10 @@
-use std::collections::HashMap;
 use std::fs::File;
 
 use rdcl_aoc_helpers::args::get_args;
 use rdcl_aoc_helpers::input::WithReadLines;
+use rdcl_aoc_helpers::machine::hook::NoopHook;
+use rdcl_aoc_helpers::machine::register::MachineRegister;
+use rdcl_aoc_helpers::machine::Machine;
 
 use crate::instruction::Instruction;
 
@@ -27,32 +29,27 @@ fn main() {
     );
 }
 
-fn run_program(instructions: &[Instruction], reg_a: u64, reg_b: u64) -> (u64, u64) {
-    let mut registers: HashMap<char, u64> = HashMap::new();
-    registers.insert('a', reg_a);
-    registers.insert('b', reg_b);
-    let mut idx: isize = 0;
-    let ilen = instructions.len() as isize;
+fn run_program(instructions: &[Instruction], reg_a: i32, reg_b: i32) -> (i32, i32) {
+    let mut machine = Machine::new_simple_machine(instructions);
+    machine.register.write('a', reg_a);
+    machine.register.write('b', reg_b);
 
-    while idx >= 0 && idx < ilen {
-        idx = instructions[idx as usize].execute(idx, &mut registers);
-    }
+    machine.run(&mut NoopHook::default());
 
-    (
-        *registers.get(&'a').unwrap_or(&0),
-        *registers.get(&'b').unwrap_or(&0),
-    )
+    (machine.register.read('a'), machine.register.read('b'))
 }
 
 #[cfg(test)]
 mod tests {
+    use rdcl_aoc_helpers::machine::instruction::Value;
+
     use super::*;
 
     #[test]
     fn test_run_program_0_0() {
         let instructions = vec![
             Instruction::Increment('a'),
-            Instruction::JumpIfOne('a', 2),
+            Instruction::JumpIfOne(Value::Register('a'), 2),
             Instruction::Triple('a'),
             Instruction::Increment('a'),
         ];
@@ -64,7 +61,7 @@ mod tests {
     fn test_run_program_1_0() {
         let instructions = vec![
             Instruction::Increment('a'),
-            Instruction::JumpIfOne('a', 2),
+            Instruction::JumpIfOne(Value::Register('a'), 2),
             Instruction::Triple('a'),
             Instruction::Increment('a'),
         ];

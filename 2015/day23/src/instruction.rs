@@ -1,50 +1,75 @@
-use std::collections::HashMap;
 use std::fmt;
-use std::num::ParseIntError;
 use std::str::FromStr;
 
 use rdcl_aoc_helpers::error::ParseError;
+use rdcl_aoc_helpers::machine::instruction::{MachineInstruction, ParsedMachineInstruction, Value};
+use rdcl_aoc_helpers::machine::output_receiver::OutputReceiver;
+use rdcl_aoc_helpers::machine::register::MachineRegister;
 
 #[derive(Debug, Copy, Clone)]
 pub enum Instruction {
     Half(char),
     Triple(char),
     Increment(char),
-    Jump(isize),
-    JumpIfEven(char, isize),
-    JumpIfOne(char, isize),
+    Jump(i32),
+    JumpIfEven(Value, i32),
+    JumpIfOne(Value, i32),
 }
 
-impl Instruction {
-    pub fn execute(&self, idx: isize, registers: &mut HashMap<char, u64>) -> isize {
+impl MachineInstruction for Instruction {
+    fn execute<R: MachineRegister, O: OutputReceiver<R>>(
+        &self,
+        register: &mut R,
+        _output_receiver: &mut O,
+    ) -> i32 {
         match self {
-            Instruction::Half(register) => {
-                *registers.entry(*register).or_insert(0) /= 2;
-                idx + 1
+            Instruction::Half(reg) => {
+                register.write(*reg, register.read(*reg) / 2);
+                1
             }
-            Instruction::Triple(register) => {
-                *registers.entry(*register).or_insert(0) *= 3;
-                idx + 1
+            Instruction::Triple(reg) => {
+                register.write(*reg, register.read(*reg) * 3);
+                1
             }
-            Instruction::Increment(register) => {
-                *registers.entry(*register).or_insert(0) += 1;
-                idx + 1
+            Instruction::Increment(reg) => {
+                register.increment(*reg, 1);
+                1
             }
-            Instruction::Jump(offset) => idx + offset,
-            Instruction::JumpIfEven(register, offset) => {
-                idx + if *registers.get(register).unwrap_or(&0) % 2 == 0 {
+            Instruction::Jump(offset) => *offset,
+            Instruction::JumpIfEven(v, offset) => {
+                if v.get(register) % 2 == 0 {
                     *offset
                 } else {
                     1
                 }
             }
-            Instruction::JumpIfOne(register, offset) => {
-                idx + if *registers.get(register).unwrap_or(&0) == 1 {
+            Instruction::JumpIfOne(v, offset) => {
+                if v.get(register) == 1 {
                     *offset
                 } else {
                     1
                 }
             }
+        }
+    }
+
+    fn from_parsed_machine_instruction(
+        parsed: &ParsedMachineInstruction,
+    ) -> Result<Self, ParseError> {
+        match parsed.get_command() {
+            "hlf" => Ok(Instruction::Half(parsed.get_argument(0)?)),
+            "tpl" => Ok(Instruction::Triple(parsed.get_argument(0)?)),
+            "inc" => Ok(Instruction::Increment(parsed.get_argument(0)?)),
+            "jmp" => Ok(Instruction::Jump(parsed.get_argument(0)?)),
+            "jie" => Ok(Instruction::JumpIfEven(
+                parsed.get_argument(0)?,
+                parsed.get_argument(1)?,
+            )),
+            "jio" => Ok(Instruction::JumpIfOne(
+                parsed.get_argument(0)?,
+                parsed.get_argument(1)?,
+            )),
+            _ => Err(ParseError(format!("Unknown command: {}", parsed))),
         }
     }
 }
@@ -65,39 +90,7 @@ impl fmt::Display for Instruction {
 impl FromStr for Instruction {
     type Err = ParseError;
 
-    fn from_str(instruction: &str) -> Result<Self, Self::Err> {
-        if let Some(rest) = instruction.strip_prefix("hlf ") {
-            Ok(Instruction::Half(parse_register(instruction, rest)?))
-        } else if let Some(rest) = instruction.strip_prefix("tpl ") {
-            Ok(Instruction::Triple(parse_register(instruction, rest)?))
-        } else if let Some(rest) = instruction.strip_prefix("inc ") {
-            Ok(Instruction::Increment(parse_register(instruction, rest)?))
-        } else if let Some(rest) = instruction.strip_prefix("jmp ") {
-            Ok(Instruction::Jump(parse_offset(rest)?))
-        } else if let Some(rest) = instruction.strip_prefix("jie ") {
-            Ok(Instruction::JumpIfEven(
-                parse_register(instruction, rest)?,
-                parse_offset(rest)?,
-            ))
-        } else if let Some(rest) = instruction.strip_prefix("jio ") {
-            Ok(Instruction::JumpIfOne(
-                parse_register(instruction, rest)?,
-                parse_offset(rest)?,
-            ))
-        } else {
-            Err(ParseError(format!("Invalid instruction: {}", instruction)))
-        }
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        <Self as MachineInstruction>::from_str(s)
     }
-}
-
-fn parse_register(instruction: &str, rest: &str) -> Result<char, ParseError> {
-    match rest.chars().next() {
-        Some(ch) => Ok(ch),
-        None => Err(ParseError(format!("Invalid instruction: {}", instruction))),
-    }
-}
-
-fn parse_offset(rest: &str) -> Result<isize, ParseIntError> {
-    let offset = rest.find(' ').unwrap_or(0);
-    rest[offset..].trim().parse::<isize>()
 }
