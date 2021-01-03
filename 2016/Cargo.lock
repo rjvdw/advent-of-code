@@ -245,9 +245,9 @@ checksum = "9c33a3c44ca05fa6f1807d8e6743f3824e8509beca625669633be0acbdf509dc"
 
 [[package]]
 name = "rdcl_aoc_helpers"
-version = "0.2.8"
+version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ad17e0344a8c41d2afcdbab91b71b574dd064f0d959e16672cb34471c08804dd"
+checksum = "a5fbe0b206caaf234f867eb7e18b5aca9f38d5a4121eeb4f76253d713136124f"
 
 [[package]]
 name = "rdrand"
