@@ -47,7 +47,7 @@ fn main() {
     }
 }
 
-fn alternate_solution(instructions: &[Instruction]) -> Option<i32> {
+fn alternate_solution(instructions: &[Instruction]) -> Option<i64> {
     // This is an alternate solution. It might only work for my specific input.
     let i1 = if let Instruction::Copy(Value::Raw(v), _) = instructions[1] {
         v
@@ -98,7 +98,7 @@ impl Antenna {
 }
 
 impl<T: MachineRegister> OutputReceiver<T> for Antenna {
-    fn receive(&mut self, output: i32, register: &T) -> bool {
+    fn receive(&mut self, output: i64, register: &T) -> bool {
         let hash_key = format!("{}", register);
         if self.seen.contains(&hash_key) {
             true

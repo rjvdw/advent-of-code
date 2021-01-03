@@ -21,7 +21,7 @@ impl MachineInstruction for Instruction {
         &self,
         register: &mut R,
         output_receiver: &mut O,
-    ) -> i32 {
+    ) -> i64 {
         match self {
             Instruction::Copy(v, reg) => {
                 register.write(*reg, v.get(register));
@@ -45,7 +45,7 @@ impl MachineInstruction for Instruction {
             Instruction::Toggle(offset) => offset.get(register),
             Instruction::Out(signal) => {
                 if output_receiver.receive(signal.get(register), register) {
-                    i32::MIN // abort
+                    i64::MIN // abort
                 } else {
                     1
                 }

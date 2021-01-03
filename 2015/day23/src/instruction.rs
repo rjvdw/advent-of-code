@@ -11,9 +11,9 @@ pub enum Instruction {
     Half(char),
     Triple(char),
     Increment(char),
-    Jump(i32),
-    JumpIfEven(Value, i32),
-    JumpIfOne(Value, i32),
+    Jump(i64),
+    JumpIfEven(Value, i64),
+    JumpIfOne(Value, i64),
 }
 
 impl MachineInstruction for Instruction {
@@ -21,7 +21,7 @@ impl MachineInstruction for Instruction {
         &self,
         register: &mut R,
         _output_receiver: &mut O,
-    ) -> i32 {
+    ) -> i64 {
         match self {
             Instruction::Half(reg) => {
                 register.write(*reg, register.read(*reg) / 2);

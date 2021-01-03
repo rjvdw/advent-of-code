@@ -7,9 +7,9 @@ use rdcl_aoc_helpers::machine::register::MachineRegister;
 
 #[derive(Copy, Clone)]
 pub enum Instruction {
-    Acc(i32),
-    Jmp(i32),
-    Nop(i32),
+    Acc(i64),
+    Jmp(i64),
+    Nop(i64),
 }
 
 impl Instruction {
@@ -32,7 +32,7 @@ impl MachineInstruction for Instruction {
         &self,
         register: &mut R,
         _output_receiver: &mut O,
-    ) -> i32 {
+    ) -> i64 {
         match self {
             Instruction::Acc(value) => {
                 register.increment('a', *value);

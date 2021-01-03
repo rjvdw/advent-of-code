@@ -29,7 +29,7 @@ fn main() {
     );
 }
 
-fn run_program(instructions: &[Instruction], reg_a: i32, reg_b: i32) -> (i32, i32) {
+fn run_program(instructions: &[Instruction], reg_a: i64, reg_b: i64) -> (i64, i64) {
     let mut machine = Machine::new_simple_machine(instructions);
     machine.register.write('a', reg_a);
     machine.register.write('b', reg_b);

@@ -39,7 +39,7 @@ fn main() {
     }
 }
 
-fn run_program(instructions: &[Instruction]) -> (bool, i32) {
+fn run_program(instructions: &[Instruction]) -> (bool, i64) {
     let mut machine = Machine::new_simple_machine(instructions);
     let mut loop_detector = LoopDetector::new(instructions.len());
 
@@ -51,7 +51,7 @@ fn run_program(instructions: &[Instruction]) -> (bool, i32) {
     )
 }
 
-fn fix_program(instructions: &[Instruction]) -> Vec<(usize, i32)> {
+fn fix_program(instructions: &[Instruction]) -> Vec<(usize, i64)> {
     let fixer = Mutator::new(instructions);
     let mut valid_programs = Vec::new();
     for (idx, mut machine) in fixer {
@@ -92,7 +92,7 @@ mod tests {
         .as_records::<Instruction>()
         .unwrap();
 
-        let fixes: Vec<(usize, i32)> = fix_program(&instructions);
+        let fixes: Vec<(usize, i64)> = fix_program(&instructions);
 
         assert_eq!(fixes.len(), 1);
         assert_eq!(fixes[0], (7, 8));
