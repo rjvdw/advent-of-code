@@ -39,7 +39,7 @@ pub trait MachineInstruction: Sized + Clone {
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub enum Value {
     /// A raw value just contains a number.
-    Raw(i32),
+    Raw(i64),
 
     /// A register value refers to the register where the value is stored.
     Register(char),
@@ -47,7 +47,7 @@ pub enum Value {
 
 impl Value {
     /// Reads the actual value contained in `self`.
-    pub fn get<T: MachineRegister>(&self, registers: &T) -> i32 {
+    pub fn get<T: MachineRegister>(&self, registers: &T) -> i64 {
         match self {
             Value::Raw(value) => *value,
             Value::Register(register) => registers.read(*register),
@@ -68,7 +68,7 @@ impl FromStr for Value {
     type Err = ParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s.parse::<i32>() {
+        match s.parse::<i64>() {
             Ok(value) => Ok(Value::Raw(value)),
             Err(parse_int_error) => match s.parse::<char>() {
                 Ok(register) => Ok(Value::Register(register)),

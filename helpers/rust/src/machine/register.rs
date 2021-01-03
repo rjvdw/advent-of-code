@@ -5,13 +5,13 @@ use std::fmt::{Debug, Display};
 /// The registers of the machine.
 pub trait MachineRegister: Debug + Display {
     /// Reads a register.
-    fn read(&self, key: char) -> i32;
+    fn read(&self, key: char) -> i64;
 
     /// Writes a register.
-    fn write(&mut self, key: char, value: i32);
+    fn write(&mut self, key: char, value: i64);
 
     /// Increments (or decrements if by < 0) a register.
-    fn increment(&mut self, key: char, by: i32) {
+    fn increment(&mut self, key: char, by: i64) {
         self.write(key, self.read(key) + by)
     }
 }
@@ -19,7 +19,7 @@ pub trait MachineRegister: Debug + Display {
 /// The default implementation using a HashMap.
 #[derive(Debug)]
 pub struct HashMapRegister {
-    registers: HashMap<char, i32>,
+    registers: HashMap<char, i64>,
 }
 
 impl HashMapRegister {
@@ -54,11 +54,11 @@ impl fmt::Display for HashMapRegister {
 }
 
 impl MachineRegister for HashMapRegister {
-    fn read(&self, key: char) -> i32 {
+    fn read(&self, key: char) -> i64 {
         *self.registers.get(&key).unwrap_or(&0)
     }
 
-    fn write(&mut self, key: char, value: i32) {
+    fn write(&mut self, key: char, value: i64) {
         *self.registers.entry(key).or_insert(0) = value;
     }
 }
