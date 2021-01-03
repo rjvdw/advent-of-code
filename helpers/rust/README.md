@@ -227,7 +227,7 @@ use rdcl_aoc_helpers::machine::Machine;
 fn main() {
     let instructions = parse_input().unwrap();
     let mut machine = Machine::new_simple_machine(&instructions);
-    machine.run(&mut NoopHook);
+    machine.run(&mut NoopHook::default());
 
     println!("Final register state: {}", machine.register);
 }
@@ -242,7 +242,7 @@ enum Instruction {
 }
 
 impl MachineInstruction for Instruction {
-    fn execute<R: MachineRegister, O: OutputReceiver>(
+    fn execute<R: MachineRegister, O: OutputReceiver<R>>(
         &self,
         register: &mut R,
         _output_receiver: &mut O,
@@ -268,6 +268,7 @@ impl MachineInstruction for Instruction {
             "jmp" => Ok(Instruction::Jump(
                 parsed.get_argument(0)?
             )),
+            _ => Err(ParseError(format!("Unknown command: {}", parsed))),
         }
     }
 }

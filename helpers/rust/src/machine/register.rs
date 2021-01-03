@@ -1,8 +1,9 @@
 use std::collections::HashMap;
 use std::fmt;
+use std::fmt::{Debug, Display};
 
 /// The registers of the machine.
-pub trait MachineRegister {
+pub trait MachineRegister: Debug + Display {
     /// Reads a register.
     fn read(&self, key: char) -> i32;
 
@@ -30,16 +31,6 @@ impl HashMapRegister {
     }
 }
 
-impl MachineRegister for HashMapRegister {
-    fn read(&self, key: char) -> i32 {
-        *self.registers.get(&key).unwrap_or(&0)
-    }
-
-    fn write(&mut self, key: char, value: i32) {
-        *self.registers.entry(key).or_insert(0) = value;
-    }
-}
-
 impl Default for HashMapRegister {
     fn default() -> Self {
         HashMapRegister::new()
@@ -59,6 +50,16 @@ impl fmt::Display for HashMapRegister {
             write!(f, "{}={}", key, self.read(*key))?;
         }
         write!(f, "]")
+    }
+}
+
+impl MachineRegister for HashMapRegister {
+    fn read(&self, key: char) -> i32 {
+        *self.registers.get(&key).unwrap_or(&0)
+    }
+
+    fn write(&mut self, key: char, value: i32) {
+        *self.registers.entry(key).or_insert(0) = value;
     }
 }
 

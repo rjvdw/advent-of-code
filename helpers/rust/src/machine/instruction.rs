@@ -15,7 +15,7 @@ pub trait MachineInstruction: Sized + Clone {
     /// number of instructions), this will cause the program to halt. If you want to abort the
     /// program, you can just return `i32::MIN`. This will always cause the program counter to
     /// become negative, and will thus halt the program.
-    fn execute<R: MachineRegister, O: OutputReceiver>(
+    fn execute<R: MachineRegister, O: OutputReceiver<R>>(
         &self,
         register: &mut R,
         output_receiver: &mut O,

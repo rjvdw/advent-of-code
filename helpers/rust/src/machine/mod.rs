@@ -17,7 +17,7 @@ pub mod output_receiver;
 pub mod register;
 
 /// A machine which can run instructions.
-pub struct Machine<I: MachineInstruction, R: MachineRegister, O: OutputReceiver> {
+pub struct Machine<I: MachineInstruction, R: MachineRegister, O: OutputReceiver<R>> {
     instructions: Vec<I>,
     pub register: R,
     pub output_receiver: O,
@@ -42,7 +42,7 @@ impl<I, R, O> Machine<I, R, O>
 where
     I: MachineInstruction,
     R: MachineRegister,
-    O: OutputReceiver,
+    O: OutputReceiver<R>,
 {
     /// Constructs a new machine where you specify your own register and output receiver.
     pub fn new_machine(instructions: &[I], register: R, output_receiver: O) -> Machine<I, R, O> {
@@ -55,14 +55,19 @@ where
     }
 
     /// Let the program run.
-    pub fn run<H: PreExecuteHook>(&mut self, pre_execute_hook: &mut H) {
+    pub fn run<H: PreExecuteHook<I>>(&mut self, pre_execute_hook: &mut H) {
         while let Some((idx, instruction)) = self.get_next_instruction() {
             match pre_execute_hook.run(self, &instruction, idx) {
                 HookResult::Proceed => {
                     self.counter +=
                         instruction.execute(&mut self.register, &mut self.output_receiver);
                 }
-                HookResult::Skip => {}
+                HookResult::Skip => {
+                    self.counter += 1;
+                }
+                HookResult::Goto(idx) => {
+                    self.counter = idx;
+                }
                 HookResult::Abort => {
                     return;
                 }
@@ -70,13 +75,32 @@ where
         }
     }
 
-    /// Fetch the next instruction, if any.
-    fn get_next_instruction(&self) -> Option<(usize, I)> {
-        usize::try_from(self.counter).ok().and_then(|idx| {
+    /// Returns the program counter.
+    pub fn get_counter(&self) -> i32 {
+        self.counter
+    }
+
+    /// Fetch the instruction at position `idx`, if any.
+    pub fn get_instruction(&self, idx: i32) -> Option<(usize, I)> {
+        usize::try_from(idx).ok().and_then(|idx| {
             self.instructions
                 .get(idx)
                 .map(|instruction| (idx, instruction.clone()))
         })
+    }
+
+    /// Replaces the instruction at position `idx`, if any.
+    pub fn set_instruction(&mut self, idx: i32, new_instruction: &I) {
+        usize::try_from(idx).ok().and_then(|idx| {
+            self.instructions
+                .get_mut(idx)
+                .map(|instruction| *instruction = new_instruction.clone())
+        });
+    }
+
+    /// Fetch the next instruction, if any.
+    fn get_next_instruction(&self) -> Option<(usize, I)> {
+        self.get_instruction(self.counter)
     }
 }
 
@@ -92,7 +116,7 @@ mod tests {
         let instructions = vec![MockInstruction; 3];
         let mut machine = Machine::new_simple_machine(&instructions);
 
-        machine.run(&mut NoopHook);
+        machine.run(&mut NoopHook::default());
 
         assert_eq!(machine.register.read('a'), 30);
     }
@@ -101,7 +125,7 @@ mod tests {
     struct MockInstruction;
 
     impl MachineInstruction for MockInstruction {
-        fn execute<R: MachineRegister, O: OutputReceiver>(
+        fn execute<R: MachineRegister, O: OutputReceiver<R>>(
             &self,
             register: &mut R,
             _output_receiver: &mut O,

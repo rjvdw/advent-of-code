@@ -1,16 +1,18 @@
 use crate::machine::register::MachineRegister;
+use std::fmt::Debug;
 
 /// If your machine produces output, it should send this to an OutputReceiver.
-pub trait OutputReceiver {
+pub trait OutputReceiver<T: MachineRegister>: Debug {
     /// Receive some output. Returns a boolean (up to the implementer on how to interpret this).
-    fn receive<T: MachineRegister>(&mut self, output: i32, registers: &T) -> bool;
+    fn receive(&mut self, output: i32, register: &T) -> bool;
 }
 
 /// If your machine does not produce output, you can use this implementation.
+#[derive(Debug)]
 pub struct NoopOutputReceiver;
 
-impl OutputReceiver for NoopOutputReceiver {
-    fn receive<T: MachineRegister>(&mut self, _output: i32, _registers: &T) -> bool {
+impl<T: MachineRegister> OutputReceiver<T> for NoopOutputReceiver {
+    fn receive(&mut self, _output: i32, _register: &T) -> bool {
         false
     }
 }
