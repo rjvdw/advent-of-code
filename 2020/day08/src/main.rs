@@ -1,23 +1,17 @@
-extern crate rdcl_aoc_helpers;
-
 use std::fs::File;
 
 use rdcl_aoc_helpers::args::get_args;
 use rdcl_aoc_helpers::input::WithReadLines;
+use rdcl_aoc_helpers::machine::register::MachineRegister;
+use rdcl_aoc_helpers::machine::Machine;
 
-use instruction::Instruction;
-
-use crate::program_fixer::ProgramFixer;
+use crate::instruction::Instruction;
+use crate::loop_detector::LoopDetector;
+use crate::mutator::Mutator;
 
 mod instruction;
-mod program_fixer;
-
-/// The state of the program, consisting of an accumulator and an index pointer.
-pub type ProgramState = (i32, usize);
-
-/// The end state of the program, consisting of a boolean indicating whether the program terminated
-/// correctly, and the final value of the accumulator.
-pub type ProgramEndState = (bool, i32);
+mod loop_detector;
+mod mutator;
 
 /// https://adventofcode.com/2020/day/8
 fn main() {
@@ -35,8 +29,7 @@ fn main() {
             "Program did not terminate correctly. Final value is {}",
             acc
         );
-        let fixer = ProgramFixer::new(&instructions, run_program);
-        for (i, acc) in fixer {
+        for (i, acc) in fix_program(&instructions) {
             println!(
                 "Terminated correctly by altering instruction at line {}, final value is {}",
                 i + 1,
@@ -46,20 +39,30 @@ fn main() {
     }
 }
 
-fn run_program(instructions: &[Instruction]) -> ProgramEndState {
-    let mut seen: Vec<bool> = Vec::with_capacity(instructions.len());
-    let mut state = (0, 0);
-    seen.resize(instructions.len(), false);
+fn run_program(instructions: &[Instruction]) -> (bool, i32) {
+    let mut machine = Machine::new_simple_machine(instructions);
+    let mut loop_detector = LoopDetector::new(instructions.len());
 
-    while state.1 < instructions.len() {
-        if seen[state.1] {
-            return (false, state.0);
+    machine.run(&mut loop_detector);
+
+    (
+        loop_detector.terminated_normally(),
+        machine.register.read('a'),
+    )
+}
+
+fn fix_program(instructions: &[Instruction]) -> Vec<(usize, i32)> {
+    let fixer = Mutator::new(instructions);
+    let mut valid_programs = Vec::new();
+    for (idx, mut machine) in fixer {
+        let mut loop_detector = LoopDetector::new(instructions.len());
+        machine.run(&mut loop_detector);
+
+        if loop_detector.terminated_normally() {
+            valid_programs.push((idx, machine.register.read('a')));
         }
-        seen[state.1] = true;
-        state = instructions[state.1].run(state);
     }
-
-    (true, state.0)
+    valid_programs
 }
 
 #[cfg(test)]
@@ -70,27 +73,26 @@ mod tests {
 
     #[test]
     fn test_run() {
-        let values = vec![
+        let instructions = vec![
             "nop +0", "acc +1", "jmp +4", "acc +3", "jmp -3", "acc -99", "acc +1", "jmp -4",
             "acc +6",
         ]
         .as_records::<Instruction>()
         .unwrap();
 
-        assert_eq!(run_program(&values), (false, 5));
+        assert_eq!(run_program(&instructions), (false, 5));
     }
 
     #[test]
     fn test_fix() {
-        let values = vec![
+        let instructions = vec![
             "nop +0", "acc +1", "jmp +4", "acc +3", "jmp -3", "acc -99", "acc +1", "jmp -4",
             "acc +6",
         ]
         .as_records::<Instruction>()
         .unwrap();
 
-        let fixer = ProgramFixer::new(&values, run_program);
-        let fixes: Vec<(usize, i32)> = fixer.collect();
+        let fixes: Vec<(usize, i32)> = fix_program(&instructions);
 
         assert_eq!(fixes.len(), 1);
         assert_eq!(fixes[0], (7, 8));
