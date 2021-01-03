@@ -7,6 +7,7 @@ My answers for the 2018 [Advent of Code](https://adventofcode.com/2018).
 ## To Do
 
 * For part 2 of day 2, it might be more efficient to construct a binary search tree.
+* The solution for day 7 has quite some duplication.
 
 
 [workflows-CI-badge]: https://github.com/rjvdw/advent-of-code/workflows/CI%202018/badge.svg
