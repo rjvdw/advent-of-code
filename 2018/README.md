@@ -9,6 +9,7 @@ My answers for the 2018 [Advent of Code](https://adventofcode.com/2018).
 * For part 2 of day 2, it might be more efficient to construct a binary search tree.
 * The solution for day 7 has quite some duplication.
 * The MinMax struct from day 10 can be generalized further and then moved to the helpers. (Or maybe such a lib already exists?)
+* Day 12 makes the bold assumption that the pattern will stabilize with a period of 1. If the pattern starts repeating with a period of 2, my solution will not detect this.
 
 
 [workflows-CI-badge]: https://github.com/rjvdw/advent-of-code/workflows/CI%202018/badge.svg
