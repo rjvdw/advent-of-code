@@ -3,6 +3,11 @@ name = "day22"
 version = "0.1.0"
 authors = ["Ruud van der Weide <rj@rdcl.dev>"]
 edition = "2018"
+default-run = "aoc-2016-22"
+
+[[bin]]
+name = "aoc-2016-22"
+path = "src/main.rs"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
