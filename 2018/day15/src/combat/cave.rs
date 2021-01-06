@@ -30,7 +30,7 @@ impl Cave {
     }
 
     /// Get the number of remaining units for a faction.
-    pub fn get_remaining_units(&self, faction: Faction) -> usize {
+    pub fn get_remaining_units_count(&self, faction: Faction) -> usize {
         self.units
             .iter()
             .filter(|u| u.is_alive() && u.faction == faction)
@@ -43,7 +43,7 @@ impl Cave {
         for i in 0..self.units.len() {
             let mut unit = self.units[i];
             if unit.is_alive() {
-                if let State::Won = self.turn_move(&unit) {
+                if let State::Over = self.turn_move(&unit) {
                     return self.get_outcome();
                 }
                 unit = self.units[i];
@@ -71,12 +71,12 @@ impl Cave {
                 Some((faction, self.turns * self.get_total_health(faction)))
             }
         } else {
-            // everyone is dead
+            // everyone is dead, let's give the victory to the goblins
             Some((Faction::Goblin, 0))
         }
     }
 
-    /// Gets the total health of all units..
+    /// Gets the total health of all units within a faction.
     fn get_total_health(&self, faction: Faction) -> usize {
         self.units
             .iter()
@@ -91,7 +91,7 @@ impl Cave {
 
         // If the opposing faction has no units left, the combat is over.
         if targets.is_empty() {
-            return State::Won;
+            return State::Over;
         }
 
         // If we are not adjacent to a target, we are going to do a move.
@@ -181,8 +181,9 @@ impl Cave {
         targets: &[Unit],
         friendlies: &[Unit],
     ) -> Option<(Unit, usize)> {
-        // We are going to do a flood fill to find potential targets. This contains the points
-        // that we are currently exploring.
+        // We are going to do a flood fill to find potential targets.
+
+        // This contains the points that we are currently exploring.
         let mut exploring: HashSet<(usize, usize)> = HashSet::new();
         exploring.insert(unit.position);
 
@@ -242,6 +243,11 @@ impl Cave {
         distance: usize,
         friendlies: &[Unit],
     ) -> (usize, usize) {
+        // In order to find the direction to move to, we are again going to do a flood fill. This
+        // time we are going to do this for the specified distance - 1. We then check which of the
+        // tiles we've reached are adjacent to the unit, and from these tiles we take the first one
+        // (according to the specified order).
+
         let mut exploring = HashSet::new();
         exploring.insert(target.position);
 

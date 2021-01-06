@@ -29,6 +29,7 @@ fn main() {
     );
 }
 
+/// Given a starting situation, let the combat play out until a faction has won.
 fn do_combat(cave: &Cave) -> (Faction, usize) {
     let mut cave = cave.clone();
     let mut outcome = None;
@@ -38,8 +39,10 @@ fn do_combat(cave: &Cave) -> (Faction, usize) {
     outcome.unwrap()
 }
 
+/// Manipulate the battle, by giving elves higher attack power. Keep trying different attack powers
+/// until we find one that allows the elves to win without suffering any losses.
 fn manipulate_combat(cave: &Cave) -> (usize, usize) {
-    let nr_elves = cave.get_remaining_units(Faction::Elf);
+    let nr_elves = cave.get_remaining_units_count(Faction::Elf);
     let mut attack_power = 3;
     loop {
         attack_power += 1;
@@ -50,7 +53,7 @@ fn manipulate_combat(cave: &Cave) -> (usize, usize) {
             outcome = cave.take_turns();
         }
         if let Some((Faction::Elf, outcome)) = outcome {
-            if cave.get_remaining_units(Faction::Elf) == nr_elves {
+            if cave.get_remaining_units_count(Faction::Elf) == nr_elves {
                 return (attack_power, outcome);
             }
         }
