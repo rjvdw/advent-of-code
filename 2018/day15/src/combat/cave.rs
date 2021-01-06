@@ -3,6 +3,7 @@ use std::fmt;
 
 use rdcl_aoc_helpers::error::ParseError;
 use rdcl_aoc_helpers::input::MultilineFromStr;
+use termion::color;
 
 use crate::faction::Faction;
 use crate::point::{cmp_points, compute_distance};
@@ -17,9 +18,15 @@ pub struct Cave {
     width: usize,
     height: usize,
     turns: usize,
+    print_colors: bool,
 }
 
 impl Cave {
+    /// Enable or disable colors in the output.
+    pub fn set_print_colors(&mut self, v: bool) {
+        self.print_colors = v;
+    }
+
     /// Define the attack power for a faction.
     pub fn set_attack_power(&mut self, faction: Faction, attack_power: usize) {
         for unit in self.units.iter_mut() {
@@ -76,7 +83,7 @@ impl Cave {
     }
 
     /// Gets the total health of all units within a faction.
-    fn get_total_health(&self, faction: Faction) -> usize {
+    pub fn get_total_health(&self, faction: Faction) -> usize {
         self.units
             .iter()
             .filter(|u| u.faction == faction)
@@ -306,6 +313,27 @@ impl Cave {
 
 impl fmt::Display for Cave {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let elf;
+        let goblin;
+        let wall;
+        let empty;
+
+        if self.print_colors {
+            elf = format!("{}{} E ", color::Bg(color::Black), color::Fg(color::Green));
+            goblin = format!(
+                "{}{} G ",
+                color::Bg(color::Black),
+                color::Fg(color::LightMagenta)
+            );
+            wall = format!("{}{}   ", color::Bg(color::White), color::Fg(color::White));
+            empty = format!("{}{}   ", color::Bg(color::Black), color::Fg(color::Black));
+        } else {
+            elf = "E".to_string();
+            goblin = "G".to_string();
+            wall = "#".to_string();
+            empty = ".".to_string();
+        }
+
         for (y, row) in self.layout.iter().enumerate() {
             if y != 0 {
                 writeln!(f)?;
@@ -317,14 +345,18 @@ impl fmt::Display for Cave {
                     .find(|u| u.is_alive() && u.position == (x, y))
                 {
                     match unit.faction {
-                        Faction::Elf => write!(f, "E")?,
-                        Faction::Goblin => write!(f, "G")?,
+                        Faction::Elf => write!(f, "{}", elf)?,
+                        Faction::Goblin => write!(f, "{}", goblin)?,
                     }
                 } else {
                     match tile {
-                        Tile::Wall => write!(f, "#")?,
-                        Tile::Empty => write!(f, ".")?,
+                        Tile::Wall => write!(f, "{}", wall)?,
+                        Tile::Empty => write!(f, "{}", empty)?,
                     }
+                }
+
+                if self.print_colors {
+                    write!(f, "{}{}", color::Bg(color::Reset), color::Fg(color::Reset))?;
                 }
             }
         }
@@ -342,6 +374,7 @@ impl MultilineFromStr for Cave {
             width: 0,
             height: 0,
             turns: 0,
+            print_colors: false,
         }
     }
 
