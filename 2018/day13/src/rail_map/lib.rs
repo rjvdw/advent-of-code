@@ -6,6 +6,7 @@ use rdcl_aoc_helpers::input::MultilineFromStr;
 
 use crate::cart_state::CartState;
 use crate::track::Track;
+use termion::{color, cursor};
 
 mod cart_state;
 mod track;
@@ -15,9 +16,15 @@ pub struct RailMap {
     rails: Vec<Vec<Track>>,
     carts: HashMap<(usize, usize), CartState>,
     crashed: Vec<(usize, usize)>,
+    pretty_print: bool,
 }
 
 impl RailMap {
+    /// Enables or disables pretty print.
+    pub fn set_pretty_print(&mut self, v: bool) {
+        self.pretty_print = v;
+    }
+
     /// Returns true if so far no cart has crashed.
     pub fn is_crash_free(&self) -> bool {
         self.crashed.is_empty()
@@ -79,17 +86,52 @@ impl RailMap {
 
 impl fmt::Display for RailMap {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        for (y, row) in self.rails.iter().enumerate() {
-            if y != 0 {
-                writeln!(f)?;
+        if self.pretty_print {
+            for (y, row) in self.rails.iter().enumerate() {
+                if y != 0 {
+                    writeln!(f)?;
+                }
+                for (x, track) in row.iter().enumerate() {
+                    match track {
+                        Track::Vertical => write!(f, " │ ")?,
+                        Track::Horizontal => write!(f, "───")?,
+                        Track::Intersection => write!(f, "─┼─")?,
+                        Track::TopLeft => write!(f, " ┌─")?,
+                        Track::TopRight => write!(f, "─┐ ")?,
+                        Track::BottomLeft => write!(f, " └─")?,
+                        Track::BottomRight => write!(f, "─┘ ")?,
+                        Track::None => write!(f, "   ")?,
+                    }
+
+                    if let Some(cart_state) = self.carts.get(&(x, y)) {
+                        write!(f, "{}{}", cursor::Left(2), color::Fg(color::Green))?;
+                        match cart_state {
+                            CartState::Up(_) => write!(f, "▲")?,
+                            CartState::Down(_) => write!(f, "▼")?,
+                            CartState::Left(_) => write!(f, "◀")?,
+                            CartState::Right(_) => write!(f, "▶")?,
+                        }
+                        write!(f, "{}{}", cursor::Right(1), color::Fg(color::Reset))?;
+                    } else if self.crashed.contains(&(x, y)) {
+                        write!(f, "{}{}", cursor::Left(2), color::Fg(color::Red))?;
+                        write!(f, "X")?;
+                        write!(f, "{}{}", cursor::Right(1), color::Fg(color::Reset))?;
+                    }
+                }
             }
-            for (x, track) in row.iter().enumerate() {
-                if let Some(cart_state) = self.carts.get(&(x, y)) {
-                    write!(f, "{}", cart_state)?;
-                } else if self.crashed.contains(&(x, y)) {
-                    write!(f, "X")?;
-                } else {
-                    write!(f, "{}", track)?;
+        } else {
+            for (y, row) in self.rails.iter().enumerate() {
+                if y != 0 {
+                    writeln!(f)?;
+                }
+                for (x, track) in row.iter().enumerate() {
+                    if let Some(cart_state) = self.carts.get(&(x, y)) {
+                        write!(f, "{}", cart_state)?;
+                    } else if self.crashed.contains(&(x, y)) {
+                        write!(f, "X")?;
+                    } else {
+                        write!(f, "{}", track)?;
+                    }
                 }
             }
         }
@@ -105,6 +147,7 @@ impl MultilineFromStr for RailMap {
             rails: Vec::new(),
             carts: HashMap::new(),
             crashed: Vec::new(),
+            pretty_print: false,
         }
     }
 

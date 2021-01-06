@@ -17,6 +17,7 @@ fn main() {
         .or_exit_with(1);
     let speed = args[2].parse::<usize>().or_exit_with(1);
 
+    rail_map.set_pretty_print(true);
     let sleep_time = Duration::from_millis(speed as u64);
 
     while rail_map.get_nr_carts_remaining() > 1 {
