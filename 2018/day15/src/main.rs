@@ -68,77 +68,8 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_movement() {
-        let mut cave = get_test_input(vec![
-            "#########",
-            "#G..G..G#",
-            "#.......#",
-            "#.......#",
-            "#G..E..G#",
-            "#.......#",
-            "#.......#",
-            "#G..G..G#",
-            "#########",
-        ]);
-
-        cave.take_turns();
-        println!("{}", cave);
-        assert_eq!(
-            format!("{}", cave),
-            vec![
-                "#########",
-                "#.G...G.#",
-                "#...G...#",
-                "#...E..G#",
-                "#.G.....#",
-                "#.......#",
-                "#G..G..G#",
-                "#.......#",
-                "#########",
-            ]
-            .join("\n")
-        );
-
-        cave.take_turns();
-        println!("{}", cave);
-        assert_eq!(
-            format!("{}", cave),
-            vec![
-                "#########",
-                "#..G.G..#",
-                "#...G...#",
-                "#.G.E.G.#",
-                "#.......#",
-                "#G..G..G#",
-                "#.......#",
-                "#.......#",
-                "#########",
-            ]
-            .join("\n")
-        );
-
-        cave.take_turns();
-        println!("{}", cave);
-        assert_eq!(
-            format!("{}", cave),
-            vec![
-                "#########",
-                "#.......#",
-                "#..GGG..#",
-                "#..GEG..#",
-                "#G..G...#",
-                "#......G#",
-                "#.......#",
-                "#.......#",
-                "#########",
-            ]
-            .join("\n")
-        );
-    }
-
-    #[test]
-    fn test_attack() {
-        let mut cave = get_test_input(vec![
+    fn test_do_combat_example_1() {
+        let cave = get_test_input(vec![
             "#######",
             "#.G...#",
             "#...EG#",
@@ -147,25 +78,79 @@ mod tests {
             "#.....#",
             "#######",
         ]);
+        assert_eq!(do_combat(&cave), (Faction::Goblin, 27730));
+    }
 
-        for _ in 0..23 {
-            cave.take_turns();
-        }
+    #[test]
+    fn test_do_combat_example_2() {
+        let cave = get_test_input(vec![
+            "#######",
+            "#G..#E#",
+            "#E#E.E#",
+            "#G.##.#",
+            "#...#E#",
+            "#...E.#",
+            "#######",
+        ]);
+        assert_eq!(do_combat(&cave), (Faction::Elf, 36334));
+    }
 
-        println!("{}", cave);
-        assert_eq!(
-            format!("{}", cave),
-            vec![
-                "#######",
-                "#...G.#",
-                "#..G.G#",
-                "#.#.#G#",
-                "#...#E#",
-                "#.....#",
-                "#######",
-            ]
-            .join("\n")
-        );
+    #[test]
+    fn test_do_combat_example_3() {
+        let cave = get_test_input(vec![
+            "#######",
+            "#E..EG#",
+            "#.#G.E#",
+            "#E.##E#",
+            "#G..#.#",
+            "#..E#.#",
+            "#######"
+        ]);
+        assert_eq!(do_combat(&cave), (Faction::Elf, 39514));
+    }
+
+    #[test]
+    fn test_do_combat_example_4() {
+        let cave = get_test_input(vec![
+            "#######",
+            "#E.G#.#",
+            "#.#G..#",
+            "#G.#.G#",
+            "#G..#.#",
+            "#...E.#",
+            "#######",
+        ]);
+        assert_eq!(do_combat(&cave), (Faction::Goblin, 27755));
+    }
+
+    #[test]
+    fn test_do_combat_example_5() {
+        let cave = get_test_input(vec![
+            "#######",
+            "#.E...#",
+            "#.#..G#",
+            "#.###.#",
+            "#E#G#G#",
+            "#...#G#",
+            "#######",
+        ]);
+        assert_eq!(do_combat(&cave), (Faction::Goblin, 28944));
+    }
+
+    #[test]
+    fn test_do_combat_example_6() {
+        let cave = get_test_input(vec![
+            "#########",
+            "#G......#",
+            "#.E.#...#",
+            "#..##..G#",
+            "#...##..#",
+            "#...#...#",
+            "#.G...G.#",
+            "#.....G.#",
+            "#########",
+        ]);
+        assert_eq!(do_combat(&cave), (Faction::Goblin, 18740));
     }
 
     fn get_test_input(lines: Vec<&str>) -> Cave {

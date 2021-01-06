@@ -50,9 +50,8 @@ impl Cave {
                 self.turn_attack(&unit);
             }
         }
-        let outcome = self.get_outcome();
         self.turns += 1;
-        outcome
+        None
     }
 
     /// Determines the outcome of the battle.
@@ -372,5 +371,120 @@ impl MultilineFromStr for Cave {
         }
         self.layout.push(row);
         Ok(())
+    }
+}
+
+#[cfg(test)]
+#[rustfmt::skip::macros(vec)]
+mod tests {
+    use rdcl_aoc_helpers::input::WithAsMultilineRecords;
+
+    use super::*;
+
+    #[test]
+    fn test_movement() {
+        let mut cave = get_test_input(vec![
+            "#########",
+            "#G..G..G#",
+            "#.......#",
+            "#.......#",
+            "#G..E..G#",
+            "#.......#",
+            "#.......#",
+            "#G..G..G#",
+            "#########",
+        ]);
+
+        cave.take_turns();
+        assert_eq!(
+            format!("{}", cave),
+            vec![
+                "#########",
+                "#.G...G.#",
+                "#...G...#",
+                "#...E..G#",
+                "#.G.....#",
+                "#.......#",
+                "#G..G..G#",
+                "#.......#",
+                "#########",
+            ]
+            .join("\n")
+        );
+
+        cave.take_turns();
+        assert_eq!(
+            format!("{}", cave),
+            vec![
+                "#########",
+                "#..G.G..#",
+                "#...G...#",
+                "#.G.E.G.#",
+                "#.......#",
+                "#G..G..G#",
+                "#.......#",
+                "#.......#",
+                "#########",
+            ]
+            .join("\n")
+        );
+
+        cave.take_turns();
+        assert_eq!(
+            format!("{}", cave),
+            vec![
+                "#########",
+                "#.......#",
+                "#..GGG..#",
+                "#..GEG..#",
+                "#G..G...#",
+                "#......G#",
+                "#.......#",
+                "#.......#",
+                "#########",
+            ]
+            .join("\n")
+        );
+    }
+
+    #[test]
+    fn test_attack() {
+        let mut cave = get_test_input(vec![
+            "#######",
+            "#.G...#",
+            "#...EG#",
+            "#.#.#G#",
+            "#..G#E#",
+            "#.....#",
+            "#######",
+        ]);
+
+        // after 23 turns, the first unit falls
+        for _ in 0..23 {
+            cave.take_turns();
+        }
+
+        assert_eq!(
+            format!("{}", cave),
+            vec![
+                "#######",
+                "#...G.#",
+                "#..G.G#",
+                "#.#.#G#",
+                "#...#E#",
+                "#.....#",
+                "#######",
+            ]
+            .join("\n")
+        );
+    }
+
+    fn get_test_input(lines: Vec<&str>) -> Cave {
+        lines
+            .as_multiline_records::<Cave>()
+            .unwrap()
+            .first()
+            .unwrap()
+            .clone()
     }
 }
