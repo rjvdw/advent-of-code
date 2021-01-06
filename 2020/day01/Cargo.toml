@@ -2,13 +2,12 @@
 name = "day01"
 version = "0.1.0"
 authors = ["Ruud van der Weide <rj@rdcl.dev>"]
-description = "The solution for day 1 of the 2020 advent of code challenge."
-documentation = "https://adventofcode.com/2020/day/1"
 edition = "2018"
-repository = "https://github.com/rjvdw/advent-of-code/"
-exclude = ["input"]
+default-run = "aoc-2020-1"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[[bin]]
+name = "aoc-2020-1"
+path = "src/main.rs"
 
 [dependencies]
 rdcl_aoc_helpers = "0.5.0"
