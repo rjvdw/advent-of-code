@@ -1,6 +1,6 @@
 /// A single space within the cave.
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
-pub(in crate::combat) enum Tile {
+pub(crate) enum Tile {
     /// Walls cannot be traversed.
     Wall,
 
@@ -10,7 +10,7 @@ pub(in crate::combat) enum Tile {
 
 impl Tile {
     /// Indicates whether a tile can be traversed.
-    pub(in crate::combat) fn is_empty(&self) -> bool {
+    pub(crate) fn is_empty(&self) -> bool {
         matches!(self, Tile::Empty)
     }
 }

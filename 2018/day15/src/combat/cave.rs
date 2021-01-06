@@ -4,11 +4,11 @@ use std::fmt;
 use rdcl_aoc_helpers::error::ParseError;
 use rdcl_aoc_helpers::input::MultilineFromStr;
 
-use crate::combat::faction::Faction;
-use crate::combat::point::{cmp_points, compute_distance};
-use crate::combat::state::State;
-use crate::combat::tile::Tile;
-use crate::combat::unit::Unit;
+use crate::faction::Faction;
+use crate::point::{cmp_points, compute_distance};
+use crate::state::State;
+use crate::tile::Tile;
+use crate::unit::Unit;
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct Cave {

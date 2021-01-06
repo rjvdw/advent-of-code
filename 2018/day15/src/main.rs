@@ -4,10 +4,8 @@ use rdcl_aoc_helpers::args::get_args;
 use rdcl_aoc_helpers::error::WithOrExit;
 use rdcl_aoc_helpers::input::WithReadMultiLines;
 
-use crate::combat::cave::Cave;
-use crate::combat::faction::Faction;
-
-mod combat;
+use combat::cave::Cave;
+use combat::faction::Faction;
 
 fn main() {
     let args = get_args(&["<input file>"], 1);

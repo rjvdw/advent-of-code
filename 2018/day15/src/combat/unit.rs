@@ -1,28 +1,28 @@
 use std::cmp::Ordering;
 use std::fmt;
 
-use crate::combat::faction::Faction;
-use crate::combat::point::cmp_points;
+use crate::faction::Faction;
+use crate::point::cmp_points;
 
 /// A single unit participating in the combat.
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Hash)]
-pub(in crate::combat) struct Unit {
+pub(crate) struct Unit {
     /// The current position of the unit, in terms of (x, y).
-    pub(in crate::combat) position: (usize, usize),
+    pub(crate) position: (usize, usize),
 
     /// The faction this unit is affiliated with.
-    pub(in crate::combat) faction: Faction,
+    pub(crate) faction: Faction,
 
     /// The remaining number of hit points for this unit.
-    pub(in crate::combat) health: usize,
+    pub(crate) health: usize,
 
     /// The amount of damage this unit does when attacking.
-    pub(in crate::combat) attack_power: usize,
+    pub(crate) attack_power: usize,
 }
 
 impl Unit {
     /// Creates a new unit at a given position.
-    pub(in crate::combat) fn new(faction: Faction, position: (usize, usize)) -> Unit {
+    pub(crate) fn new(faction: Faction, position: (usize, usize)) -> Unit {
         Unit {
             position,
             faction,
@@ -32,17 +32,17 @@ impl Unit {
     }
 
     /// Indicates whether this unit is still alive.
-    pub(in crate::combat) fn is_alive(&self) -> bool {
+    pub(crate) fn is_alive(&self) -> bool {
         self.health > 0
     }
 
     /// Returns true if this unit is in an opposing faction from the other unit.
-    pub(in crate::combat) fn opposes(&self, other: &Unit) -> bool {
+    pub(crate) fn opposes(&self, other: &Unit) -> bool {
         self.faction != other.faction
     }
 
     /// Take damage. The damage that is specified is subtracted from this unit's health.
-    pub(in crate::combat) fn take_damage(&mut self, damage: usize) {
+    pub(crate) fn take_damage(&mut self, damage: usize) {
         if damage > self.health {
             self.health = 0;
         } else {
