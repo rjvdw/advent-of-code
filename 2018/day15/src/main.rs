@@ -104,7 +104,7 @@ mod tests {
             "#E.##E#",
             "#G..#.#",
             "#..E#.#",
-            "#######"
+            "#######",
         ]);
         assert_eq!(do_combat(&cave), (Faction::Elf, 39514));
     }
@@ -151,6 +151,78 @@ mod tests {
             "#########",
         ]);
         assert_eq!(do_combat(&cave), (Faction::Goblin, 18740));
+    }
+
+    #[test]
+    fn test_manipulate_combat_example_1() {
+        let cave = get_test_input(vec![
+            "#######",
+            "#.G...#",
+            "#...EG#",
+            "#.#.#G#",
+            "#..G#E#",
+            "#.....#",
+            "#######",
+        ]);
+        assert_eq!(manipulate_combat(&cave), (15, 4988));
+    }
+
+    #[test]
+    fn test_manipulate_combat_example_2() {
+        let cave = get_test_input(vec![
+            "#######",
+            "#E..EG#",
+            "#.#G.E#",
+            "#E.##E#",
+            "#G..#.#",
+            "#..E#.#",
+            "#######",
+        ]);
+        assert_eq!(manipulate_combat(&cave), (4, 31284));
+    }
+
+    #[test]
+    fn test_manipulate_combat_example_3() {
+        let cave = get_test_input(vec![
+            "#######",
+            "#E.G#.#",
+            "#.#G..#",
+            "#G.#.G#",
+            "#G..#.#",
+            "#...E.#",
+            "#######",
+        ]);
+        assert_eq!(manipulate_combat(&cave), (15, 3478));
+    }
+
+    #[test]
+    fn test_manipulate_combat_example_4() {
+        let cave = get_test_input(vec![
+            "#######",
+            "#.E...#",
+            "#.#..G#",
+            "#.###.#",
+            "#E#G#G#",
+            "#...#G#",
+            "#######",
+        ]);
+        assert_eq!(manipulate_combat(&cave), (12, 6474));
+    }
+
+    #[test]
+    fn test_manipulate_combat_example_5() {
+        let cave = get_test_input(vec![
+            "#########",
+            "#G......#",
+            "#.E.#...#",
+            "#..##..G#",
+            "#...##..#",
+            "#...#...#",
+            "#.G...G.#",
+            "#.....G.#",
+            "#########",
+        ]);
+        assert_eq!(manipulate_combat(&cave), (34, 1140));
     }
 
     fn get_test_input(lines: Vec<&str>) -> Cave {
