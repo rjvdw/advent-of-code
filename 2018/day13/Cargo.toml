@@ -3,14 +3,18 @@ name = "day13"
 version = "0.1.0"
 authors = ["Ruud van der Weide <rj@rdcl.dev>"]
 edition = "2018"
-default-run = "day13"
+default-run = "aoc-2018-13"
 
 [lib]
 name = "rail_map"
 path = "src/rail_map/lib.rs"
 
 [[bin]]
-name = "day13-visualisation"
+name = "aoc-2018-13"
+path = "src/main.rs"
+
+[[bin]]
+name = "aoc-2018-13-visualisation"
 path = "src/visualisation.rs"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
