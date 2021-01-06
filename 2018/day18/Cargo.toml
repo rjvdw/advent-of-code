@@ -13,5 +13,10 @@ path = "src/forest/lib.rs"
 name = "aoc-2018-18"
 path = "src/main.rs"
 
+[[bin]]
+name = "aoc-2018-18-visualisation"
+path = "src/visualisation.rs"
+
 [dependencies]
 rdcl_aoc_helpers = "0.5.0"
+termion = "1.5.5"

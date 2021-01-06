@@ -2,6 +2,7 @@ use std::fmt;
 
 use rdcl_aoc_helpers::error::ParseError;
 use rdcl_aoc_helpers::input::MultilineFromStr;
+use termion::color;
 
 use crate::tile::Tile;
 
@@ -10,9 +11,15 @@ mod tile;
 #[derive(Debug, Clone)]
 pub struct Forest {
     tiles: Vec<Vec<Tile>>,
+    print_colors: bool,
 }
 
 impl Forest {
+    /// Set whether or not colors should be used when printing.
+    pub fn set_print_colors(&mut self, print_colors: bool) {
+        self.print_colors = print_colors;
+    }
+
     /// Get the next iteration of this forest, and return a code indicating its current state.
     pub fn next_iteration(&mut self) -> String {
         let mut tree_counts = self.get_new_counts();
@@ -92,16 +99,33 @@ impl Forest {
 
 impl fmt::Display for Forest {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let open;
+        let trees;
+        let lumberyard;
+
+        if self.print_colors {
+            open = format!("{}{}  ", color::Fg(color::Black), color::Bg(color::Black));
+            trees = format!("{}{}  ", color::Fg(color::Green), color::Bg(color::Green));
+            lumberyard = format!("{}{}  ", color::Fg(color::Red), color::Bg(color::Red));
+        } else {
+            open = ".".to_string();
+            trees = "|".to_string();
+            lumberyard = "#".to_string();
+        }
+
         for (y, row) in self.tiles.iter().enumerate() {
             if y != 0 {
                 writeln!(f)?;
             }
             for tile in row {
                 match tile {
-                    Tile::Open => write!(f, ".")?,
-                    Tile::Trees => write!(f, "|")?,
-                    Tile::Lumberyard => write!(f, "#")?,
+                    Tile::Open => write!(f, "{}", open)?,
+                    Tile::Trees => write!(f, "{}", trees)?,
+                    Tile::Lumberyard => write!(f, "{}", lumberyard)?,
                 }
+            }
+            if self.print_colors {
+                write!(f, "{}{}", color::Fg(color::Reset), color::Bg(color::Reset))?;
             }
         }
 
@@ -113,7 +137,10 @@ impl MultilineFromStr for Forest {
     type Err = ParseError;
 
     fn new() -> Self {
-        Forest { tiles: Vec::new() }
+        Forest {
+            tiles: Vec::new(),
+            print_colors: false,
+        }
     }
 
     fn indicates_new_record(&self, _line: &str) -> bool {
