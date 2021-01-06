@@ -1,7 +1,7 @@
 use std::fmt;
 
 #[derive(Debug, Copy, Clone)]
-pub(in crate::rail_map) enum CartState {
+pub(crate) enum CartState {
     Up(u8),
     Down(u8),
     Left(u8),
@@ -9,23 +9,23 @@ pub(in crate::rail_map) enum CartState {
 }
 
 impl CartState {
-    pub(in crate::rail_map) fn faces_up(&self) -> bool {
+    pub(crate) fn faces_up(&self) -> bool {
         matches!(self, CartState::Up(_))
     }
 
-    pub(in crate::rail_map) fn faces_down(&self) -> bool {
+    pub(crate) fn faces_down(&self) -> bool {
         matches!(self, CartState::Down(_))
     }
 
-    pub(in crate::rail_map) fn faces_left(&self) -> bool {
+    pub(crate) fn faces_left(&self) -> bool {
         matches!(self, CartState::Left(_))
     }
 
-    pub(in crate::rail_map) fn faces_right(&self) -> bool {
+    pub(crate) fn faces_right(&self) -> bool {
         matches!(self, CartState::Right(_))
     }
 
-    pub(in crate::rail_map) fn pick_direction(&self) -> Self {
+    pub(crate) fn pick_direction(&self) -> Self {
         match self {
             CartState::Up(0) => CartState::Left(1),
             CartState::Up(1) => CartState::Up(2),
@@ -47,7 +47,7 @@ impl CartState {
         }
     }
 
-    pub(in crate::rail_map) fn turn_left(&self) -> Self {
+    pub(crate) fn turn_left(&self) -> Self {
         match self {
             CartState::Up(d) => CartState::Left(*d),
             CartState::Down(d) => CartState::Right(*d),
@@ -56,7 +56,7 @@ impl CartState {
         }
     }
 
-    pub(in crate::rail_map) fn turn_right(&self) -> Self {
+    pub(crate) fn turn_right(&self) -> Self {
         match self {
             CartState::Up(d) => CartState::Right(*d),
             CartState::Down(d) => CartState::Left(*d),
@@ -65,7 +65,7 @@ impl CartState {
         }
     }
 
-    pub(in crate::rail_map) fn next(&self, (x, y): (usize, usize)) -> (usize, usize) {
+    pub(crate) fn next(&self, (x, y): (usize, usize)) -> (usize, usize) {
         match self {
             CartState::Up(_) if y > 0 => (x, y - 1),
             CartState::Down(_) => (x, y + 1),

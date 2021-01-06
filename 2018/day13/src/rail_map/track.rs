@@ -1,7 +1,7 @@
 use std::fmt;
 
 #[derive(Debug, Copy, Clone)]
-pub(in crate::rail_map) enum Track {
+pub(crate) enum Track {
     Vertical,
     Horizontal,
     Intersection,

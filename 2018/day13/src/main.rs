@@ -4,9 +4,7 @@ use rdcl_aoc_helpers::args::get_args;
 use rdcl_aoc_helpers::error::WithOrExit;
 use rdcl_aoc_helpers::input::WithReadMultiLines;
 
-use crate::rail_map::RailMap;
-
-mod rail_map;
+use rail_map::RailMap;
 
 fn main() {
     let args = get_args(&["<input file>"], 1);

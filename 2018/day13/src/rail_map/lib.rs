@@ -4,8 +4,8 @@ use std::fmt;
 use rdcl_aoc_helpers::error::ParseError;
 use rdcl_aoc_helpers::input::MultilineFromStr;
 
-use crate::rail_map::cart_state::CartState;
-use crate::rail_map::track::Track;
+use crate::cart_state::CartState;
+use crate::track::Track;
 
 mod cart_state;
 mod track;

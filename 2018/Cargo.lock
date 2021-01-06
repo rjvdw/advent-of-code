@@ -89,6 +89,7 @@ name = "day13"
 version = "0.1.0"
 dependencies = [
  "rdcl_aoc_helpers",
+ "termion",
 ]
 
 [[package]]
