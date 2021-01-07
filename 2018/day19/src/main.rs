@@ -17,7 +17,7 @@ fn main() {
     let (instruction_pointer, instructions) = parse_input(&args[1]).or_exit_with(1);
 
     let mut machine = Machine::new_simple_machine(&instructions);
-    machine.run(&mut Hook::new(instruction_pointer));
+    machine.run(&mut Hook::new(instruction_pointer, true));
     println!(
         "The value in register 0 is {}.",
         machine.register.read(reg(0))
@@ -25,7 +25,7 @@ fn main() {
 
     let mut machine = Machine::new_simple_machine(&instructions);
     machine.register.write(reg(0), 1);
-    machine.run(&mut Hook::new(instruction_pointer));
+    machine.run(&mut Hook::new(instruction_pointer, true));
     println!(
         "The value in register 0 is {}.",
         machine.register.read(reg(0))
@@ -68,7 +68,7 @@ mod tests {
             Instruction::Seti(9, 0, 5),
         ];
         let mut machine = Machine::new_simple_machine(&instructions);
-        machine.run(&mut Hook::new(instruction_pointer));
+        machine.run(&mut Hook::new(instruction_pointer, false));
         assert_eq!(format!("{}", machine.register), "[a=7, b=5, c=6, f=9]");
     }
 }
