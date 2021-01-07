@@ -10,9 +10,17 @@ pub trait MachineRegister: Debug + Display {
     /// Writes a register.
     fn write(&mut self, key: char, value: i64);
 
+    /// Clears the register.
+    fn clear(&mut self);
+
     /// Increments (or decrements if by < 0) a register.
     fn increment(&mut self, key: char, by: i64) {
         self.write(key, self.read(key) + by)
+    }
+
+    /// Writes a boolean value (1 = true, 0 = false) to a register.
+    fn write_bool(&mut self, key: char, condition: bool) {
+        self.write(key, if condition { 1 } else { 0 });
     }
 }
 
@@ -60,6 +68,10 @@ impl MachineRegister for HashMapRegister {
 
     fn write(&mut self, key: char, value: i64) {
         *self.registers.entry(key).or_insert(0) = value;
+    }
+
+    fn clear(&mut self) {
+        self.registers.clear();
     }
 }
 
