@@ -5,9 +5,9 @@ use rdcl_aoc_helpers::error::ParseError;
 
 use crate::sample::Sample;
 
-pub fn parse_input(path: &str) -> Result<(Vec<Sample>, Vec<[usize; 4]>), ParseError> {
+pub fn parse_input(path: &str) -> Result<(Vec<Sample>, Vec<[i64; 4]>), ParseError> {
     let mut samples: Vec<Sample> = Vec::new();
-    let mut instructions: Vec<[usize; 4]> = Vec::new();
+    let mut instructions: Vec<[i64; 4]> = Vec::new();
     let file = File::open(path)?;
     let mut lines = BufReader::new(file).lines();
     let mut finished_parsing_samples = false;

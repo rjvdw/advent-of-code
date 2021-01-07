@@ -112,6 +112,7 @@ name = "day16"
 version = "0.1.0"
 dependencies = [
  "rdcl_aoc_helpers",
+ "shared",
 ]
 
 [[package]]
@@ -168,6 +169,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7e891cfe48e9100a70a3b6eb652fef28920c117d366339687bd5576160db0f76"
 dependencies = [
  "redox_syscall",
+]
+
+[[package]]
+name = "shared"
+version = "0.1.0"
+dependencies = [
+ "rdcl_aoc_helpers",
 ]
 
 [[package]]

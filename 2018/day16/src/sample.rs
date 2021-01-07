@@ -2,9 +2,9 @@ use std::fmt;
 
 #[derive(Debug, Copy, Clone)]
 pub struct Sample {
-    pub before: [usize; 4],
-    pub after: [usize; 4],
-    pub instruction: [usize; 4],
+    pub before: [i64; 4],
+    pub after: [i64; 4],
+    pub instruction: [i64; 4],
 }
 
 impl fmt::Display for Sample {

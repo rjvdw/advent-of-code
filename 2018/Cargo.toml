@@ -1,5 +1,5 @@
 [workspace]
-members = ["day*"]
+members = ["day*", "shared"]
 exclude = []
 
 [profile.test.package.day11]
