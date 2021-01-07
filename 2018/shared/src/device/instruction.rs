@@ -101,37 +101,37 @@ impl MachineInstruction for Instruction {
                 let a = *a;
                 let b = register.read(reg(*b));
                 let c = reg(*c);
-                register.write(c, as_bool(a > b));
+                register.write_bool(c, a > b);
             }
             Instruction::Gtri(a, b, c) => {
                 let a = register.read(reg(*a));
                 let b = *b;
                 let c = reg(*c);
-                register.write(c, as_bool(a > b));
+                register.write_bool(c, a > b);
             }
             Instruction::Gtrr(a, b, c) => {
                 let a = register.read(reg(*a));
                 let b = register.read(reg(*b));
                 let c = reg(*c);
-                register.write(c, as_bool(a > b));
+                register.write_bool(c, a > b);
             }
             Instruction::Eqir(a, b, c) => {
                 let a = *a;
                 let b = register.read(reg(*b));
                 let c = reg(*c);
-                register.write(c, as_bool(a == b));
+                register.write_bool(c, a == b);
             }
             Instruction::Eqri(a, b, c) => {
                 let a = register.read(reg(*a));
                 let b = *b;
                 let c = reg(*c);
-                register.write(c, as_bool(a == b));
+                register.write_bool(c, a == b);
             }
             Instruction::Eqrr(a, b, c) => {
                 let a = register.read(reg(*a));
                 let b = register.read(reg(*b));
                 let c = reg(*c);
-                register.write(c, as_bool(a == b));
+                register.write_bool(c, a == b);
             }
         }
 
@@ -203,13 +203,5 @@ pub fn reg(key: i64) -> char {
         (key as u8 + b'a') as char
     } else {
         panic!("Cannot use key {} as a register.", key)
-    }
-}
-
-fn as_bool(condition: bool) -> i64 {
-    if condition {
-        1
-    } else {
-        0
     }
 }
