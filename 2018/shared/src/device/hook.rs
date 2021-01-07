@@ -4,13 +4,29 @@ use rdcl_aoc_helpers::machine::output_receiver::OutputReceiver;
 use rdcl_aoc_helpers::machine::register::MachineRegister;
 use rdcl_aoc_helpers::machine::Machine;
 
-use shared::device::instruction::{reg, Instruction};
+use crate::device::instruction::{reg, Instruction};
 
-pub struct Hook(char, bool);
+pub struct Hook {
+    register: char,
+    day19_optimization_enabled: bool,
+    debugging: bool,
+}
 
 impl Hook {
-    pub fn new(instruction_pointer: i64, with_optimization: bool) -> Hook {
-        Hook(reg(instruction_pointer), with_optimization)
+    pub fn new(instruction_pointer: i64) -> Hook {
+        Hook {
+            register: reg(instruction_pointer),
+            day19_optimization_enabled: false,
+            debugging: false,
+        }
+    }
+
+    pub fn enable_day19_optimization(&mut self) {
+        self.day19_optimization_enabled = true;
+    }
+
+    pub fn enable_debugging(&mut self) {
+        self.debugging = true;
     }
 }
 
@@ -21,7 +37,15 @@ impl PreExecuteHook<Instruction> for Hook {
         instruction: &Instruction,
         idx: usize,
     ) -> HookResult {
-        if self.1 && idx == 1 {
+        if self.debugging {
+            println!(
+                "{:60} {:3}. {}",
+                format!("{}", machine.register),
+                idx,
+                instruction
+            );
+        }
+        if self.day19_optimization_enabled && idx == 1 {
             let f = machine.register.read('f');
 
             // Strictly speaking, we don't need to set all these registers (just 'a' and 'c'), but I
@@ -34,8 +58,8 @@ impl PreExecuteHook<Instruction> for Hook {
         } else {
             instruction.execute(&mut machine.register, &mut machine.output_receiver);
         }
-        machine.register.increment(self.0, 1);
-        HookResult::Goto(machine.register.read(self.0))
+        machine.register.increment(self.register, 1);
+        HookResult::Goto(machine.register.read(self.register))
     }
 }
 

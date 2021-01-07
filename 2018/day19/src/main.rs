@@ -1,23 +1,24 @@
 use std::fs::File;
-use std::io::{BufRead, BufReader};
 
 use rdcl_aoc_helpers::args::get_args;
-use rdcl_aoc_helpers::error::{ParseError, WithOrExit};
+use rdcl_aoc_helpers::error::WithOrExit;
 use rdcl_aoc_helpers::machine::register::MachineRegister;
 use rdcl_aoc_helpers::machine::Machine;
 
-use shared::device::instruction::{reg, Instruction};
-
-use crate::hook::Hook;
-
-mod hook;
+use shared::device::hook::Hook;
+use shared::device::instruction::reg;
+use shared::device::parse_instructions;
 
 fn main() {
     let args = get_args(&["<input file>"], 1);
-    let (instruction_pointer, instructions) = parse_input(&args[1]).or_exit_with(1);
+    let file = File::open(&args[1]).or_exit_with(1);
+    let (instruction_pointer, instructions) = parse_instructions(file).or_exit_with(1);
+
+    let mut pre_execute_hook = Hook::new(instruction_pointer);
+    pre_execute_hook.enable_day19_optimization();
 
     let mut machine = Machine::new_simple_machine(&instructions);
-    machine.run(&mut Hook::new(instruction_pointer, true));
+    machine.run(&mut pre_execute_hook);
     println!(
         "The value in register 0 is {}.",
         machine.register.read(reg(0))
@@ -25,34 +26,17 @@ fn main() {
 
     let mut machine = Machine::new_simple_machine(&instructions);
     machine.register.write(reg(0), 1);
-    machine.run(&mut Hook::new(instruction_pointer, true));
+    machine.run(&mut pre_execute_hook);
     println!(
         "The value in register 0 is {}.",
         machine.register.read(reg(0))
     );
 }
 
-fn parse_input(path: &str) -> Result<(i64, Vec<Instruction>), ParseError> {
-    let file = File::open(path)?;
-    let mut lines = BufReader::new(file).lines();
-    if let Some(Ok(line)) = lines.next() {
-        if let Some(instruction_pointer) = line.strip_prefix("#ip ") {
-            let mut instructions = Vec::new();
-            for line in lines {
-                let line = line?;
-                instructions.push(line.parse()?);
-            }
-            Ok((instruction_pointer.parse()?, instructions))
-        } else {
-            Err(ParseError(format!("Invalid instruction pointer: {}", line)))
-        }
-    } else {
-        Err(ParseError::of("Empty input file"))
-    }
-}
-
 #[cfg(test)]
 mod tests {
+    use shared::device::instruction::Instruction;
+
     use super::*;
 
     #[test]
@@ -67,8 +51,9 @@ mod tests {
             Instruction::Seti(8, 0, 4),
             Instruction::Seti(9, 0, 5),
         ];
+        let mut pre_execute_hook = Hook::new(instruction_pointer);
         let mut machine = Machine::new_simple_machine(&instructions);
-        machine.run(&mut Hook::new(instruction_pointer, false));
+        machine.run(&mut pre_execute_hook);
         assert_eq!(format!("{}", machine.register), "[a=7, b=5, c=6, f=9]");
     }
 }
