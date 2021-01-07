@@ -6,7 +6,7 @@ use rdcl_aoc_helpers::machine::instruction::{MachineInstruction, ParsedMachineIn
 use rdcl_aoc_helpers::machine::output_receiver::OutputReceiver;
 use rdcl_aoc_helpers::machine::register::MachineRegister;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Copy, Clone)]
 pub enum Instruction {
     Addr(i64, i64, i64),
     Addi(i64, i64, i64),

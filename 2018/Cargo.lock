@@ -132,6 +132,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "day19"
+version = "0.1.0"
+dependencies = [
+ "rdcl_aoc_helpers",
+ "shared",
+]
+
+[[package]]
 name = "day25"
 version = "0.1.0"
 dependencies = [
