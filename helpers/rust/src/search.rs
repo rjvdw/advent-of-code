@@ -10,8 +10,8 @@ pub trait Navigable {
     /// The distance score between points a and b.
     fn distance_score(&self, a: &Self::Point, b: &Self::Point) -> u64;
 
-    /// Returns the points that can be reached directly from `point`.
-    fn get_neighbours(&self, point: &Self::Point) -> Vec<Self::Point>;
+    /// Returns the points that can be reached directly from `point`, together with the distance.
+    fn get_neighbours(&self, point: &Self::Point) -> Vec<(u64, Self::Point)>;
 
     /// Use [A*](https://en.wikipedia.org/wiki/A*_search_algorithm) to find the shortest path
     /// between two points within a `Navigable` space.
@@ -50,18 +50,18 @@ pub trait Navigable {
             }
 
             open_set.remove(current);
-            let current_score = *g_score.get(current).unwrap_or(&u64::MAX);
+            let current_distance = *g_score.get(current).unwrap_or(&u64::MAX);
 
-            for neighbour in &self.get_neighbours(current) {
-                let score = current_score + self.distance_score(current, neighbour);
-                let neighbour_score = *g_score.get(neighbour).unwrap_or(&u64::MAX);
+            for (d, neighbour) in &self.get_neighbours(current) {
+                let distance = current_distance + d;
+                let neighbour_distance = *g_score.get(neighbour).unwrap_or(&u64::MAX);
 
-                if score < neighbour_score {
+                if distance < neighbour_distance {
                     came_from.insert(neighbour.clone(), current.clone());
-                    g_score.insert(neighbour.clone(), score);
+                    g_score.insert(neighbour.clone(), distance);
                     f_score.insert(
                         neighbour.clone(),
-                        score.add(self.distance_score(neighbour, end)),
+                        distance.add(self.distance_score(neighbour, end)),
                     );
                     open_set.insert(neighbour.clone());
                 }
@@ -75,6 +75,7 @@ pub trait Navigable {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::math::taxi_cab_2d;
 
     #[test]
     fn test_find_shortest_path_without_obstacles() {
@@ -198,15 +199,16 @@ mod tests {
         type Point = (u64, u64);
 
         fn distance_score(&self, a: &Self::Point, b: &Self::Point) -> u64 {
-            (a.0.max(b.0) - a.0.min(b.0)) + (a.1.max(b.1) - a.1.min(b.1))
+            taxi_cab_2d(*a, *b)
         }
 
-        fn get_neighbours(&self, (x, y): &Self::Point) -> Vec<Self::Point> {
+        fn get_neighbours(&self, (x, y): &Self::Point) -> Vec<(u64, Self::Point)> {
             vec![(*x - 1, *y), (*x + 1, *y), (*x, *y - 1), (*x, *y + 1)]
                 .iter()
                 .filter(|(x, y)| *x > 0 && *x <= self.width && *y > 0 && *y <= self.height)
                 .filter(|p| !self.obstacles.contains(p))
                 .copied()
+                .map(|p| (1, p))
                 .collect()
         }
     }
