@@ -5,4 +5,4 @@ authors = ["Ruud van der Weide <rj@rdcl.dev>"]
 edition = "2018"
 
 [dependencies]
-rdcl_aoc_helpers = "0.5.1"
+rdcl_aoc_helpers = "0.5.2"

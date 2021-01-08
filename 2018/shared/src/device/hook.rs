@@ -62,12 +62,7 @@ impl PreExecuteHook<Instruction> for Hook {
         idx: usize,
     ) -> HookResult {
         if self.debugging && (self.log_points.is_empty() || self.log_points.contains(&idx)) {
-            println!(
-                "{:60} {:3}. {}",
-                format!("{}", machine.register),
-                idx,
-                instruction
-            );
+            println!("{:10} {:3}. {}", machine.register, idx, instruction);
         }
 
         if self.day21_analysis_enabled && idx == 28 {
@@ -76,15 +71,14 @@ impl PreExecuteHook<Instruction> for Hook {
             if x == 0 {
                 machine.register.write('x', d);
                 println!(
-                    "[Part 1] The value for a should be {} (instruction count: {}).",
-                    d, self.instruction_counter
+                    "[Part 1] The value for a should be {}.",
+                    machine.register.read('x')
                 );
             }
             if self.day21_seen.contains(&d) {
                 println!(
-                    "[Part 2] The value for a should be {} (instruction count: {}).",
-                    machine.register.read('y'),
-                    self.instruction_counter
+                    "[Part 2] The value for a should be {}.",
+                    machine.register.read('y')
                 );
                 return HookResult::Abort;
             } else {
@@ -94,6 +88,9 @@ impl PreExecuteHook<Instruction> for Hook {
         }
 
         if self.day19_optimization_enabled && idx == 1 {
+            // Once we reach instruction 1, the device starts determining the sum of all divisors of
+            // the value that is in register 'f'. After that, the program will halt.
+
             let f = machine.register.read('f');
 
             // Strictly speaking, we don't need to set all these registers (just 'a' and 'c'), but I
@@ -103,6 +100,15 @@ impl PreExecuteHook<Instruction> for Hook {
             machine.register.write('c', 15);
             machine.register.write('d', 1);
             machine.register.write('e', f + 1);
+        } else if self.day21_analysis_enabled && idx == 18 {
+            // Once we reach instruction 18, the device starts computing the smallest value e, such
+            // that (e + 1) * 256 > b. This translates to integer division.
+
+            let b = machine.register.read('b');
+
+            machine.register.write('c', 25);
+            machine.register.write('e', b / 256);
+            machine.register.write('f', 1);
         } else {
             instruction.execute(&mut machine.register, &mut machine.output_receiver);
             self.instruction_counter += 1;
