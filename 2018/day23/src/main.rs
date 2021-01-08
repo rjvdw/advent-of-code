@@ -1,4 +1,5 @@
 use std::cmp::Ordering;
+use std::collections::VecDeque;
 use std::fs::File;
 
 use rdcl_aoc_helpers::args::get_args;
@@ -11,8 +12,10 @@ use crate::region::Region;
 mod nanobot;
 mod region;
 
+/// A point represents a coordinate within 3D space.
 pub type Point = (i64, i64, i64);
 
+/// The origin is at 0,0,0.
 pub const ORIGIN: Point = (0, 0, 0);
 
 fn main() {
@@ -32,7 +35,7 @@ fn main() {
     match find_optimal_position(&nanobots) {
         Some(position) => {
             println!(
-                "You should position yourself at {:?}. This point has distance {} from {:?}",
+                "You should position yourself at {:?}. This point has distance {} from {:?}.",
                 position,
                 distance_to_origin(position),
                 ORIGIN
@@ -42,6 +45,8 @@ fn main() {
     }
 }
 
+/// Find the strongest nanobot (i.e. the nanobot with the largest sphere of influence), and count
+/// how many nanobots are within the sphere of influence of this nanobot.
 fn count_nr_nanobots_in_range_of_strongest(nanobots: &[Nanobot]) -> Option<usize> {
     nanobots
         .iter()
@@ -54,7 +59,14 @@ fn count_nr_nanobots_in_range_of_strongest(nanobots: &[Nanobot]) -> Option<usize
         })
 }
 
+/// Find the optimal position. A position is optimal if it is within the spheres of influence of the
+/// maximum number of nanobots. If there are multiple such points, then the optimal points should be
+/// closest to the origin. If multiple points are at the same minimum distance from the origin,
+/// while they all are in the maximum number of spheres of influence, then just pick any of these
+/// points.
 fn find_optimal_position(nanobots: &[Nanobot]) -> Option<Point> {
+    // Start by determining the initial bounds to the region. Take the smallest boundaries such that
+    // all nanobots fit within this initial region.
     let mut lower_bound = (i64::MAX, i64::MAX, i64::MAX);
     let mut upper_bound = (i64::MIN, i64::MIN, i64::MIN);
 
@@ -64,71 +76,98 @@ fn find_optimal_position(nanobots: &[Nanobot]) -> Option<Point> {
         update_bounds(&mut lower_bound.2, &mut upper_bound.2, nanobot.position.2);
     }
 
-    explore_region(
-        nanobots,
-        &Region {
+    // This variable will hold the best point we have encountered until now. At the end of this
+    // method, it should contain the optimal point. The number stored with this point is the number
+    // of nanobots for which this point falls within their sphere of influence.
+    let mut best_so_far: Option<(usize, Point)> = None;
+
+    // Regions we are currently exploring. This queue will always be sorted such that the regions
+    // with the highest scores are at the start. The score of a region is the number of nanobots for
+    // which their sphere of influence overlaps with this region. This score basically gives an
+    // upper bound for the best possible point we can find -- no point within this region can ever
+    // be in the sphere of influence of more nanobots than this score.
+    let mut regions: VecDeque<(usize, Region)> = VecDeque::new();
+    regions.push_back((
+        nanobots.len(),
+        Region {
             from: lower_bound,
             to: upper_bound,
         },
-    )
-    .map(|(_, p)| p)
-}
+    ));
 
-/// Find the optimal point within a region. A point is optimal if is within range of the maximum
-/// number of nanobots, and if is it is not further from the origin than other points that are
-/// within range of this same number of nanobots. This function returns None if it is impossible to
-/// determine such a point (i.e. there are no points within range of a nanobot), or a tuple that has
-/// the number of nanobots that the point is in range of and the point itself.
-fn explore_region(nanobots: &[Nanobot], region: &Region) -> Option<(usize, Point)> {
-    let sub_regions = region.split();
-    let mut scores = vec![0; sub_regions.len()];
-    let mut order = vec![0; sub_regions.len()];
-    for (idx, sub_region) in sub_regions.iter().enumerate() {
-        scores[idx] = sub_region.count_influencing_nanobots(nanobots);
-        order[idx] = idx;
-    }
-    order.sort_unstable_by_key(|&idx| scores[idx]);
+    // As long as there are still regions left to explore, we take the first one (i.e. the one with
+    // the best score).
+    while let Some((_, region)) = regions.pop_front() {
+        // Check if the region is small enough that we can just loop over all points contained
+        // within this region.
+        if region.is_small_enough() {
+            for point in region.iter() {
+                let nanobot_count = nanobots.iter().filter(|b| b.in_range(point)).count();
 
-    let mut optimal: Option<(usize, Point)> = None;
-    for &idx in order.iter().rev() {
-        let score = scores[idx];
-        let sub_region = sub_regions[idx];
-
-        if score == 0 || score < optimal.map(|(o, _)| o).unwrap_or(0) {
-            // If there are no nanobots that influence this region, or if the number of nanobots
-            // than influence this region is less than the best score we've found so far, then we
-            // can skip this region. Since we have sorted based on the score, this means we can skip
-            // all remaining regions as well.
-            break;
-        }
-
-        if sub_region.is_fully_contained(nanobots) {
-            let point = sub_region.closest_point_to_origin();
-            if is_better_result(optimal, (score, point)) {
-                optimal = Some((score, point));
-            }
-        } else if sub_region.is_small_enough() {
-            for point in sub_region.iter() {
-                let score = nanobots.iter().filter(|b| b.in_range(point)).count();
-                if is_better_result(optimal, (score, point)) {
-                    optimal = Some((score, point));
+                // If we have found a better result than what we have found so far, we update the
+                // value in `best_so_far`, and we remove all regions that have now become
+                // unacceptable given this new count.
+                if is_better_result(&best_so_far, (nanobot_count, point)) {
+                    best_so_far = Some((nanobot_count, point));
+                    while let Some(el) = regions.pop_back() {
+                        if is_acceptable_score(el.0, &best_so_far) {
+                            regions.push_back(el);
+                            break;
+                        }
+                    }
                 }
             }
-        } else if let Some(result) = explore_region(nanobots, &sub_region) {
-            if is_better_result(optimal, result) {
-                optimal = Some(result);
-            }
+        } else {
+            splice_subregions(nanobots, &region, &mut regions, &best_so_far);
         }
     }
-    optimal
+
+    best_so_far.map(|(_, p)| p)
 }
 
+/// Split a region into sub regions, and insert these sub regions into the correct place within the
+/// queue. Any sub region that has a score that is not acceptable will be dropped.
+fn splice_subregions(
+    nanobots: &[Nanobot],
+    region: &Region,
+    regions: &mut VecDeque<(usize, Region)>,
+    best_so_far: &Option<(usize, Point)>,
+) {
+    // We start by making a vector and moving all regions into this vector. This is so that we can
+    // sort this vector after adding the newly found regions.
+    // TODO: It might be more efficient to insert using a binary search.
+    let mut rc = Vec::with_capacity(regions.len());
+    while let Some(r) = regions.pop_back() {
+        rc.push(r);
+    }
+
+    // Split the region, filter out any unacceptable regions, and add them to the vector.
+    region
+        .split()
+        .iter()
+        .map(|&sub_region| {
+            let score = sub_region.count_influencing_nanobots(nanobots);
+            (score, sub_region)
+        })
+        .filter(|&(score, _)| is_acceptable_score(score, best_so_far))
+        .for_each(|el| rc.push(el));
+
+    // Sort the vector and move the elements back into the queue. Note that we sort the vector from
+    // small to large, and then move the elements into the queue in the reverse order.
+    rc.sort_unstable_by_key(|(s, _)| *s);
+    while let Some((score, region)) = rc.pop() {
+        regions.push_back((score, region));
+    }
+}
+
+/// Returns the distance between this point and the origin.
 pub fn distance_to_origin(point: Point) -> i64 {
     taxi_cab_3d(point, ORIGIN)
 }
 
-fn is_better_result(current: Option<(usize, Point)>, next: (usize, Point)) -> bool {
-    match current {
+/// Compares two results and returns whether the newest result is better than the best so far.
+fn is_better_result(best_so_far: &Option<(usize, Point)>, next: (usize, Point)) -> bool {
+    match best_so_far {
         Some(current) => match current.0.cmp(&next.0) {
             Ordering::Less => true,
             Ordering::Equal => distance_to_origin(next.1) < distance_to_origin(current.1),
@@ -138,6 +177,14 @@ fn is_better_result(current: Option<(usize, Point)>, next: (usize, Point)) -> bo
     }
 }
 
+/// A score is considered acceptable if it is greater than zero, and if it's not worse than the best
+/// score we have found so far. It is acceptable if the score is _equal_ to the best score we have
+/// found so far.
+fn is_acceptable_score(score: usize, best_so_far: &Option<(usize, Point)>) -> bool {
+    score != 0 && (best_so_far.is_none() || score >= best_so_far.unwrap().0)
+}
+
+/// Given a value, update the min and max bound so that this value fits between them.
 fn update_bounds(min: &mut i64, max: &mut i64, v: i64) {
     if v < *min {
         *min = v;

@@ -7,9 +7,13 @@ use rdcl_aoc_helpers::math::taxi_cab_3d;
 use crate::region::Region;
 use crate::Point;
 
+/// A single nanobot.
 #[derive(Debug, Copy, Clone, Hash, Eq, PartialEq)]
 pub struct Nanobot {
+    /// The position in space of the nanobot.
     pub position: Point,
+
+    /// The radius of its sphere of influence.
     pub radius: i64,
 }
 
@@ -21,26 +25,70 @@ impl Nanobot {
 
     /// Returns true if the nanobot can influence some point within the region.
     pub fn influences(&self, region: &Region) -> bool {
+        // if a corner of the sphere of influence overlaps with the region ...
+        if self.get_corners().iter().any(|&p| region.contains(p)) {
+            return true;
+        }
+
+        // if a corner of the region falls within the sphere of influence ...
+        if region.get_corners().iter().any(|&p| self.in_range(p)) {
+            return true;
+        }
+
+        // if the edges overlap (x, y and z) ...
+        // TODO: Maybe these three code blocks can be generalized...
+        if (region.from.0..=region.to.0).contains(&self.position.0) {
+            let points = vec![
+                (self.position.0, region.from.1, region.from.2),
+                (self.position.0, region.from.1, region.to.2),
+                (self.position.0, region.to.1, region.from.2),
+                (self.position.0, region.to.1, region.to.2),
+            ];
+            if points.iter().any(|&p| self.in_range(p)) {
+                return true;
+            }
+        }
+
+        if (region.from.1..=region.to.1).contains(&self.position.1) {
+            let points = vec![
+                (region.from.0, self.position.1, region.from.2),
+                (region.from.0, self.position.1, region.to.2),
+                (region.to.0, self.position.1, region.from.2),
+                (region.to.0, self.position.1, region.to.2),
+            ];
+            if points.iter().any(|&p| self.in_range(p)) {
+                return true;
+            }
+        }
+
+        if (region.from.2..=region.to.2).contains(&self.position.2) {
+            let points = vec![
+                (region.from.0, region.from.1, self.position.2),
+                (region.from.0, region.to.1, self.position.2),
+                (region.to.0, region.from.1, self.position.2),
+                (region.to.0, region.to.1, self.position.2),
+            ];
+            if points.iter().any(|&p| self.in_range(p)) {
+                return true;
+            }
+        }
+
+        false
+    }
+
+    /// Returns the corners of the sphere of influence of the nanobot.
+    fn get_corners(&self) -> Vec<Point> {
         let (x, y, z) = self.position;
         let r = self.radius;
 
-        let points_of_interest = vec![
-            (x, y, z),
+        vec![
             (x + r, y, z),
             (x - r, y, z),
             (x, y + r, z),
             (x, y - r, z),
             (x, y, z + r),
             (x, y, z - r),
-        ];
-
-        points_of_interest.iter().any(|&p| region.contains(p))
-            || region.get_corners().iter().any(|&p| self.in_range(p))
-    }
-
-    /// Returns true if the nanobot can influence all points within the region.
-    pub fn all_in_range(&self, region: &Region) -> bool {
-        region.get_corners().iter().all(|&p| self.in_range(p))
+        ]
     }
 }
 
@@ -105,4 +153,77 @@ enum ParsingState {
     P2,
     P3,
     R,
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_nanobot_influences_region_1() {
+        // corner of the nanobot falls within the region
+
+        let nanobot = Nanobot {
+            position: (7, 0, 0),
+            radius: 5,
+        };
+        let region = Region {
+            from: (-3, -3, -3),
+            to: (3, 3, 3),
+        };
+
+        assert!(nanobot.influences(&region));
+    }
+
+    #[test]
+    fn test_nanobot_influences_region_2() {
+        // corner of the region falls within the sphere of influence
+
+        let nanobot = Nanobot {
+            position: (0, 0, 0),
+            radius: 5,
+        };
+        let region = Region {
+            from: (1, 1, 1),
+            to: (7, 7, 7),
+        };
+
+        assert!(nanobot.influences(&region));
+    }
+
+    #[test]
+    fn test_nanobot_influences_region_3() {
+        // edge of the region falls within the sphere of influence, but all corners are disjoint
+
+        let nanobot = Nanobot {
+            position: (0, 0, 0),
+            radius: 5,
+        };
+        let region = Region {
+            from: (2, 2, -3),
+            to: (8, 8, 3),
+        };
+
+        assert!(nanobot.influences(&region));
+    }
+
+    #[test]
+    fn test_corners_are_in_range() {
+        let nb = Nanobot {
+            position: (0, 0, 0),
+            radius: 3,
+        };
+        let corners = nb.get_corners();
+
+        assert_eq!(corners.len(), 6);
+
+        assert_eq!(corners[0], (3, 0, 0));
+        assert_eq!(corners[1], (-3, 0, 0));
+        assert_eq!(corners[2], (0, 3, 0));
+        assert_eq!(corners[3], (0, -3, 0));
+        assert_eq!(corners[4], (0, 0, 3));
+        assert_eq!(corners[5], (0, 0, -3));
+
+        assert!(corners.iter().all(|&c| nb.in_range(c)));
+    }
 }
