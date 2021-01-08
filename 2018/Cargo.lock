@@ -182,9 +182,9 @@ checksum = "b8f8bdf33df195859076e54ab11ee78a1b208382d3a26ec40d142ffc1ecc49ef"
 
 [[package]]
 name = "rdcl_aoc_helpers"
-version = "0.5.3"
+version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b351e0a618a4694527def8c2941c6fce633b51c695eb7861068e0da9dac9c436"
+checksum = "9d1f1808afcf8bf804ff1dd39612ba9e969b4790001f95c218ee4bd1f2810fc0"
 
 [[package]]
 name = "redox_syscall"

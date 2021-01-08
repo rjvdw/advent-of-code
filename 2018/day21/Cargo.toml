@@ -14,5 +14,5 @@ name = "aoc-2018-21-run"
 path = "src/run.rs"
 
 [dependencies]
-rdcl_aoc_helpers = "0.5.2"
+rdcl_aoc_helpers = "0.6.0"
 shared = { path = "../shared" }

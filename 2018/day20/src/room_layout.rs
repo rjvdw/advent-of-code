@@ -27,10 +27,10 @@ impl RoomLayout {
 
         let mut longest_distance = 0;
         while let Some((distance, room)) = exploring.pop_front() {
-            for neighbour in self.get_neighbours(&room) {
+            for (d, neighbour) in self.get_neighbours(&room) {
                 if !explored.contains(&neighbour) {
-                    longest_distance = distance + 1;
-                    exploring.push_back((distance + 1, neighbour));
+                    longest_distance = distance + d as usize;
+                    exploring.push_back((longest_distance, neighbour));
                     explored.insert(neighbour);
                 }
             }
@@ -47,12 +47,13 @@ impl RoomLayout {
 
         let mut count = 0;
         while let Some((distance, room)) = exploring.pop_front() {
-            for neighbour in self.get_neighbours(&room) {
+            for (d, neighbour) in self.get_neighbours(&room) {
                 if !explored.contains(&neighbour) {
-                    if distance + 1 > threshold {
+                    let distance = distance + d as usize;
+                    if distance > threshold {
                         count += 1;
                     }
-                    exploring.push_back((distance + 1, neighbour));
+                    exploring.push_back((distance, neighbour));
                     explored.insert(neighbour);
                 }
             }
@@ -161,7 +162,7 @@ impl Navigable for RoomLayout {
         taxi_cab_2d(*a, *b) as u64
     }
 
-    fn get_neighbours(&self, point: &Self::Point) -> Vec<Self::Point> {
+    fn get_neighbours(&self, point: &Self::Point) -> Vec<(u64, Self::Point)> {
         let mut neighbours = vec![*point, *point, *point, *point];
         neighbours[0].0 -= 1;
         neighbours[1].0 += 1;
@@ -172,6 +173,7 @@ impl Navigable for RoomLayout {
             .iter()
             .filter(|&p| self.doors.contains(&(*p, *point)))
             .copied()
+            .map(|p| (1, p))
             .collect()
     }
 }

@@ -196,13 +196,15 @@ impl Navigable for Cave {
         taxi_cab_2d(*a, *b) as u64
     }
 
-    fn get_neighbours(&self, point: &Self::Point) -> Vec<Self::Point> {
-        match *point {
+    fn get_neighbours(&self, point: &Self::Point) -> Vec<(u64, Self::Point)> {
+        let neighbours = match *point {
             (0, 0) => vec![(0, 1), (1, 0)],
             (x, 0) => vec![(x - 1, 0), (x, 1), (x + 1, 0)],
             (0, y) => vec![(0, y - 1), (1, y), (0, y + 1)],
             (x, y) => vec![(x - 1, y), (x, y + 1), (x + 1, y), (x, y - 1)],
-        }
+        };
+
+        neighbours.iter().copied().map(|n| (1, n)).collect()
     }
 }
 
