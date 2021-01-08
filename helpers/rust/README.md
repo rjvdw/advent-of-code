@@ -370,7 +370,7 @@ fn main() {
 ### `part::Part`
 
 This enum is useful if you need to explicitly refer to a part.
-It implemts [str::FromStr] and [fmt::Display], so you can easily convert to and from a string.
+It implements [str::FromStr] and [fmt::Display], so you can easily convert to and from a string.
 
 #### Example
 
