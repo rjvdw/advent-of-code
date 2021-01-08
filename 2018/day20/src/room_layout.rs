@@ -3,6 +3,7 @@ use std::fmt;
 use std::str::FromStr;
 
 use rdcl_aoc_helpers::error::ParseError;
+use rdcl_aoc_helpers::math::taxi_cab_2d;
 use rdcl_aoc_helpers::search::Navigable;
 
 type Room = (i64, i64);
@@ -157,7 +158,7 @@ impl Navigable for RoomLayout {
     type Point = Room;
 
     fn distance_score(&self, a: &Self::Point, b: &Self::Point) -> u64 {
-        ((a.0 - b.0).abs() + (a.1 - b.1).abs()) as u64
+        taxi_cab_2d(*a, *b) as u64
     }
 
     fn get_neighbours(&self, point: &Self::Point) -> Vec<Self::Point> {

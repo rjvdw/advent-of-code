@@ -3,6 +3,8 @@ use std::fmt;
 
 use rdcl_aoc_helpers::error::ParseError;
 use rdcl_aoc_helpers::input::MultilineFromStr;
+use rdcl_aoc_helpers::math::taxi_cab_2d;
+use rdcl_aoc_helpers::search::Navigable;
 
 use crate::tile::Tile;
 
@@ -187,6 +189,23 @@ impl MultilineFromStr for Cave {
     }
 }
 
+impl Navigable for Cave {
+    type Point = (usize, usize);
+
+    fn distance_score(&self, a: &Self::Point, b: &Self::Point) -> u64 {
+        taxi_cab_2d(*a, *b) as u64
+    }
+
+    fn get_neighbours(&self, point: &Self::Point) -> Vec<Self::Point> {
+        match *point {
+            (0, 0) => vec![(0, 1), (1, 0)],
+            (x, 0) => vec![(x - 1, 0), (x, 1), (x + 1, 0)],
+            (0, y) => vec![(0, y - 1), (1, y), (0, y + 1)],
+            (x, y) => vec![(x - 1, y), (x, y + 1), (x + 1, y), (x, y - 1)],
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -264,13 +283,13 @@ mod tests {
         assert_eq!(cave.compute_risk_level(), 114);
     }
 
-    #[test]
-    fn test_find_shortest_path() {
-        let mut cave = Cave {
-            depth: 510,
-            target: (10, 10),
-            ..Default::default()
-        };
-        assert_eq!(cave.find_fastest_path(), Some(45));
-    }
+    // #[test]
+    // fn test_find_shortest_path() {
+    //     let mut cave = Cave {
+    //         depth: 510,
+    //         target: (10, 10),
+    //         ..Default::default()
+    //     };
+    //     assert_eq!(cave.find_fastest_path(), Some(45));
+    // }
 }

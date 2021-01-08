@@ -4,6 +4,7 @@ use std::io::{BufRead, BufReader};
 
 use rdcl_aoc_helpers::args::get_args;
 use rdcl_aoc_helpers::error::{ParseError, WithOrExit};
+use rdcl_aoc_helpers::math::taxi_cab_4d;
 
 type P = (i32, i32, i32, i32);
 
@@ -27,7 +28,7 @@ fn find_constellations(coordinates: &[P], threshold: i32) -> usize {
         for constellation in constellations {
             if constellation
                 .iter()
-                .any(|p| distance(point, *p) <= threshold)
+                .any(|p| taxi_cab_4d(point, *p) <= threshold)
             {
                 new_constellation.extend(constellation);
             } else {
@@ -38,10 +39,6 @@ fn find_constellations(coordinates: &[P], threshold: i32) -> usize {
         constellations = next_constellations;
     }
     constellations.len()
-}
-
-fn distance(p1: P, p2: P) -> i32 {
-    (p1.0 - p2.0).abs() + (p1.1 - p2.1).abs() + (p1.2 - p2.2).abs() + (p1.3 - p2.3).abs()
 }
 
 fn parse_input(path: &str) -> Result<Vec<P>, ParseError> {

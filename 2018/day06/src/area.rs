@@ -2,6 +2,7 @@ use std::mem;
 
 use rdcl_aoc_helpers::error::ParseError;
 use rdcl_aoc_helpers::input::MultilineFromStr;
+use rdcl_aoc_helpers::math::taxi_cab_2d;
 
 #[derive(Debug)]
 pub struct Area {
@@ -41,14 +42,10 @@ impl Area {
         area
     }
 
-    pub fn distance(&self, p1: (i32, i32), p2: (i32, i32)) -> i32 {
-        (p1.0 - p2.0).abs() + (p1.1 - p2.1).abs()
-    }
-
     pub fn distance_to_all(&self, point: (i32, i32)) -> i32 {
         self.coordinates
             .iter()
-            .map(|c| self.distance(*c, point))
+            .map(|c| taxi_cab_2d(*c, point))
             .sum()
     }
 
@@ -56,7 +53,7 @@ impl Area {
         let distances: Vec<((i32, i32), i32)> = self
             .coordinates
             .iter()
-            .map(|p2| (*p2, self.distance(p1, *p2)))
+            .map(|p2| (*p2, taxi_cab_2d(p1, *p2)))
             .collect();
 
         let shortest_distance = distances.iter().map(|(_, d)| *d).min()?;

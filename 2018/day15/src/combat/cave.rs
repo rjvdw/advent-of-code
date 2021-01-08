@@ -3,10 +3,11 @@ use std::fmt;
 
 use rdcl_aoc_helpers::error::ParseError;
 use rdcl_aoc_helpers::input::MultilineFromStr;
+use rdcl_aoc_helpers::math::taxi_cab_2d;
 use termion::color;
 
 use crate::faction::Faction;
-use crate::point::{cmp_points, compute_distance};
+use crate::point::cmp_points;
 use crate::state::State;
 use crate::tile::Tile;
 use crate::unit::Unit;
@@ -164,7 +165,7 @@ impl Cave {
             .filter(|u| u.is_alive() && u.opposes(unit))
         {
             result.0.push(other);
-            if !result.1 && compute_distance(unit.position, other.position) == 1 {
+            if !result.1 && taxi_cab_2d(unit.position, other.position) == 1 {
                 result.1 = true;
             }
         }
@@ -281,7 +282,7 @@ impl Cave {
 
         exploring
             .iter()
-            .filter(|&&p| compute_distance(p, unit.position) == 1)
+            .filter(|&&p| taxi_cab_2d(p, unit.position) == 1)
             .min_by(|a, b| cmp_points(a, b))
             .copied()
             .unwrap()

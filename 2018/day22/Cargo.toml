@@ -14,4 +14,4 @@ name = "aoc-2018-22"
 path = "src/main.rs"
 
 [dependencies]
-rdcl_aoc_helpers = "0.5.2"
+rdcl_aoc_helpers = "0.5.3"

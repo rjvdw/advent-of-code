@@ -3,6 +3,7 @@ use std::fs::File;
 use rdcl_aoc_helpers::args::get_args;
 use rdcl_aoc_helpers::error::WithOrExit;
 use rdcl_aoc_helpers::input::WithReadLines;
+use rdcl_aoc_helpers::math::abs_diff;
 
 /// The difference between the code point of an uppercase letter and its corresponding lower case
 /// letter.
@@ -60,7 +61,7 @@ fn reduce_polymer(polymer: &str) -> String {
     let mut current = 0;
     while current < ll[current] {
         let next = ll[current];
-        if distance(units[current], units[next]) == LU_DIFF {
+        if abs_diff(units[current], units[next]) == LU_DIFF {
             let prev = ll_rev[current];
             ll[prev] = ll[next]; // removes current and next from ll
             ll_rev[ll[next]] = prev; // removes current and next from ll_rev
@@ -88,14 +89,6 @@ fn reconstruct(units: &[u8], ll: &[usize], mut current: usize) -> String {
     reduced.push(units[current] as char);
 
     reduced
-}
-
-fn distance(a: u8, b: u8) -> u8 {
-    if a > b {
-        a - b
-    } else {
-        b - a
-    }
 }
 
 #[cfg(test)]
