@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::collections::{HashSet, VecDeque};
 use std::fmt;
 use std::str::FromStr;
 
@@ -18,64 +18,44 @@ pub struct RoomLayout {
 
 impl RoomLayout {
     pub fn find_longest_path(&self) -> usize {
-        let mut exploring: HashSet<Room> = HashSet::new();
-        exploring.insert((0, 0));
+        let mut exploring: VecDeque<(usize, Room)> = VecDeque::new();
+        exploring.push_back((0, (0, 0)));
 
         let mut explored: HashSet<Room> = HashSet::new();
         explored.insert((0, 0));
 
-        let mut distance: usize = 0;
-
-        while !exploring.is_empty() {
-            distance += 1;
-
-            let mut next_exploring = HashSet::new();
-
-            for room in exploring {
-                for neighbour in self.get_neighbours(&room) {
-                    if !explored.contains(&neighbour) {
-                        next_exploring.insert(neighbour);
-                        explored.insert(neighbour);
-                    }
+        let mut longest_distance = 0;
+        while let Some((distance, room)) = exploring.pop_front() {
+            for neighbour in self.get_neighbours(&room) {
+                if !explored.contains(&neighbour) {
+                    longest_distance = distance + 1;
+                    exploring.push_back((distance + 1, neighbour));
+                    explored.insert(neighbour);
                 }
             }
-
-            exploring = next_exploring;
         }
-
-        distance.saturating_sub(1)
+        longest_distance
     }
 
     pub fn find_paths_longer_than(&self, threshold: usize) -> usize {
-        let mut exploring: HashSet<Room> = HashSet::new();
-        exploring.insert((0, 0));
+        let mut exploring: VecDeque<(usize, Room)> = VecDeque::new();
+        exploring.push_back((0, (0, 0)));
 
         let mut explored: HashSet<Room> = HashSet::new();
         explored.insert((0, 0));
 
-        let mut distance: usize = 0;
-        let mut count: usize = 0;
-
-        while !exploring.is_empty() {
-            distance += 1;
-
-            let mut next_exploring = HashSet::new();
-
-            for room in exploring {
-                for neighbour in self.get_neighbours(&room) {
-                    if !explored.contains(&neighbour) {
-                        if distance > threshold {
-                            count += 1;
-                        }
-                        next_exploring.insert(neighbour);
-                        explored.insert(neighbour);
+        let mut count = 0;
+        while let Some((distance, room)) = exploring.pop_front() {
+            for neighbour in self.get_neighbours(&room) {
+                if !explored.contains(&neighbour) {
+                    if distance + 1 > threshold {
+                        count += 1;
                     }
+                    exploring.push_back((distance + 1, neighbour));
+                    explored.insert(neighbour);
                 }
             }
-
-            exploring = next_exploring;
         }
-
         count
     }
 
