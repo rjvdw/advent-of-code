@@ -13,22 +13,22 @@ pub struct Grid {
 
 impl Grid {
     pub fn new(nodes: &[Node]) -> Grid {
-        let mut start = nodes[0].clone(); // placeholder
-        let mut target = nodes[0].clone(); // placeholder
+        let mut start = nodes[0]; // placeholder
+        let mut target = nodes[0]; // placeholder
         let mut width = 0; // placeholder
 
         let mut map: HashMap<(usize, usize), Node> = HashMap::new();
-        for node in nodes {
-            map.insert(node.get_xy(), node.clone());
+        for &node in nodes {
+            map.insert(node.get_xy(), node);
 
             let (x, y) = node.get_xy();
             if node.is_empty() {
-                start = node.clone();
+                start = node;
             }
 
             if y == 0 && x + 1 > width {
                 width = x + 1;
-                target = node.clone();
+                target = node;
             }
         }
 
@@ -48,7 +48,7 @@ impl Navigable for Grid {
         a.distance(b) as u64
     }
 
-    fn get_neighbours(&self, node: &Self::Point) -> Vec<Self::Point> {
+    fn get_neighbours(&self, node: &Self::Point) -> Vec<(u64, Self::Point)> {
         let (x, y) = node.get_xy();
         let mut neighbours: Vec<(usize, usize)> = vec![(x + 1, y), (x, y + 1)];
         if x > 0 {
@@ -64,7 +64,7 @@ impl Navigable for Grid {
             .filter(|node_opt| node_opt.is_some())
             .map(|node_opt| node_opt.unwrap())
             .filter(|node1| node1.fits_on(&self.start))
-            .cloned()
+            .map(|&node| (1, node))
             .collect()
     }
 }

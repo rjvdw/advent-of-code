@@ -3,7 +3,7 @@ use std::str::FromStr;
 
 use rdcl_aoc_helpers::error::ParseError;
 
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Copy, Clone)]
 pub struct Node {
     xy: (usize, usize),
     size: u64,

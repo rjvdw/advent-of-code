@@ -63,7 +63,7 @@ fn explore_maze(maze: &Maze, start: (u64, u64), mut max_steps: u64) -> usize {
         max_steps -= 1;
         let mut next_to_explore: HashSet<(u64, u64)> = HashSet::new();
         for node in to_explore {
-            for neighbour in maze.get_neighbours(&node) {
+            for (_, neighbour) in maze.get_neighbours(&node) {
                 if !explored.contains(&neighbour) {
                     explored.insert(neighbour);
                     next_to_explore.insert(neighbour);

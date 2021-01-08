@@ -10,5 +10,5 @@ name = "aoc-2016-23"
 path = "src/main.rs"
 
 [dependencies]
-rdcl_aoc_helpers = "0.5.0"
+rdcl_aoc_helpers = "0.6.0"
 shared = { path = "../shared" }

@@ -23,7 +23,7 @@ impl Navigable for Maze {
         (a.0.max(b.0) - a.0.min(b.0)) + (a.1.max(b.1) - a.1.min(b.1))
     }
 
-    fn get_neighbours(&self, &(x, y): &Self::Point) -> Vec<Self::Point> {
+    fn get_neighbours(&self, &(x, y): &Self::Point) -> Vec<(u64, Self::Point)> {
         let mut n = Vec::new();
         if x > 0 {
             n.push((x - 1, y));
@@ -33,6 +33,9 @@ impl Navigable for Maze {
         }
         n.push((x + 1, y));
         n.push((x, y + 1));
-        n.iter().filter(|&c| !self.is_wall(*c)).cloned().collect()
+        n.iter()
+            .filter(|&c| !self.is_wall(*c))
+            .map(|&c| (1, c))
+            .collect()
     }
 }

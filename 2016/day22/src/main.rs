@@ -53,10 +53,10 @@ fn find_path(nodes: &[Node]) -> Option<usize> {
 
 fn find_viable_pairs(nodes: &[Node]) -> Vec<(Node, Node)> {
     let mut viable_pairs = Vec::new();
-    for node1 in nodes {
-        for node2 in nodes {
-            if is_viable(node1, node2) {
-                viable_pairs.push((node1.clone(), node2.clone()))
+    for &node1 in nodes {
+        for &node2 in nodes {
+            if is_viable(&node1, &node2) {
+                viable_pairs.push((node1, node2))
             }
         }
     }
