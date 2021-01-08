@@ -1,3 +1,41 @@
+use std::cmp::Ordering;
+use std::ops::{Add, Sub};
+
+/// The absolute difference between two numbers.
+pub fn abs_diff<T>(a: T, b: T) -> T
+where
+    T: Sub<T, Output = T> + Ord + Copy,
+{
+    match a.cmp(&b) {
+        Ordering::Less => b.sub(a),
+        _ => a.sub(b),
+    }
+}
+
+/// The taxi cab distance between two 2D points.
+pub fn taxi_cab_2d<T>((xa, ya): (T, T), (xb, yb): (T, T)) -> T
+where
+    T: Add<T, Output = T> + Sub<T, Output = T> + Ord + Copy,
+{
+    abs_diff(xa, xb).add(abs_diff(ya, yb))
+}
+
+/// The taxi cab distance between two 3D points.
+pub fn taxi_cab_3d<T>((xa, ya, za): (T, T, T), (xb, yb, zb): (T, T, T)) -> T
+where
+    T: Add<T, Output = T> + Sub<T, Output = T> + Ord + Copy,
+{
+    taxi_cab_2d((xa, ya), (xb, yb)).add(abs_diff(za, zb))
+}
+
+/// The taxi cab distance between two 4D points.
+pub fn taxi_cab_4d<T>((xa, ya, za, wa): (T, T, T, T), (xb, yb, zb, wb): (T, T, T, T)) -> T
+where
+    T: Add<T, Output = T> + Sub<T, Output = T> + Ord + Copy,
+{
+    taxi_cab_3d((xa, ya, za), (xb, yb, zb)).add(abs_diff(wa, wb))
+}
+
 /// Computes the greatest common divisor for numbers a and b.
 #[allow(clippy::many_single_char_names)]
 pub fn gcd(a: u64, b: u64) -> u64 {
@@ -88,6 +126,41 @@ pub fn bezout_coefficients(a: i64, b: i64) -> (i64, i64) {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    mod taxi_cab {
+        use super::*;
+
+        #[test]
+        pub fn test_abs_diff() {
+            assert_eq!(abs_diff::<i32>(7, 3), 4);
+            assert_eq!(abs_diff::<i32>(3, 7), 4);
+            assert_eq!(abs_diff::<i32>(-3, 7), 10);
+            assert_eq!(abs_diff::<i32>(3, -7), 10);
+            assert_eq!(abs_diff::<u32>(7, 3), 4);
+            assert_eq!(abs_diff::<u32>(3, 7), 4);
+        }
+
+        #[test]
+        pub fn test_taxi_cab_2d() {
+            assert_eq!(taxi_cab_2d::<i32>((0, 0), (5, 5)), 10);
+            assert_eq!(taxi_cab_2d::<i32>((-3, 2), (2, -3)), 10);
+            assert_eq!(taxi_cab_2d::<u32>((0, 0), (5, 5)), 10);
+        }
+
+        #[test]
+        pub fn test_taxi_cab_3d() {
+            assert_eq!(taxi_cab_3d::<i32>((0, 0, 0), (5, 5, 5)), 15);
+            assert_eq!(taxi_cab_3d::<i32>((-3, 2, -2), (2, -3, 3)), 15);
+            assert_eq!(taxi_cab_3d::<u32>((0, 0, 5), (5, 5, 0)), 15);
+        }
+
+        #[test]
+        pub fn test_taxi_cab_4d() {
+            assert_eq!(taxi_cab_4d::<i32>((0, 0, 0, 0), (5, 5, 5, 5)), 20);
+            assert_eq!(taxi_cab_4d::<i32>((-3, 2, -2, 2), (2, -3, 3, -3)), 20);
+            assert_eq!(taxi_cab_4d::<u32>((0, 0, 5, 5), (5, 5, 0, 0)), 20);
+        }
+    }
 
     mod gcd {
         use super::*;

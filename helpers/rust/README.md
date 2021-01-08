@@ -285,6 +285,24 @@ impl FromStr for Instruction {
 
 ## Math
 
+### `math::abs_diff` & `math::taxi_cab_*d`
+
+The function `abs_diff` computes the absolute difference between two points.
+The functions `taxi_cab_*d` (implemented for 2D, 3D and 4D) computes the taxi cab distance between two points.
+
+#### Example
+
+```rust
+use rdcl_aoc_helpers::math::{abs_diff, taxi_cab_2d, taxi_cab_3d, taxi_cab_4d};
+
+fn main() {
+    println!("|1 - 5| = {}", abs_diff(1, 5));
+    println!("|(1, 10) - (5, 3)| = {}", taxi_cab_2d((1, 10), (5, 3)));
+    println!("|(1, 10, 2) - (5, 3, 4)| = {}", taxi_cab_3d((1, 10, 2), (5, 3, 4)));
+    println!("|(1, 10, 2, 7) - (5, 3, 4, 2)| = {}", taxi_cab_4d((1, 10, 2, 7), (5, 3, 4, 2)));
+}
+```
+
 ### `math::gcd`
 
 Computes the greatest common divisor of two numbers.
