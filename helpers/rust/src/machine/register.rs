@@ -55,7 +55,8 @@ impl fmt::Display for HashMapRegister {
             if i != 0 {
                 write!(f, ", ")?;
             }
-            write!(f, "{}={}", key, self.read(*key))?;
+            write!(f, "{}=", key)?;
+            fmt::Display::fmt(&self.read(*key), f)?;
         }
         write!(f, "]")
     }
