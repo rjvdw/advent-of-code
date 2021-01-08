@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::fmt;
 
 use rdcl_aoc_helpers::error::ParseError;
@@ -7,8 +7,10 @@ use rdcl_aoc_helpers::math::taxi_cab_2d;
 use rdcl_aoc_helpers::search::Navigable;
 
 use crate::tile::Tile;
+use crate::tool::Tool;
 
 mod tile;
+mod tool;
 
 /// The cave in which the target is lost.
 #[derive(Debug)]
@@ -49,8 +51,54 @@ impl Cave {
     }
 
     /// Find the fastest path to the target.
-    pub fn find_fastest_path(&mut self) -> Option<usize> {
+    pub fn find_fastest_path(&mut self) -> Option<u64> {
         // cannot use the A* implementation from the helpers, as that one does not use a mutable ref
+
+        type Point = <Cave as Navigable>::Point;
+
+        let start: Point = ((0, 0), Tool::Torch);
+        let end: Point = (self.target, Tool::Torch);
+
+        let mut open_set: HashSet<Point> = HashSet::new();
+        open_set.insert(start);
+
+        let mut came_from: HashMap<Point, Point> = HashMap::new();
+
+        let mut g_score: HashMap<Point, u64> = HashMap::new();
+        g_score.insert(start, 0);
+
+        let mut f_score: HashMap<Point, u64> = HashMap::new();
+        f_score.insert(start, self.distance_score(&start, &end));
+
+        while !open_set.is_empty() {
+            let current = open_set
+                .iter()
+                .min_by_key(|node| f_score.get(node).unwrap_or(&u64::MAX))
+                .copied()
+                .unwrap();
+
+            if current == end {
+                return g_score.get(&current).copied();
+            }
+
+            self.compute_geologic_index((current.0 .0 + 1, current.0 .1));
+            self.compute_geologic_index((current.0 .0, current.0 .1 + 1));
+
+            open_set.remove(&current);
+            let current_distance = *g_score.get(&current).unwrap_or(&u64::MAX);
+
+            for &(d, neighbour) in &self.get_neighbours(&current) {
+                let distance = current_distance + d;
+                let neighbour_distance = *g_score.get(&neighbour).unwrap_or(&u64::MAX);
+
+                if distance < neighbour_distance {
+                    came_from.insert(neighbour, current);
+                    g_score.insert(neighbour, distance);
+                    f_score.insert(neighbour, distance + self.distance_score(&neighbour, &end));
+                    open_set.insert(neighbour);
+                }
+            }
+        }
 
         None
     }
@@ -190,13 +238,13 @@ impl MultilineFromStr for Cave {
 }
 
 impl Navigable for Cave {
-    type Point = (usize, usize);
+    type Point = ((usize, usize), Tool);
 
-    fn distance_score(&self, a: &Self::Point, b: &Self::Point) -> u64 {
+    fn distance_score(&self, (a, _): &Self::Point, (b, _): &Self::Point) -> u64 {
         taxi_cab_2d(*a, *b) as u64
     }
 
-    fn get_neighbours(&self, point: &Self::Point) -> Vec<(u64, Self::Point)> {
+    fn get_neighbours(&self, (point, equipped): &Self::Point) -> Vec<(u64, Self::Point)> {
         let neighbours = match *point {
             (0, 0) => vec![(0, 1), (1, 0)],
             (x, 0) => vec![(x - 1, 0), (x, 1), (x + 1, 0)],
@@ -204,7 +252,19 @@ impl Navigable for Cave {
             (x, y) => vec![(x - 1, y), (x, y + 1), (x + 1, y), (x, y - 1)],
         };
 
-        neighbours.iter().copied().map(|n| (1, n)).collect()
+        neighbours
+            .iter()
+            .flat_map(|&neighbour| {
+                let tile = self.get_type(neighbour).unwrap();
+                tile.suitable_tools()
+                    .iter()
+                    .map(move |&tool| {
+                        let distance = if *equipped == tool { 1 } else { 8 };
+                        (distance, (neighbour, tool))
+                    })
+                    .collect::<Vec<(u64, Self::Point)>>()
+            })
+            .collect()
     }
 }
 
@@ -285,13 +345,13 @@ mod tests {
         assert_eq!(cave.compute_risk_level(), 114);
     }
 
-    // #[test]
-    // fn test_find_shortest_path() {
-    //     let mut cave = Cave {
-    //         depth: 510,
-    //         target: (10, 10),
-    //         ..Default::default()
-    //     };
-    //     assert_eq!(cave.find_fastest_path(), Some(45));
-    // }
+    #[test]
+    fn test_find_shortest_path() {
+        let mut cave = Cave {
+            depth: 510,
+            target: (10, 10),
+            ..Default::default()
+        };
+        assert_eq!(cave.find_fastest_path(), Some(45));
+    }
 }
