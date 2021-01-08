@@ -1,8 +1,9 @@
+use std::convert::TryFrom;
+
 use crate::machine::hook::{HookResult, PreExecuteHook};
 use crate::machine::instruction::MachineInstruction;
 use crate::machine::output_receiver::{NoopOutputReceiver, OutputReceiver};
 use crate::machine::register::{HashMapRegister, MachineRegister};
-use std::convert::TryFrom;
 
 /// Hooks allow you to influence how the program is executed.
 pub mod hook;
@@ -106,10 +107,11 @@ where
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use crate::error::ParseError;
     use crate::machine::hook::NoopHook;
     use crate::machine::instruction::ParsedMachineInstruction;
+
+    use super::*;
 
     #[test]
     fn test_machine() {

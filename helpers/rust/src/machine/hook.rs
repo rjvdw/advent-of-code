@@ -1,8 +1,9 @@
+use std::marker::PhantomData;
+
 use crate::machine::instruction::MachineInstruction;
 use crate::machine::output_receiver::OutputReceiver;
 use crate::machine::register::MachineRegister;
 use crate::machine::Machine;
-use std::marker::PhantomData;
 
 /// Allows the hook to influence the rest of the execution of an instruction.
 pub enum HookResult {

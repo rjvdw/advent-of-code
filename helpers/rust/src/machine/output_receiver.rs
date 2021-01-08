@@ -1,5 +1,6 @@
-use crate::machine::register::MachineRegister;
 use std::fmt::Debug;
+
+use crate::machine::register::MachineRegister;
 
 /// If your machine produces output, it should send this to an OutputReceiver.
 pub trait OutputReceiver<T: MachineRegister>: Debug {
