@@ -1,0 +1,17 @@
+[package]
+name = "day22"
+version = "0.1.0"
+authors = ["Ruud van der Weide <rj@rdcl.dev>"]
+edition = "2018"
+default-run = "aoc-2018-22"
+
+[lib]
+name = "cave"
+path = "src/cave/lib.rs"
+
+[[bin]]
+name = "aoc-2018-22"
+path = "src/main.rs"
+
+[dependencies]
+rdcl_aoc_helpers = "0.5.2"
