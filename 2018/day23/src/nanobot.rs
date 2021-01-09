@@ -5,7 +5,7 @@ use rdcl_aoc_helpers::error::ParseError;
 use rdcl_aoc_helpers::math::taxi_cab_3d;
 
 use crate::region::Region;
-use crate::{check_if_edge_overlaps, edge_points_to_check, Point};
+use crate::{check_if_edge_overlaps, Point};
 
 /// A single nanobot.
 #[derive(Debug, Copy, Clone, Hash, Eq, PartialEq)]

@@ -30,7 +30,7 @@ macro_rules! edge_points_to_check {
 macro_rules! check_if_edge_overlaps {
     ($nanobot:expr, $region:expr, $dim:tt) => {
         if ($region.from.$dim..=$region.to.$dim).contains(&$nanobot.position.$dim) {
-            let points = edge_points_to_check![$nanobot, $region, $dim];
+            let points = $crate::edge_points_to_check![$nanobot, $region, $dim];
             points.iter().any(|&p| $nanobot.in_range(p))
         } else {
             false
