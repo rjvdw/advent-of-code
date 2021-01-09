@@ -72,18 +72,15 @@ impl Region {
 
     /// Returns the corners of this region.
     pub fn get_corners(&self) -> Vec<Point> {
-        let (x0, y0, z0) = self.from;
-        let (x1, y1, z1) = self.to;
-
         vec![
-            (x0, y0, z0),
-            (x1, y0, z0),
-            (x0, y1, z0),
-            (x0, y0, z1),
-            (x1, y1, z0),
-            (x1, y0, z1),
-            (x0, y1, z1),
-            (x1, y1, z1),
+            (self.from.0, self.from.1, self.from.2),
+            (self.to.0, self.from.1, self.from.2),
+            (self.from.0, self.to.1, self.from.2),
+            (self.from.0, self.from.1, self.to.2),
+            (self.to.0, self.to.1, self.from.2),
+            (self.to.0, self.from.1, self.to.2),
+            (self.from.0, self.to.1, self.to.2),
+            (self.to.0, self.to.1, self.to.2),
         ]
     }
 }

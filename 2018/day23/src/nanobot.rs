@@ -5,7 +5,7 @@ use rdcl_aoc_helpers::error::ParseError;
 use rdcl_aoc_helpers::math::taxi_cab_3d;
 
 use crate::region::Region;
-use crate::Point;
+use crate::{check_if_edge_overlaps, edge_points_to_check, Point};
 
 /// A single nanobot.
 #[derive(Debug, Copy, Clone, Hash, Eq, PartialEq)]
@@ -36,41 +36,14 @@ impl Nanobot {
         }
 
         // if the edges overlap (x, y and z) ...
-        // TODO: Maybe these three code blocks can be generalized...
-        if (region.from.0..=region.to.0).contains(&self.position.0) {
-            let points = vec![
-                (self.position.0, region.from.1, region.from.2),
-                (self.position.0, region.from.1, region.to.2),
-                (self.position.0, region.to.1, region.from.2),
-                (self.position.0, region.to.1, region.to.2),
-            ];
-            if points.iter().any(|&p| self.in_range(p)) {
-                return true;
-            }
+        if check_if_edge_overlaps!(self, region, 0) {
+            return true;
         }
-
-        if (region.from.1..=region.to.1).contains(&self.position.1) {
-            let points = vec![
-                (region.from.0, self.position.1, region.from.2),
-                (region.from.0, self.position.1, region.to.2),
-                (region.to.0, self.position.1, region.from.2),
-                (region.to.0, self.position.1, region.to.2),
-            ];
-            if points.iter().any(|&p| self.in_range(p)) {
-                return true;
-            }
+        if check_if_edge_overlaps!(self, region, 1) {
+            return true;
         }
-
-        if (region.from.2..=region.to.2).contains(&self.position.2) {
-            let points = vec![
-                (region.from.0, region.from.1, self.position.2),
-                (region.from.0, region.to.1, self.position.2),
-                (region.to.0, region.from.1, self.position.2),
-                (region.to.0, region.to.1, self.position.2),
-            ];
-            if points.iter().any(|&p| self.in_range(p)) {
-                return true;
-            }
+        if check_if_edge_overlaps!(self, region, 2) {
+            return true;
         }
 
         false

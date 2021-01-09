@@ -11,6 +11,8 @@ use crate::region::Region;
 
 mod nanobot;
 mod region;
+#[macro_use]
+mod edge_checks;
 
 /// A point represents a coordinate within 3D space.
 pub type Point = (i64, i64, i64);
