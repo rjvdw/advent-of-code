@@ -3,3 +3,12 @@
 [[package]]
 name = "day01"
 version = "0.1.0"
+dependencies = [
+ "rdcl_aoc_helpers",
+]
+
+[[package]]
+name = "rdcl_aoc_helpers"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9d1f1808afcf8bf804ff1dd39612ba9e969b4790001f95c218ee4bd1f2810fc0"
