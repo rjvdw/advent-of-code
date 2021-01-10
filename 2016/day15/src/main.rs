@@ -3,6 +3,7 @@ use std::io::{BufRead, BufReader};
 use std::num::ParseIntError;
 
 use rdcl_aoc_helpers::args::get_args;
+use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::{ParseError, WithOrExit};
 use rdcl_aoc_helpers::math::solve_crt;
 
@@ -53,7 +54,7 @@ fn parse_input(path: &str) -> Result<Vec<(u64, u64)>, ParseError> {
         let line = line?;
         match parse_line(&line) {
             Some(disc) => discs.push(disc?),
-            None => return Err(ParseError(format!("Error parsing line: {}", line))),
+            None => return err_parse_error!("Error parsing line: {}", line),
         }
     }
     Ok(discs)

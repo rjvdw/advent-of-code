@@ -1,6 +1,7 @@
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 
+use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
 
 use crate::item::Item;
@@ -25,7 +26,7 @@ pub fn parse_line(line: &str) -> Result<(Vec<Item>, usize), ParseError> {
     } else if let Some(r) = line.strip_prefix("The fourth floor contains ") {
         (3, r)
     } else {
-        return Err(ParseError(format!("Invalid input: {}", line)));
+        return err_parse_error!("Invalid input: {}", line);
     };
 
     let mut floor = Vec::new();

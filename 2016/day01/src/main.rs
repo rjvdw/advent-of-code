@@ -4,6 +4,7 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 
 use rdcl_aoc_helpers::args::get_args;
+use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::{ParseError, WithOrExit};
 
 fn main() {
@@ -67,7 +68,7 @@ fn parse_input(path: &str) -> Result<Vec<Instruction>, ParseError> {
             } else if let Some(distance) = instruction.strip_prefix('L') {
                 parsed.push(Instruction::Left(distance.parse()?));
             } else {
-                return Err(ParseError(format!("Invalid instruction: {}", instruction)));
+                return err_parse_error!("Invalid instruction: {}", instruction);
             }
         }
     }

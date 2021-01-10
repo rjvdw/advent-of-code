@@ -1,6 +1,7 @@
 use std::convert::TryFrom;
 use std::str::FromStr;
 
+use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
 
 const LOWER: u8 = b'a';
@@ -84,7 +85,7 @@ impl FromStr for Room {
                 checksum,
             })
         } else {
-            Err(ParseError(format!("Invalid input: {}", s)))
+            err_parse_error!("Invalid input: {}", s)
         }
     }
 }

@@ -1,6 +1,7 @@
 use std::fmt;
 use std::str::FromStr;
 
+use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
 
 #[derive(Clone)]
@@ -162,7 +163,7 @@ impl FromStr for Instruction {
             let (start, end) = get_start_and_end(r)?;
             Ok(Instruction::Move(start.parse()?, end.parse()?))
         } else {
-            Err(ParseError(format!("Invalid input: {}", s)))
+            err_parse_error!("Invalid input: {}", s)
         }
     }
 }
@@ -171,7 +172,7 @@ fn get_start_and_end(r: &str) -> Result<(&str, &str), ParseError> {
     if let (Some(idx1), Some(idx2)) = (r.find(' '), r.rfind(' ')) {
         Ok((&r[..idx1], &r[idx2 + 1..]))
     } else {
-        Err(ParseError(format!("Invalid input: {}", r)))
+        err_parse_error!("Invalid input: {}", r)
     }
 }
 

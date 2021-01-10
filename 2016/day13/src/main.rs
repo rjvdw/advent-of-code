@@ -1,6 +1,7 @@
 use std::collections::HashSet;
 
 use rdcl_aoc_helpers::args::get_args;
+use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::{ParseError, WithOrExit};
 use rdcl_aoc_helpers::search::Navigable;
 
@@ -82,7 +83,7 @@ fn parse_xy(xy: &str) -> Result<(u64, u64), ParseError> {
         match idx {
             0 => parsed.0 = part.trim().parse()?,
             1 => parsed.1 = part.trim().parse()?,
-            _ => return Err(ParseError(format!("Invalid input: {}", xy))),
+            _ => return err_parse_error!("Invalid input: {}", xy),
         }
     }
     Ok(parsed)

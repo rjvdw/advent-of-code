@@ -1,6 +1,7 @@
 use std::str::FromStr;
 
 use rdcl_aoc_helpers::error::ParseError;
+use rdcl_aoc_helpers::{err_parse_error, parse_error};
 
 #[derive(Debug, Clone)]
 pub enum Input {
@@ -12,7 +13,7 @@ impl FromStr for Input {
     type Err = ParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let error = || ParseError(format!("Invalid input: {}", s));
+        let error = || parse_error!("Invalid input: {}", s);
 
         if let Some(r) = s.strip_prefix("bot ") {
             let (idx, nr) = parse_up_to_space(r)?;
@@ -39,7 +40,7 @@ fn parse_up_to_space(r: &str) -> Result<(usize, usize), ParseError> {
     if let Some(idx) = r.find(' ') {
         Ok((idx, r[..idx].parse()?))
     } else {
-        Err(ParseError::of("Invalid input"))
+        err_parse_error!("Invalid input")
     }
 }
 
@@ -58,7 +59,7 @@ impl FromStr for Output {
         } else if let Some(r) = s.strip_prefix("output ") {
             Ok(Output::Bin(r.parse()?))
         } else {
-            Err(ParseError(format!("Invalid output: {}", s)))
+            err_parse_error!("Invalid output: {}", s)
         }
     }
 }

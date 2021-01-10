@@ -195,9 +195,9 @@ checksum = "8f5f3913fa0bfe7ee1fd8248b6b9f42a5af4b9d65ec2dd2c3c26132b950ecfc2"
 
 [[package]]
 name = "libc"
-version = "0.2.81"
+version = "0.2.82"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1482821306169ec4d07f6aca392a4681f66c75c9918aa49641a2595db64053cb"
+checksum = "89203f3fba0a3795506acaad8ebce3c80c0af93f994d5a1d7a0b1eeb23271929"
 
 [[package]]
 name = "md5"
@@ -245,9 +245,9 @@ checksum = "9c33a3c44ca05fa6f1807d8e6743f3824e8509beca625669633be0acbdf509dc"
 
 [[package]]
 name = "rdcl_aoc_helpers"
-version = "0.6.0"
+version = "0.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9d1f1808afcf8bf804ff1dd39612ba9e969b4790001f95c218ee4bd1f2810fc0"
+checksum = "4ba80a34bbbdcc41036a66d6f2597fb810b473ed077f6c466f16d6b277eb87aa"
 
 [[package]]
 name = "rdrand"

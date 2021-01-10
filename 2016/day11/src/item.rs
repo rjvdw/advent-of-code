@@ -1,5 +1,6 @@
 use std::str::FromStr;
 
+use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash, Ord, PartialOrd)]
@@ -41,7 +42,7 @@ impl FromStr for Item {
         } else if let Some(r) = s.strip_suffix("-compatible microchip") {
             Ok(Item::Microchip(r.to_string()))
         } else {
-            Err(ParseError(format!("Invalid input: {}", s)))
+            err_parse_error!("Invalid input: {}", s)
         }
     }
 }

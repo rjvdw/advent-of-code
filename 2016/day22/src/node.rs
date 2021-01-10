@@ -1,6 +1,7 @@
 use std::hash;
 use std::str::FromStr;
 
+use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
 
 #[derive(Debug, Default, Copy, Clone)]
@@ -75,7 +76,7 @@ impl FromStr for Node {
             }
             Ok(node)
         } else {
-            Err(ParseError(format!("Invalid input: {}", s)))
+            err_parse_error!("Invalid input: {}", s)
         }
     }
 }
@@ -91,7 +92,7 @@ fn parse_xy(part: &str) -> Result<(usize, usize), ParseError> {
 
         Ok((x, y))
     } else {
-        Err(ParseError(format!("Invalid input: {}", part)))
+        err_parse_error!("Invalid input: {}", part)
     }
 }
 
@@ -99,6 +100,6 @@ fn parse_size(part: &str) -> Result<u64, ParseError> {
     if let Some(r) = part.strip_suffix("T") {
         Ok(r.parse()?)
     } else {
-        Err(ParseError(format!("Invalid input: {}", part)))
+        err_parse_error!("Invalid input: {}", part)
     }
 }

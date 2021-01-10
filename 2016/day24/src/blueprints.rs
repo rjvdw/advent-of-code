@@ -1,6 +1,7 @@
 use std::collections::HashSet;
 use std::fmt;
 
+use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
 use rdcl_aoc_helpers::input::MultilineFromStr;
 
@@ -151,9 +152,9 @@ impl MultilineFromStr for Blueprints {
             if row == 0 {
                 self.width += 1;
             } else if column >= self.width {
-                return Err(ParseError::of(
+                return err_parse_error!(
                     "Could not parse input, as lines have inconsistent width.",
-                ));
+                );
             }
             match ch {
                 '#' => {}

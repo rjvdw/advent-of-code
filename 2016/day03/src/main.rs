@@ -2,6 +2,7 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 
 use rdcl_aoc_helpers::args::get_args;
+use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::{ParseError, WithOrExit};
 use rdcl_aoc_helpers::input::WithReadLines;
 
@@ -46,7 +47,7 @@ fn parse_by_column(path: &str) -> Result<usize, ParseError> {
         }
 
         if sides.len() != 3 {
-            return Err(ParseError(format!("Invalid input: {}", line)));
+            return err_parse_error!("Invalid input: {}", line);
         }
 
         t1.push(sides[0]);
