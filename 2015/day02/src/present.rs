@@ -1,7 +1,7 @@
 use std::str::FromStr;
 
-use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
+use rdcl_aoc_helpers::parse_error;
 
 pub struct Present(u32, u32, u32);
 
@@ -48,7 +48,10 @@ impl FromStr for Present {
             values.push(dim.parse::<u32>()?);
         }
         if values.len() != 3 {
-            return err_parse_error!("Present with dimensions {} could not be parsed", s);
+            return Err(parse_error!(
+                "Present with dimensions {} could not be parsed",
+                s
+            ));
         }
         Ok(Present(values[0], values[1], values[2]))
     }

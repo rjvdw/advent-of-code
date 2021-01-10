@@ -2,8 +2,8 @@ use std::collections::HashMap;
 use std::fmt;
 use std::str::FromStr;
 
-use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
+use rdcl_aoc_helpers::parse_error;
 
 use crate::instruction::Instruction;
 
@@ -69,7 +69,7 @@ impl FromStr for Signal {
 
                 Ok(Signal::Wire((ch1 << 8) + ch2))
             } else {
-                err_parse_error!("Invalid label: {}", label)
+                Err(parse_error!("Invalid label: {}", label))
             }
         }
     }

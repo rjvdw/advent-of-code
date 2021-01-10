@@ -1,8 +1,8 @@
 use std::num::ParseIntError;
 use std::str::FromStr;
 
-use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
+use rdcl_aoc_helpers::parse_error;
 
 const VALUE_SEPARATOR: &str = " = ";
 const SET_MASK_KEYWORD: &str = "mask";
@@ -33,10 +33,10 @@ impl FromStr for Instruction {
                     let value = value.parse::<u64>()?;
                     Ok(Instruction::WriteValue(address, value))
                 } else {
-                    err_parse_error!("Invalid line: {}", s)
+                    Err(parse_error!("Invalid line: {}", s))
                 }
             }
-            None => err_parse_error!("Invalid line: {}", s),
+            None => Err(parse_error!("Invalid line: {}", s)),
         }
     }
 }

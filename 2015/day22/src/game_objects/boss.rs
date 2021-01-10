@@ -1,6 +1,6 @@
-use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
 use rdcl_aoc_helpers::input::MultilineFromStr;
+use rdcl_aoc_helpers::parse_error;
 
 use crate::game_objects::player::Player;
 
@@ -61,7 +61,7 @@ impl MultilineFromStr for Boss {
             self.damage = v.parse()?;
             Ok(())
         } else {
-            err_parse_error!("Invalid input line: {}", line)
+            Err(parse_error!("Invalid input line: {}", line))
         }
     }
 }

@@ -2,8 +2,8 @@ use std::fmt;
 use std::ops::{Add, Mul, Sub};
 use std::str::FromStr;
 
-use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
+use rdcl_aoc_helpers::parse_error;
 
 pub const ORIGIN: Coordinates = Coordinates(0, 0);
 
@@ -93,7 +93,7 @@ impl FromStr for Coordinates {
             }
         }
 
-        err_parse_error!("Invalid coordinates '{}'", s)
+        Err(parse_error!("Invalid coordinates '{}'", s))
     }
 }
 

@@ -2,9 +2,9 @@ use std::collections::{HashSet, VecDeque};
 use std::fmt;
 use std::str::FromStr;
 
-use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
 use rdcl_aoc_helpers::math::taxi_cab_2d;
+use rdcl_aoc_helpers::parse_error;
 use rdcl_aoc_helpers::search::Navigable;
 
 type Room = (i64, i64);
@@ -105,19 +105,19 @@ impl RoomLayout {
                 }
                 ')' => {
                     return if depth == 0 {
-                        err_parse_error!("Illegal closing bracket encountered.")
+                        Err(parse_error!("Illegal closing bracket encountered."))
                     } else {
                         Ok((idx + 1, end_points))
                     };
                 }
                 '$' => {
                     return if depth != 0 {
-                        err_parse_error!("Illegal dollar symbol encountered.")
+                        Err(parse_error!("Illegal dollar symbol encountered."))
                     } else {
                         Ok((idx + 1, end_points))
                     };
                 }
-                _ => return err_parse_error!("Invalid character: {}", ch),
+                _ => return Err(parse_error!("Invalid character: {}", ch)),
             }
 
             if let Some(direction) = direction {

@@ -1,8 +1,8 @@
 use std::fmt;
 
-use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
 use rdcl_aoc_helpers::input::MultilineFromStr;
+use rdcl_aoc_helpers::parse_error;
 
 use crate::validators::{
     valid_color, valid_eye_color, valid_height, valid_passport_id, valid_year,
@@ -123,11 +123,11 @@ impl MultilineFromStr for Passport {
                             "ecl" => Ok(self.ecl.set_value(value)),
                             "pid" => Ok(self.pid.set_value(value)),
                             "cid" => Ok(self.cid.set_value(value)),
-                            _ => err_parse_error!("Invalid key '{}' in line '{}'", key, line),
+                            _ => Err(parse_error!("Invalid key '{}' in line '{}'", key, line)),
                         }?
                     }
                     None => {
-                        return err_parse_error!("Invalid tuple '{}' in line '{}'", tuple, line);
+                        return Err(parse_error!("Invalid tuple '{}' in line '{}'", tuple, line));
                     }
                 }
             }

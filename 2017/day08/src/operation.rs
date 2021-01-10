@@ -1,8 +1,8 @@
 use std::fmt;
 use std::str::FromStr;
 
-use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
+use rdcl_aoc_helpers::parse_error;
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub enum Operation {
@@ -37,7 +37,7 @@ impl FromStr for Operation {
         } else if let Some(r) = s.strip_prefix("dec ") {
             Ok(Operation::Decrement(r.parse()?))
         } else {
-            err_parse_error!("Invalid operation: {}", s)
+            Err(parse_error!("Invalid operation: {}", s))
         }
     }
 }
@@ -55,7 +55,7 @@ mod tests {
         );
         assert_eq!(
             "invalid".parse::<Operation>(),
-            err_parse_error!["Invalid operation: invalid"]
+            Err(parse_error!("Invalid operation: invalid"))
         );
     }
 }

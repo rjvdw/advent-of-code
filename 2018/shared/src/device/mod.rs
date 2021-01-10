@@ -1,7 +1,7 @@
 use std::io::{BufRead, BufReader, Read};
 
-use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
+use rdcl_aoc_helpers::parse_error;
 
 use crate::device::instruction::Instruction;
 
@@ -19,9 +19,9 @@ pub fn parse_instructions<R: Read>(readable: R) -> Result<(i64, Vec<Instruction>
             }
             Ok((instruction_pointer.parse()?, instructions))
         } else {
-            err_parse_error!("Invalid instruction pointer: {}", line)
+            Err(parse_error!("Invalid instruction pointer: {}", line))
         }
     } else {
-        err_parse_error!("Empty input file")
+        Err(parse_error!("Empty input file"))
     }
 }

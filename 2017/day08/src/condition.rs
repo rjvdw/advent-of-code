@@ -2,8 +2,8 @@ use std::collections::HashMap;
 use std::fmt;
 use std::str::FromStr;
 
-use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
+use rdcl_aoc_helpers::parse_error;
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub enum Condition {
@@ -71,7 +71,7 @@ impl FromStr for Condition {
             ">=" => Ok(Condition::Ge(parts[0].to_string(), parts[2].parse()?)),
             "==" => Ok(Condition::Eq(parts[0].to_string(), parts[2].parse()?)),
             "!=" => Ok(Condition::Ne(parts[0].to_string(), parts[2].parse()?)),
-            _ => err_parse_error!("Invalid condition: {}", s),
+            _ => Err(parse_error!("Invalid condition: {}", s)),
         }
     }
 }
@@ -96,7 +96,7 @@ mod tests {
         );
         assert_eq!(
             "bla & 10".parse::<Condition>(),
-            err_parse_error!("Invalid condition: bla & 10")
+            Err(parse_error!("Invalid condition: bla & 10"))
         );
     }
 }

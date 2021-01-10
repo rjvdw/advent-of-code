@@ -1,8 +1,8 @@
 use std::ops::Add;
 use std::str::FromStr;
 
-use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
+use rdcl_aoc_helpers::parse_error;
 
 #[derive(Debug, Eq, PartialEq, Hash, Copy, Clone)]
 pub struct Tile(pub i32, pub i32);
@@ -80,7 +80,7 @@ impl FromStr for Tile {
             } {
                 position = direction.walk(&position);
             } else {
-                return err_parse_error!("Invalid input line: {}", s);
+                return Err(parse_error!("Invalid input line: {}", s));
             }
         }
 

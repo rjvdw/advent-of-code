@@ -2,8 +2,8 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 
 use rdcl_aoc_helpers::args::get_args;
-use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::{ParseError, WithOrExit};
+use rdcl_aoc_helpers::parse_error;
 
 const STR_ROW: &str = "row";
 const STR_COL: &str = "column";
@@ -72,7 +72,7 @@ fn parse_slice(line: &str, start: &str, end: char) -> Result<usize, ParseError> 
         }
     }
 
-    err_parse_error!("Could not find row in error message.")
+    Err(parse_error!("Could not find row in error message."))
 }
 
 struct Manual {

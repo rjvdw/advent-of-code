@@ -1,8 +1,8 @@
 use std::fmt;
 use std::str::FromStr;
 
-use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
+use rdcl_aoc_helpers::parse_error;
 
 #[derive(Debug, Copy, Clone, Hash, Eq, PartialEq)]
 pub enum AttackType {
@@ -35,7 +35,7 @@ impl FromStr for AttackType {
             "fire" => Ok(AttackType::Fire),
             "radiation" => Ok(AttackType::Radiation),
             "slashing" => Ok(AttackType::Slashing),
-            _ => err_parse_error!("invalid attack type: {}", s),
+            _ => Err(parse_error!("invalid attack type: {}", s)),
         }
     }
 }

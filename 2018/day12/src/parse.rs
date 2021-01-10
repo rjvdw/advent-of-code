@@ -1,8 +1,8 @@
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 
-use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
+use rdcl_aoc_helpers::parse_error;
 
 pub const RULE_SIZE: usize = 5;
 
@@ -21,7 +21,7 @@ pub fn parse_input(path: &str) -> Result<(Vec<bool>, u32), ParseError> {
             ParseResult::Rule(rule, active) => {
                 if active {
                     if rule == 0 {
-                        return err_parse_error!("Rule '{}' is illegal.", line);
+                        return Err(parse_error!("Rule '{}' is illegal.", line));
                     }
                     rules += 2u32.pow(rule);
                 }

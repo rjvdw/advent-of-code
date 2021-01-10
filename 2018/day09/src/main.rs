@@ -2,8 +2,8 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 
 use rdcl_aoc_helpers::args::get_args;
-use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::{ParseError, WithOrExit};
+use rdcl_aoc_helpers::parse_error;
 
 fn main() {
     let args = get_args(&["<input file>", "<scoring round>", "<scoring offset>"], 1);
@@ -80,19 +80,19 @@ fn parse_input(path: &str) -> Result<(usize, usize), ParseError> {
         let nr_players = if let Some(idx) = line.find(" players") {
             line[..idx].parse::<usize>()?
         } else {
-            return err_parse_error!("Could not parse number of players.");
+            return Err(parse_error!("Could not parse number of players."));
         };
 
         let points_bounds_opt = (line.find("worth ").map(|idx| idx + 6), line.rfind(' '));
         let last_marble = if let (Some(start_idx), Some(end_idx)) = points_bounds_opt {
             line[start_idx..end_idx].parse::<usize>()?
         } else {
-            return err_parse_error!("Could not parse number of players.");
+            return Err(parse_error!("Could not parse number of players."));
         };
 
         Ok((nr_players, last_marble))
     } else {
-        err_parse_error!("Invalid input file")
+        Err(parse_error!("Invalid input file"))
     }
 }
 

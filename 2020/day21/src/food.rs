@@ -1,8 +1,8 @@
 use std::collections::HashSet;
 use std::str::FromStr;
 
-use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
+use rdcl_aoc_helpers::parse_error;
 
 #[derive(Debug, Clone)]
 pub struct Food {
@@ -35,7 +35,7 @@ impl FromStr for Food {
                     allergens,
                 })
             }
-            None => err_parse_error!("Invalid input: {}", s),
+            None => Err(parse_error!("Invalid input: {}", s)),
         }
     }
 }

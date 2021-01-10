@@ -1,7 +1,7 @@
 use std::str::FromStr;
 
-use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
+use rdcl_aoc_helpers::parse_error;
 
 pub struct Triangle(pub u32, pub u32, pub u32);
 
@@ -21,7 +21,7 @@ impl FromStr for Triangle {
         }
 
         if sides.len() != 3 {
-            err_parse_error!("Invalid input: {}", s)
+            Err(parse_error!("Invalid input: {}", s))
         } else {
             Ok(Triangle(sides[0], sides[1], sides[2]))
         }

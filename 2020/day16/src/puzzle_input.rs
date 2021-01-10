@@ -1,9 +1,9 @@
 use std::collections::HashMap;
 use std::fmt;
 
-use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
 use rdcl_aoc_helpers::input::MultilineFromStr;
+use rdcl_aoc_helpers::parse_error;
 
 #[derive(Debug, Clone)]
 enum ParseState {
@@ -156,7 +156,7 @@ impl MultilineFromStr for PuzzleInput {
                                         value.push((start, end));
                                     }
                                     None => {
-                                        return err_parse_error!("Invalid input line: {}", line);
+                                        return Err(parse_error!("Invalid input line: {}", line));
                                     }
                                 }
                             }
@@ -165,7 +165,7 @@ impl MultilineFromStr for PuzzleInput {
 
                             Ok(())
                         }
-                        None => err_parse_error!("Invalid input line: {}", line),
+                        None => Err(parse_error!("Invalid input line: {}", line)),
                     }
                 }
             }

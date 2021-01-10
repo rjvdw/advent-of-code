@@ -1,7 +1,7 @@
 use std::str::FromStr;
 
-use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
+use rdcl_aoc_helpers::parse_error;
 
 #[derive(Debug)]
 pub struct Password {
@@ -50,7 +50,7 @@ impl FromStr for Password {
         let idx2 = s[p1 + 1..p2].parse::<usize>()?;
         let character = match s.chars().nth(p2 + 1) {
             Some(v) => Ok(v),
-            None => err_parse_error!("Invalid character in line {}", s),
+            None => Err(parse_error!("Invalid character in line {}", s)),
         }?;
         let password = s.chars().skip(p3 + 2).collect();
 
@@ -66,6 +66,6 @@ impl FromStr for Password {
 fn find_char(s: &str, offset: usize, ch: char) -> Result<usize, ParseError> {
     match s.chars().skip(offset).position(|c| c == ch) {
         Some(v) => Ok(v),
-        None => err_parse_error!("Input file has invalid format in line {}", s,),
+        None => Err(parse_error!("Input file has invalid format in line {}", s,)),
     }
 }

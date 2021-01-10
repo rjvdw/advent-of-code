@@ -1,7 +1,7 @@
 use std::str::FromStr;
 
-use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
+use rdcl_aoc_helpers::parse_error;
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash, Ord, PartialOrd)]
 pub enum Item {
@@ -42,7 +42,7 @@ impl FromStr for Item {
         } else if let Some(r) = s.strip_suffix("-compatible microchip") {
             Ok(Item::Microchip(r.to_string()))
         } else {
-            err_parse_error!("Invalid input: {}", s)
+            Err(parse_error!("Invalid input: {}", s))
         }
     }
 }

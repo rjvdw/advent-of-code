@@ -1,8 +1,8 @@
 use std::fmt;
 
-use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
 use rdcl_aoc_helpers::input::MultilineFromStr;
+use rdcl_aoc_helpers::parse_error;
 
 #[derive(Debug, Clone)]
 pub struct Grid {
@@ -124,7 +124,7 @@ impl MultilineFromStr for Grid {
         if self.cols == 0 {
             self.cols = line.len()
         } else if self.cols != line.len() {
-            return err_parse_error!("The lines have inconsistent width.");
+            return Err(parse_error!("The lines have inconsistent width."));
         }
         self.rows += 1;
 

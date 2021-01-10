@@ -2,9 +2,9 @@ use std::fs::File;
 use std::str::FromStr;
 
 use rdcl_aoc_helpers::args::get_args;
-use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
 use rdcl_aoc_helpers::input::WithReadLines;
+use rdcl_aoc_helpers::parse_error;
 
 use shared::graph::{create_graph, find_longest_path, find_shortest_path, EdgeLike};
 
@@ -57,7 +57,7 @@ impl FromStr for Edge {
 
             Ok(Edge(node1, node2, distance))
         } else {
-            err_parse_error!("Invalid input: {}", s)
+            Err(parse_error!("Invalid input: {}", s))
         }
     }
 }

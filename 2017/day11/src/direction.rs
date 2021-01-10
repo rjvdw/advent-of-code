@@ -1,8 +1,8 @@
 use std::fmt;
 use std::str::FromStr;
 
-use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
+use rdcl_aoc_helpers::parse_error;
 
 #[derive(Debug, Copy, Clone)]
 pub enum Direction {
@@ -51,7 +51,7 @@ impl FromStr for Direction {
             "sw" => Ok(Direction::SouthWest),
             "s" => Ok(Direction::South),
             "se" => Ok(Direction::SouthEast),
-            _ => err_parse_error!("Invalid direction: {}", s),
+            _ => Err(parse_error!("Invalid direction: {}", s)),
         }
     }
 }

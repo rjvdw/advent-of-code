@@ -2,8 +2,8 @@ use std::collections::HashMap;
 use std::fmt;
 use std::str::FromStr;
 
-use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
+use rdcl_aoc_helpers::parse_error;
 
 #[derive(Debug, Clone)]
 pub struct Program {
@@ -73,13 +73,13 @@ impl FromStr for Program {
         if let Some(idx) = line.find(' ') {
             program.name = line[..idx].to_string();
         } else {
-            return err_parse_error!("Could not get name: {}", line);
+            return Err(parse_error!("Could not get name: {}", line));
         }
 
         if let (Some(start), Some(end)) = (line.find('('), line.find(')')) {
             program.weight = line[start + 1..end].parse()?;
         } else {
-            return err_parse_error!("Could not get weight: {}", line);
+            return Err(parse_error!("Could not get weight: {}", line));
         }
 
         if let Some(idx) = line.find(" -> ") {

@@ -1,8 +1,8 @@
 use std::fmt;
 
-use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
 use rdcl_aoc_helpers::input::MultilineFromStr;
+use rdcl_aoc_helpers::parse_error;
 
 use Position::{Floor, Seat};
 use SeatState::{Empty, Occupied};
@@ -176,11 +176,11 @@ impl MultilineFromStr for SeatLayout {
         if self.width == 0 {
             self.width = line.len();
         } else if self.width != line.len() {
-            return err_parse_error!(
+            return Err(parse_error!(
                 "The width of the lines is not consistent (seen both {} and {}).",
                 self.width,
                 line.len()
-            );
+            ));
         }
 
         for char in line.chars() {
@@ -188,7 +188,10 @@ impl MultilineFromStr for SeatLayout {
                 '.' => Ok(Floor),
                 'L' => Ok(Seat(Empty)),
                 '#' => Ok(Seat(Occupied)),
-                _ => err_parse_error!("Invalid input character found in line '{}'.", char,),
+                _ => Err(parse_error!(
+                    "Invalid input character found in line '{}'.",
+                    char,
+                )),
             }?);
         }
 

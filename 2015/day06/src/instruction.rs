@@ -1,8 +1,8 @@
 use std::collections::{HashMap, HashSet};
 use std::str::FromStr;
 
-use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
+use rdcl_aoc_helpers::parse_error;
 
 const OP_TURN_ON: &str = "turn on";
 const OP_TURN_OFF: &str = "turn off";
@@ -122,7 +122,7 @@ impl FromStr for Instruction {
 
             Ok(Instruction { op, lights })
         } else {
-            err_parse_error!("Invalid instruction: {}", s)
+            Err(parse_error!("Invalid instruction: {}", s))
         }
     }
 }

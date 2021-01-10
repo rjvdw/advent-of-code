@@ -2,9 +2,9 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 
 use rdcl_aoc_helpers::args::get_args;
-use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::{ParseError, WithOrExit};
 use rdcl_aoc_helpers::input::WithReadLines;
+use rdcl_aoc_helpers::parse_error;
 
 use crate::triangle::Triangle;
 
@@ -47,7 +47,7 @@ fn parse_by_column(path: &str) -> Result<usize, ParseError> {
         }
 
         if sides.len() != 3 {
-            return err_parse_error!("Invalid input: {}", line);
+            return Err(parse_error!("Invalid input: {}", line));
         }
 
         t1.push(sides[0]);

@@ -72,11 +72,11 @@ impl FromStr for Value {
             Ok(value) => Ok(Value::Raw(value)),
             Err(parse_int_error) => match s.parse::<char>() {
                 Ok(register) => Ok(Value::Register(register)),
-                Err(parse_char_error) => err_parse_error!(
+                Err(parse_char_error) => Err(parse_error!(
                     "Failed to parse value. Could not parse as int ({}) or as register ({}).",
                     parse_int_error,
                     parse_char_error,
-                ),
+                )),
             },
         }
     }
@@ -110,11 +110,11 @@ impl ParsedMachineInstruction {
     {
         match self.arguments.get(idx) {
             Some(value) => Ok(value.parse()?),
-            None => err_parse_error!(
+            None => Err(parse_error!(
                 "Command {} has insufficient arguments ({:?})",
                 self.command,
                 self.arguments
-            ),
+            )),
         }
     }
 }
@@ -134,7 +134,7 @@ impl FromStr for ParsedMachineInstruction {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         if s.is_empty() {
-            err_parse_error!("Could not parse empty instruction")
+            Err(parse_error!("Could not parse empty instruction"))
         } else {
             let normalized = s.replace(',', " ");
             let mut parts = normalized.split_whitespace();
@@ -183,7 +183,7 @@ mod tests {
     #[test]
     fn test_parse_invalid_value() {
         const ERROR_MESSAGE: &str = "Failed to parse value. Could not parse as int (invalid digit found in string) or as register (too many characters in string).";
-        assert_eq!("foo".parse::<Value>(), err_parse_error!(ERROR_MESSAGE));
+        assert_eq!("foo".parse::<Value>(), Err(parse_error!(ERROR_MESSAGE)));
     }
 
     #[test]

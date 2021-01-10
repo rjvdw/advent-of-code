@@ -1,10 +1,10 @@
 use std::collections::{HashMap, HashSet};
 use std::fmt;
 
-use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
 use rdcl_aoc_helpers::input::MultilineFromStr;
 use rdcl_aoc_helpers::math::taxi_cab_2d;
+use rdcl_aoc_helpers::parse_error;
 use termion::color;
 
 use crate::faction::Faction;
@@ -401,7 +401,7 @@ impl MultilineFromStr for Cave {
                     row.push(Tile::Empty);
                     self.units.push(Unit::new(Faction::Elf, (x, y)));
                 }
-                _ => return err_parse_error!("Invalid tile: {}", ch),
+                _ => return Err(parse_error!("Invalid tile: {}", ch)),
             }
         }
         self.layout.push(row);

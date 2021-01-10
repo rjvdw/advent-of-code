@@ -4,8 +4,8 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 
 use rdcl_aoc_helpers::args::get_args;
-use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::{ParseError, WithOrExit};
+use rdcl_aoc_helpers::parse_error;
 
 fn main() {
     let args = get_args(&["<input file>"], 1);
@@ -76,7 +76,7 @@ fn parse_input(path: &str) -> Result<(Molecule, Vec<(Atom, Molecule)>), ParseErr
                 let right = parse_molecule(line[idx + 2..].trim());
                 replacements.push((left, right));
             } else {
-                return err_parse_error!("Invalid input line: {}", line);
+                return Err(parse_error!("Invalid input line: {}", line));
             }
         } else {
             molecule = parse_molecule(&line);

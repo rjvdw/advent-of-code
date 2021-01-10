@@ -1,8 +1,8 @@
 use std::fmt;
 use std::str::FromStr;
 
-use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
+use rdcl_aoc_helpers::parse_error;
 
 use crate::screen::Screen;
 
@@ -70,6 +70,6 @@ impl FromStr for Instruction {
             }
         }
 
-        err_parse_error!("Invalid input: {}", s)
+        Err(parse_error!("Invalid input: {}", s))
     }
 }

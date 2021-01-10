@@ -2,7 +2,7 @@ use std::fs::File;
 use std::io::{BufRead, BufReader, Lines, Read};
 
 use rdcl_aoc_helpers::error::ParseError;
-use rdcl_aoc_helpers::{err_parse_error, parse_error};
+use rdcl_aoc_helpers::parse_error;
 
 use crate::sample::Sample;
 
@@ -41,7 +41,7 @@ fn parse_sample<R: Read>(
         if let Some(l) = lines.next() {
             Ok(l?)
         } else {
-            err_parse_error!("Parsing failed, insufficient lines.")
+            Err(parse_error!("Parsing failed, insufficient lines."))
         }
     };
 
@@ -59,9 +59,9 @@ fn parse_sample<R: Read>(
         let line4 = next_line()?;
 
         if !line4.is_empty() {
-            return err_parse_error!(
+            return Err(parse_error!(
                 "Parsing failed, encountered non-empty line where an empty line was expected.",
-            );
+            ));
         }
 
         let mut sample = Sample {

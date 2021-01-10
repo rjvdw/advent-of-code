@@ -1,11 +1,11 @@
 use std::fmt;
 use std::str::FromStr;
 
-use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
 use rdcl_aoc_helpers::machine::instruction::{MachineInstruction, ParsedMachineInstruction};
 use rdcl_aoc_helpers::machine::output_receiver::OutputReceiver;
 use rdcl_aoc_helpers::machine::register::MachineRegister;
+use rdcl_aoc_helpers::parse_error;
 
 #[derive(Debug, Copy, Clone)]
 pub enum Instruction {
@@ -163,7 +163,7 @@ impl MachineInstruction for Instruction {
             "eqir" => Ok(Instruction::Eqir(a, b, c)),
             "eqri" => Ok(Instruction::Eqri(a, b, c)),
             "eqrr" => Ok(Instruction::Eqrr(a, b, c)),
-            _ => err_parse_error!("Invalid instruction: {}", parsed),
+            _ => Err(parse_error!("Invalid instruction: {}", parsed)),
         }
     }
 }

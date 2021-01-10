@@ -1,8 +1,8 @@
 use std::fmt;
 
-use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
 use rdcl_aoc_helpers::input::MultilineFromStr;
+use rdcl_aoc_helpers::parse_error;
 use termion::color;
 
 use crate::tile::Tile;
@@ -155,7 +155,7 @@ impl MultilineFromStr for Forest {
                 '.' => row.push(Tile::Open),
                 '|' => row.push(Tile::Trees),
                 '#' => row.push(Tile::Lumberyard),
-                _ => return err_parse_error!("Invalid character encountered."),
+                _ => return Err(parse_error!("Invalid character encountered.")),
             }
         }
         self.tiles.push(row);

@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 use std::str::FromStr;
 
-use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
+use rdcl_aoc_helpers::parse_error;
 
 const INPUT_SEPARATOR: &str = " bags contain";
 
@@ -16,7 +16,7 @@ impl FromStr for Bag {
     type Err = ParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let error = || err_parse_error!("Invalid input line: '{}'", s);
+        let error = || Err(parse_error!("Invalid input line: '{}'", s));
         match s.find(INPUT_SEPARATOR) {
             Some(pos) => {
                 let color = s[..pos].to_string();
