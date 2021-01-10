@@ -53,7 +53,7 @@ fn visualise(
     println!("Picosecond {}:", time);
 
     for d in 0..=*max_depth {
-        print!("{:2}  ", d);
+        print!("{:^3} ", d);
     }
     println!();
 
