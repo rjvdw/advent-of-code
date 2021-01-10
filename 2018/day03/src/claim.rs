@@ -2,6 +2,7 @@ use std::fmt;
 use std::str::FromStr;
 
 use rdcl_aoc_helpers::error::ParseError;
+use rdcl_aoc_helpers::parse_error;
 
 #[derive(Debug, Copy, Clone)]
 pub struct Claim {
@@ -69,7 +70,7 @@ impl FromStr for Claim {
     type Err = ParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let err = || ParseError(format!("Invalid input: {}", s));
+        let err = || parse_error!("Invalid input: {}", s);
         let nr_start_idx = 1;
         let nr_end_idx = nr_start_idx + s[nr_start_idx..].find(' ').ok_or_else(err)?;
         let at_x_start_idx = nr_end_idx + 3 + s[nr_end_idx..].find(" @ ").ok_or_else(err)?;

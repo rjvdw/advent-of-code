@@ -1,6 +1,7 @@
 use std::fmt;
 use std::str::FromStr;
 
+use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
 
 #[derive(Debug, Copy, Clone, Hash, Eq, PartialEq)]
@@ -34,7 +35,7 @@ impl FromStr for AttackType {
             "fire" => Ok(AttackType::Fire),
             "radiation" => Ok(AttackType::Radiation),
             "slashing" => Ok(AttackType::Slashing),
-            _ => Err(ParseError(format!("invalid attack type: {}", s))),
+            _ => err_parse_error!("invalid attack type: {}", s),
         }
     }
 }

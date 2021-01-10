@@ -1,12 +1,13 @@
 use std::collections::HashMap;
 use std::fmt;
 
+use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
 use rdcl_aoc_helpers::input::MultilineFromStr;
+use termion::{color, cursor};
 
 use crate::cart_state::CartState;
 use crate::track::Track;
-use termion::{color, cursor};
 
 mod cart_state;
 mod track;
@@ -216,10 +217,7 @@ impl MultilineFromStr for RailMap {
                     prev_was_horizontal = true;
                 }
                 _ => {
-                    return Err(ParseError(format!(
-                        "Invalid input encountered @{},{}: {}",
-                        x, y, ch
-                    )));
+                    return err_parse_error!("Invalid input encountered @{},{}: {}", x, y, ch);
                 }
             }
         }

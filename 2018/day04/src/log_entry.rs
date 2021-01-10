@@ -3,6 +3,7 @@ use std::fmt;
 use std::num::ParseIntError;
 use std::str::FromStr;
 
+use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
 
 #[derive(Debug, Clone)]
@@ -47,7 +48,7 @@ impl FromStr for LogEntry {
         } else if let Some(start) = s.strip_suffix(" wakes up") {
             Ok(LogEntry::WakesUp(start.parse()?))
         } else {
-            Err(ParseError(format!("Invalid log entry: {}", s)))
+            err_parse_error!("Invalid log entry: {}", s)
         }
     }
 }

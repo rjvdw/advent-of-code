@@ -1,5 +1,6 @@
 use std::str::FromStr;
 
+use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
 
 #[derive(Debug, Copy, Clone)]
@@ -48,6 +49,6 @@ fn parse_pair(s: &str, offset: usize) -> Result<(usize, (i64, i64)), ParseError>
 
         Ok((offset + i_end + 1, (left, right)))
     } else {
-        Err(ParseError(format!("Invalid input line: {}", s)))
+        err_parse_error!("Invalid input line: {}", s)
     }
 }

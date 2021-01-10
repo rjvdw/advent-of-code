@@ -1,6 +1,7 @@
 use std::collections::{HashMap, HashSet};
 use std::fmt;
 
+use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
 use rdcl_aoc_helpers::input::MultilineFromStr;
 use rdcl_aoc_helpers::math::taxi_cab_2d;
@@ -229,10 +230,10 @@ impl MultilineFromStr for Cave {
                 self.target = (x, y);
                 Ok(())
             } else {
-                Err(ParseError(format!("invalid line: {}", line)))
+                err_parse_error!("invalid line: {}", line)
             }
         } else {
-            Err(ParseError(format!("invalid line: {}", line)))
+            err_parse_error!("invalid line: {}", line)
         }
     }
 }
