@@ -1,6 +1,7 @@
+use std::fs::File;
+
 use rdcl_aoc_helpers::args::get_args;
 use rdcl_aoc_helpers::input::{MappedLines, WithReadLines};
-use std::fs::File;
 
 fn main() {
     let args = get_args(&["<input file>"], 1);

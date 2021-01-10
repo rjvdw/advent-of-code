@@ -1,6 +1,7 @@
 use std::fmt;
 use std::str::FromStr;
 
+use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
 use rdcl_aoc_helpers::machine::instruction::{MachineInstruction, ParsedMachineInstruction, Value};
 use rdcl_aoc_helpers::machine::output_receiver::OutputReceiver;
@@ -69,7 +70,7 @@ impl MachineInstruction for Instruction {
                 parsed.get_argument(0)?,
                 parsed.get_argument(1)?,
             )),
-            _ => Err(ParseError(format!("Unknown command: {}", parsed))),
+            _ => err_parse_error!("Unknown command: {}", parsed),
         }
     }
 }

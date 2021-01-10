@@ -3,6 +3,7 @@ use std::fmt;
 use std::str::FromStr;
 
 use rdcl_aoc_helpers::error::ParseError;
+use rdcl_aoc_helpers::parse_error;
 
 use crate::signal::Signal;
 
@@ -120,7 +121,7 @@ impl FromStr for Instruction {
     type Err = ParseError;
 
     fn from_str(instruction: &str) -> Result<Self, Self::Err> {
-        let error = || ParseError(format!("Invalid instruction: {}", instruction));
+        let error = || parse_error!("Invalid instruction: {}", instruction);
 
         if let Some((left, right)) = split_instruction(instruction) {
             let output = right.parse::<Signal>()?;

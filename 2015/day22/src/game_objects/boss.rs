@@ -1,3 +1,4 @@
+use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
 use rdcl_aoc_helpers::input::MultilineFromStr;
 
@@ -60,7 +61,7 @@ impl MultilineFromStr for Boss {
             self.damage = v.parse()?;
             Ok(())
         } else {
-            Err(ParseError(format!("Invalid input line: {}", line)))
+            err_parse_error!("Invalid input line: {}", line)
         }
     }
 }

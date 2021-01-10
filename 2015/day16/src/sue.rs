@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use std::str::FromStr;
 
+use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
 
 #[derive(Debug)]
@@ -62,16 +63,17 @@ impl FromStr for Sue {
                     let value = key_value_pair[idx + 2..].parse::<usize>()?;
                     sue.properties.insert(property, value);
                 } else {
-                    return Err(ParseError(format!(
+                    return err_parse_error!(
                         "Invalid key value pair '{}' Sue: {}",
-                        key_value_pair, s
-                    )));
+                        key_value_pair,
+                        s
+                    );
                 }
             }
 
             Ok(sue)
         } else {
-            Err(ParseError(format!("Invalid Sue: {}", s)))
+            err_parse_error!("Invalid Sue: {}", s)
         }
     }
 }

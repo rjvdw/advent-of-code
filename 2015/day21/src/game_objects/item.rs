@@ -1,6 +1,7 @@
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 
+use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
 
 pub fn parse_inventory_file(path: &str) -> Result<Vec<Item>, ParseError> {
@@ -14,19 +15,19 @@ pub fn parse_inventory_file(path: &str) -> Result<Vec<Item>, ParseError> {
             category = ItemCategory::Weapon;
             match get_columns(&line) {
                 Some(c) => columns = c,
-                None => return Err(ParseError(format!("invalid line: {}", line))),
+                None => return err_parse_error!("invalid line: {}", line),
             }
         } else if line.starts_with("Armor:") {
             category = ItemCategory::Armor;
             match get_columns(&line) {
                 Some(c) => columns = c,
-                None => return Err(ParseError(format!("invalid line: {}", line))),
+                None => return err_parse_error!("invalid line: {}", line),
             }
         } else if line.starts_with("Rings:") {
             category = ItemCategory::Ring;
             match get_columns(&line) {
                 Some(c) => columns = c,
-                None => return Err(ParseError(format!("invalid line: {}", line))),
+                None => return err_parse_error!("invalid line: {}", line),
             }
         } else if !line.is_empty() {
             let (cost_idx, damage_idx, armor_idx) = columns;

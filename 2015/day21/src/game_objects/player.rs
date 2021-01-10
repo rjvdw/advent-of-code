@@ -1,3 +1,4 @@
+use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
 use rdcl_aoc_helpers::input::MultilineFromStr;
 
@@ -68,7 +69,7 @@ impl MultilineFromStr for Player {
         } else if let Some(v) = line.strip_prefix("Armor: ") {
             self.armor = v.parse()?;
         } else {
-            return Err(ParseError(format!("Invalid input line: {}", line)));
+            return err_parse_error!("Invalid input line: {}", line);
         }
 
         Ok(())

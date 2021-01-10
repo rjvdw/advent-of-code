@@ -1,6 +1,7 @@
 use std::ops::{Add, Mul};
 use std::str::FromStr;
 
+use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
 
 #[derive(Debug, Clone)]
@@ -93,19 +94,20 @@ impl FromStr for Ingredient {
                         "texture" => ingredient.texture = value,
                         "calories" => ingredient.calories = value,
                         _ => {
-                            return Err(ParseError(format!(
+                            return err_parse_error!(
                                 "Invalid property '{}' in ingredient: {}",
-                                property, s
-                            )));
+                                property,
+                                s
+                            );
                         }
                     };
                 } else {
-                    return Err(ParseError(format!("Invalid ingredient: {}", s)));
+                    return err_parse_error!("Invalid ingredient: {}", s);
                 }
             }
             Ok(ingredient)
         } else {
-            Err(ParseError(format!("Invalid ingredient: {}", s)))
+            err_parse_error!("Invalid ingredient: {}", s)
         }
     }
 }

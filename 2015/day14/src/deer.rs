@@ -1,6 +1,7 @@
 use std::str::FromStr;
 
 use rdcl_aoc_helpers::error::ParseError;
+use rdcl_aoc_helpers::parse_error;
 
 #[derive(Debug)]
 enum State {
@@ -63,7 +64,7 @@ impl FromStr for Deer {
     type Err = ParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let error = || ParseError(format!("Invalid input: {}", s));
+        let error = || parse_error!("Invalid input: {}", s);
 
         let mut deer = Deer {
             name: String::new(),

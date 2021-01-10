@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 
+use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
 use rdcl_aoc_helpers::input::MultilineFromStr;
 
@@ -30,10 +31,7 @@ impl MultilineFromStr for TickerTape {
             self.0.insert(property, value);
             Ok(())
         } else {
-            Err(ParseError(format!(
-                "Invalid input line in ticker tape: {}",
-                line
-            )))
+            err_parse_error!("Invalid input line in ticker tape: {}", line)
         }
     }
 }

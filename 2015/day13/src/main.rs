@@ -4,6 +4,7 @@ use std::fs::File;
 use std::str::FromStr;
 
 use rdcl_aoc_helpers::args::get_args;
+use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
 use rdcl_aoc_helpers::input::WithReadLines;
 
@@ -110,13 +111,13 @@ impl FromStr for Edge {
         if let Some(idx) = s.find(' ') {
             person1 = s[..idx].to_string();
         } else {
-            return Err(ParseError(format!("Invalid input: {}", s)));
+            return err_parse_error!("Invalid input: {}", s);
         }
 
         if let Some(idx) = s.rfind(' ') {
             person2 = s[idx + 1..s.len() - 1].to_string();
         } else {
-            return Err(ParseError(format!("Invalid input: {}", s)));
+            return err_parse_error!("Invalid input: {}", s);
         }
 
         let sign;
@@ -128,13 +129,13 @@ impl FromStr for Edge {
             sign = -1;
             score_idx = idx + 4;
         } else {
-            return Err(ParseError(format!("Invalid input: {}", s)));
+            return err_parse_error!("Invalid input: {}", s);
         }
 
         if let Some(idx) = s[score_idx..].find("happiness units") {
             score = sign * s[score_idx..score_idx + idx].trim().parse::<i32>()?;
         } else {
-            return Err(ParseError(format!("Invalid input: {}", s)));
+            return err_parse_error!("Invalid input: {}", s);
         }
 
         Ok(Edge(person1, person2, score))
