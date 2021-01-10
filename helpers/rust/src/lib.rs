@@ -2,6 +2,7 @@
 pub mod args;
 
 /// Error handling.
+#[macro_use]
 pub mod error;
 
 /// I/O operations.

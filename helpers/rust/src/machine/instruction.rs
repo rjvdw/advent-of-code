@@ -72,10 +72,11 @@ impl FromStr for Value {
             Ok(value) => Ok(Value::Raw(value)),
             Err(parse_int_error) => match s.parse::<char>() {
                 Ok(register) => Ok(Value::Register(register)),
-                Err(parse_char_error) => Err(ParseError(format!(
+                Err(parse_char_error) => err_parse_error!(
                     "Failed to parse value. Could not parse as int ({}) or as register ({}).",
-                    parse_int_error, parse_char_error,
-                ))),
+                    parse_int_error,
+                    parse_char_error,
+                ),
             },
         }
     }
@@ -109,10 +110,11 @@ impl ParsedMachineInstruction {
     {
         match self.arguments.get(idx) {
             Some(value) => Ok(value.parse()?),
-            None => Err(ParseError(format!(
+            None => err_parse_error!(
                 "Command {} has insufficient arguments ({:?})",
-                self.command, self.arguments
-            ))),
+                self.command,
+                self.arguments
+            ),
         }
     }
 }
@@ -132,7 +134,7 @@ impl FromStr for ParsedMachineInstruction {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         if s.is_empty() {
-            Err(ParseError::of("Could not parse empty instruction"))
+            err_parse_error!("Could not parse empty instruction")
         } else {
             let normalized = s.replace(',', " ");
             let mut parts = normalized.split_whitespace();
@@ -181,7 +183,7 @@ mod tests {
     #[test]
     fn test_parse_invalid_value() {
         const ERROR_MESSAGE: &str = "Failed to parse value. Could not parse as int (invalid digit found in string) or as register (too many characters in string).";
-        assert_eq!("foo".parse::<Value>(), Err(ParseError::of(ERROR_MESSAGE)));
+        assert_eq!("foo".parse::<Value>(), err_parse_error!(ERROR_MESSAGE));
     }
 
     #[test]
@@ -203,7 +205,7 @@ mod tests {
     #[test]
     fn test_parse_empty_instruction() {
         let parsed = "".parse::<ParsedMachineInstruction>().unwrap_err();
-        assert_eq!(parsed, ParseError::of("Could not parse empty instruction"));
+        assert_eq!(parsed, parse_error!("Could not parse empty instruction"));
     }
 
     #[test]

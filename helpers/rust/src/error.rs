@@ -34,11 +34,12 @@ impl<T> WithOrExit<T> for Option<T> {
 }
 
 /// Generic parsing error.
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, Eq, PartialEq)]
 pub struct ParseError(pub String);
 
 impl ParseError {
     /// Produces a `ParseError` from a `&str`.
+    #[deprecated(since = "0.6.1", note = "Please use the parse_error! macro instead.")]
     pub fn of(s: &str) -> ParseError {
         ParseError(s.to_string())
     }
@@ -74,3 +75,62 @@ impl From<std::char::ParseCharError> for ParseError {
 //         ParseError(format!("{:?}", err))
 //     }
 // }
+
+/// Macro to produce a ParseError, with optional interpolation (using format!).
+#[macro_export]
+macro_rules! parse_error {
+    ($err:expr) => {{
+        $crate::error::ParseError($err.to_string())
+    }};
+    ($err:expr, $($args:tt)*) => {{
+        $crate::error::ParseError(format!($err, $($args)*))
+    }};
+}
+
+/// Macro to produce a ParseError wrapped in an Err, with optional interpolation (using format!).
+#[macro_export]
+macro_rules! err_parse_error {
+    ($err:expr) => {{
+        Err($crate::parse_error!($err))
+    }};
+    ($err:expr, $($args:tt)*) => {{
+        Err($crate::parse_error!($err, $($args)*))
+    }};
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_macro_parse_error_simple() {
+        let err = parse_error!["This is a simple error."];
+        assert_eq!(err, ParseError("This is a simple error.".to_string()));
+    }
+
+    #[test]
+    fn test_macro_parse_error_with_formatting() {
+        let err = parse_error!["This is an error with {}.", "formatting"];
+        assert_eq!(
+            err,
+            ParseError("This is an error with formatting.".to_string())
+        );
+    }
+
+    #[test]
+    fn test_macro_err_parse_error_simple() {
+        let err: Result<(), ParseError> = err_parse_error!["This is a simple error."];
+        assert_eq!(err, Err(ParseError("This is a simple error.".to_string())));
+    }
+
+    #[test]
+    fn test_macro_err_parse_error_with_formatting() {
+        let err: Result<(), ParseError> =
+            err_parse_error!["This is an error with {}.", "formatting"];
+
+        assert_eq!(
+            err,
+            Err(ParseError("This is an error with formatting.".to_string()))
+        );
+    }
+}

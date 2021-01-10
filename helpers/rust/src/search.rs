@@ -74,8 +74,9 @@ pub trait Navigable {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use crate::math::taxi_cab_2d;
+
+    use super::*;
 
     #[test]
     fn test_find_shortest_path_without_obstacles() {

@@ -52,13 +52,14 @@ It implements [fmt::Display] and [fmt::Debug], and it can be converted from [io:
 #### Example
 
 ```rust
+use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
 
 fn example_with_params(param: u8) -> Result<(), ParseError> {
     if process(param) {
         Ok(())
     } else {
-        Err(ParseError(format!("Failed to process param: {}", param)))
+        err_parse_error!("Failed to process param: {}", param)
     }
 }
 
@@ -66,7 +67,7 @@ fn example_without_params() -> Result<(), ParseError> {
     if process() {
         Ok(())
     } else {
-        Err(ParseError.of("Failed to process"))
+        err_parse_error!("Failed to process")
     }
 }
 ```
