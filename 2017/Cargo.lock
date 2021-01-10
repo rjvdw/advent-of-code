@@ -67,8 +67,8 @@ dependencies = [
 name = "day10"
 version = "0.1.0"
 dependencies = [
- "hex",
  "rdcl_aoc_helpers",
+ "shared",
 ]
 
 [[package]]
@@ -92,12 +92,6 @@ dependencies = [
  "rdcl_aoc_helpers",
  "termion",
 ]
-
-[[package]]
-name = "hex"
-version = "0.4.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "644f9158b2f133fd50f5fb3242878846d9eb792e445c893805ff0e3824006e35"
 
 [[package]]
 name = "libc"
@@ -131,6 +125,10 @@ checksum = "7e891cfe48e9100a70a3b6eb652fef28920c117d366339687bd5576160db0f76"
 dependencies = [
  "redox_syscall",
 ]
+
+[[package]]
+name = "shared"
+version = "0.1.0"
 
 [[package]]
 name = "termion"

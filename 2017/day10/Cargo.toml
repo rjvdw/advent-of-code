@@ -11,4 +11,4 @@ path = "src/main.rs"
 
 [dependencies]
 rdcl_aoc_helpers = "0.6.0"
-hex = "0.4.2"
+shared = { path = "../shared" }
