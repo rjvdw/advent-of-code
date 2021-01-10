@@ -1,6 +1,7 @@
 use std::fmt;
 use std::str::FromStr;
 
+use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
 
 #[derive(Debug, Copy, Clone)]
@@ -50,7 +51,7 @@ impl FromStr for Direction {
             "sw" => Ok(Direction::SouthWest),
             "s" => Ok(Direction::South),
             "se" => Ok(Direction::SouthEast),
-            _ => Err(ParseError(format!("Invalid direction: {}", s))),
+            _ => err_parse_error!("Invalid direction: {}", s),
         }
     }
 }

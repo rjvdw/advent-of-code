@@ -3,6 +3,7 @@ use std::fs::File;
 use std::io::{BufRead, BufReader, Read};
 
 use rdcl_aoc_helpers::args::get_args;
+use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::{ParseError, WithOrExit};
 
 type Network<T> = HashMap<T, HashSet<T>>;
@@ -74,7 +75,7 @@ fn parse_input<R: Read>(readable: R) -> Result<Network<usize>, ParseError> {
                     pipes.insert(key, value);
                 }
                 _ => {
-                    return Err(ParseError(format!("Invalid input line: {}", line)));
+                    return err_parse_error!("Invalid input line: {}", line);
                 }
             }
         }

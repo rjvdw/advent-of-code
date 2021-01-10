@@ -93,6 +93,6 @@ checksum = "644f9158b2f133fd50f5fb3242878846d9eb792e445c893805ff0e3824006e35"
 
 [[package]]
 name = "rdcl_aoc_helpers"
-version = "0.6.0"
+version = "0.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9d1f1808afcf8bf804ff1dd39612ba9e969b4790001f95c218ee4bd1f2810fc0"
+checksum = "4ba80a34bbbdcc41036a66d6f2597fb810b473ed077f6c466f16d6b277eb87aa"

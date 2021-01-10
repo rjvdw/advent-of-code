@@ -1,6 +1,7 @@
 use std::fmt;
 use std::str::FromStr;
 
+use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
@@ -36,7 +37,7 @@ impl FromStr for Operation {
         } else if let Some(r) = s.strip_prefix("dec ") {
             Ok(Operation::Decrement(r.parse()?))
         } else {
-            Err(ParseError(format!("Invalid operation: {}", s)))
+            err_parse_error!("Invalid operation: {}", s)
         }
     }
 }
@@ -54,7 +55,7 @@ mod tests {
         );
         assert_eq!(
             "invalid".parse::<Operation>(),
-            Err(ParseError::of("Invalid operation: invalid"))
+            err_parse_error!["Invalid operation: invalid"]
         );
     }
 }
