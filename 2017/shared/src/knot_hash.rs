@@ -26,7 +26,9 @@ pub fn compute_sparse_hash(lengths: &[u8], rope_length: usize, rounds: usize) ->
 }
 
 pub fn compute_knot_hash(lengths: &[u8]) -> u128 {
-    let sparse_hash = compute_sparse_hash(lengths, 256, 64);
+    let mut numbers = lengths.to_vec();
+    numbers.extend_from_slice(&[17, 31, 73, 47, 23]);
+    let sparse_hash = compute_sparse_hash(&numbers, 256, 64);
     let mut knot_hash = 0;
     let mut ch = 0;
     for (idx, b) in sparse_hash.iter().enumerate() {
@@ -59,10 +61,21 @@ mod tests {
 
     #[test]
     fn test_compute_knot_hash() {
-        assert_eq!(compute_knot_hash(&[]), 0);
         assert_eq!(
-            compute_knot_hash(&[3, 4, 1, 5]),
-            0xe31f007e7b3a3c0707071b1e070610ec
+            compute_knot_hash("".as_bytes()),
+            0xa2582a3a0e66e6e86e3812dcb672a272
+        );
+        assert_eq!(
+            compute_knot_hash("AoC 2017".as_bytes()),
+            0x33efeb34ea91902bb2f59c9920caa6cd
+        );
+        assert_eq!(
+            compute_knot_hash("1,2,3".as_bytes()),
+            0x3efbe78a8d82f29979031a4aa0b16a9d
+        );
+        assert_eq!(
+            compute_knot_hash("1,2,4".as_bytes()),
+            0x63960835bcdc130f0b66d7ff4f6a5a8e
         );
     }
 }
