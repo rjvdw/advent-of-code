@@ -1,3 +1,4 @@
+use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
 
 use crate::calc::helpers::partial_expression::PartialExpression;
@@ -42,10 +43,7 @@ impl PartialExpression for Left<'_> {
             }
         }
 
-        Err(ParseError(format!(
-            "Unbalanced left-hand expression: {}",
-            self.0
-        )))
+        err_parse_error!("Unbalanced left-hand expression: {}", self.0)
     }
 
     fn evaluate_number(

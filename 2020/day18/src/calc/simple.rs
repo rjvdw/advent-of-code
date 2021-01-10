@@ -1,3 +1,4 @@
+use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
 
 use crate::operator::Operator;
@@ -12,20 +13,20 @@ pub fn evaluate(mut expr: &str) -> Result<i64, ParseError> {
     while !expr.is_empty() {
         if expr.starts_with('(') {
             if mode == ParseMode::Operator {
-                return Err(ParseError::of("Expected an operator, encountered '('."));
+                return err_parse_error!("Expected an operator, encountered '('.");
             }
             stack.push((value, operator));
             operator = Operator::Nop;
             expr = &expr[1..];
         } else if expr.starts_with(')') {
             if mode == ParseMode::Number {
-                return Err(ParseError::of("Expected a number, encountered ')'."));
+                return err_parse_error!("Expected a number, encountered ')'.");
             }
             match stack.pop() {
                 Some((p_value, p_operator)) => {
                     value = p_operator.evaluate(p_value, value);
                 }
-                None => return Err(ParseError::of("Expression is unbalanced.")),
+                None => return err_parse_error!("Expression is unbalanced."),
             }
             expr = &expr[1..];
             if expr.starts_with(' ') {
@@ -50,7 +51,7 @@ pub fn evaluate(mut expr: &str) -> Result<i64, ParseError> {
     }
 
     if !stack.is_empty() {
-        return Err(ParseError::of("Expression is unbalanced."));
+        return err_parse_error!("Expression is unbalanced.");
     }
 
     Ok(value)

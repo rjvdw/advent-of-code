@@ -1,6 +1,7 @@
 use std::collections::HashSet;
 use std::str::FromStr;
 
+use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
 
 #[derive(Debug, Clone)]
@@ -34,7 +35,7 @@ impl FromStr for Food {
                     allergens,
                 })
             }
-            None => Err(ParseError(format!("Invalid input: {}", s))),
+            None => err_parse_error!("Invalid input: {}", s),
         }
     }
 }

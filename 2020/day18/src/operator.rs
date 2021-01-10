@@ -1,5 +1,6 @@
 use std::str::FromStr;
 
+use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
 
 #[derive(Debug, Copy, Clone)]
@@ -31,7 +32,7 @@ impl FromStr for Operator {
         match s {
             "+" => Ok(Operator::Plus),
             "*" => Ok(Operator::Times),
-            _ => Err(ParseError(format!("Invalid operator: {}", s))),
+            _ => err_parse_error!("Invalid operator: {}", s),
         }
     }
 }

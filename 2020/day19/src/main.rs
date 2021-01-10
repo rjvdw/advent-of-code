@@ -5,6 +5,7 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 
 use rdcl_aoc_helpers::args::get_args;
+use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
 
 use crate::rule::Rule;
@@ -41,7 +42,7 @@ fn read(path: &str) -> Result<usize, ParseError> {
                 let value = line[idx + 2..].parse::<Rule>()?;
                 rules.insert(key, value);
             }
-            None => return Err(ParseError(format!("Invalid rule encountered: {}", line))),
+            None => return err_parse_error!("Invalid rule encountered: {}", line),
         }
     }
 
@@ -49,7 +50,7 @@ fn read(path: &str) -> Result<usize, ParseError> {
     let mut count = 0;
     let rule0 = match rules.get(&0) {
         Some(rule) => rule,
-        None => return Err(ParseError::of("Rule 0 does not exist")),
+        None => return err_parse_error!("Rule 0 does not exist"),
     };
     for line in lines {
         if rule0.test(&rules, &line?) {

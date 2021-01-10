@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use std::fmt;
 
+use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
 use rdcl_aoc_helpers::input::MultilineFromStr;
 
@@ -155,10 +156,7 @@ impl MultilineFromStr for PuzzleInput {
                                         value.push((start, end));
                                     }
                                     None => {
-                                        return Err(ParseError(format!(
-                                            "Invalid input line: {}",
-                                            line
-                                        )));
+                                        return err_parse_error!("Invalid input line: {}", line);
                                     }
                                 }
                             }
@@ -167,7 +165,7 @@ impl MultilineFromStr for PuzzleInput {
 
                             Ok(())
                         }
-                        None => Err(ParseError(format!("Invalid input line: {}", line))),
+                        None => err_parse_error!("Invalid input line: {}", line),
                     }
                 }
             }

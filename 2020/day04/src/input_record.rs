@@ -1,5 +1,6 @@
 use std::fmt;
 
+use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
 use rdcl_aoc_helpers::input::MultilineFromStr;
 
@@ -122,17 +123,11 @@ impl MultilineFromStr for Passport {
                             "ecl" => Ok(self.ecl.set_value(value)),
                             "pid" => Ok(self.pid.set_value(value)),
                             "cid" => Ok(self.cid.set_value(value)),
-                            _ => Err(ParseError(format!(
-                                "Invalid key '{}' in line '{}'",
-                                key, line
-                            ))),
+                            _ => err_parse_error!("Invalid key '{}' in line '{}'", key, line),
                         }?
                     }
                     None => {
-                        return Err(ParseError(format!(
-                            "Invalid tuple '{}' in line '{}'",
-                            tuple, line
-                        )));
+                        return err_parse_error!("Invalid tuple '{}' in line '{}'", tuple, line);
                     }
                 }
             }

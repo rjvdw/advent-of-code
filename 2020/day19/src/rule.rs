@@ -1,6 +1,7 @@
 use std::collections::{HashMap, HashSet};
 use std::str::FromStr;
 
+use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
 
 use crate::rules_map::RulesMap;
@@ -67,7 +68,7 @@ impl FromStr for Rule {
         if s.starts_with('"') {
             match s.chars().nth(1) {
                 Some(ch) => Ok(Rule::Simple(ch)),
-                None => Err(ParseError(format!("Invalid simple rule: {}", s))),
+                None => err_parse_error!("Invalid simple rule: {}", s),
             }
         } else if let Some(idx) = s.find(EITHER_SEPARATOR) {
             let (left, right) = s.split_at_and_parse::<Rule, Rule>(idx)?;

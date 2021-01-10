@@ -1,8 +1,9 @@
-use crate::instruction::Instruction;
 use rdcl_aoc_helpers::machine::hook::{HookResult, PreExecuteHook};
 use rdcl_aoc_helpers::machine::output_receiver::OutputReceiver;
 use rdcl_aoc_helpers::machine::register::MachineRegister;
 use rdcl_aoc_helpers::machine::Machine;
+
+use crate::instruction::Instruction;
 
 pub struct LoopDetector {
     seen: Vec<bool>,

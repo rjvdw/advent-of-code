@@ -1,6 +1,7 @@
 use std::ops::Add;
 use std::str::FromStr;
 
+use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
 
 #[derive(Debug, Eq, PartialEq, Hash, Copy, Clone)]
@@ -79,7 +80,7 @@ impl FromStr for Tile {
             } {
                 position = direction.walk(&position);
             } else {
-                return Err(ParseError(format!("Invalid input line: {}", s)));
+                return err_parse_error!("Invalid input line: {}", s);
             }
         }
 

@@ -1,5 +1,6 @@
 use std::str::FromStr;
 
+use rdcl_aoc_helpers::err_parse_error;
 use rdcl_aoc_helpers::error::ParseError;
 
 use crate::coordinates::Coordinates;
@@ -69,7 +70,7 @@ impl FromStr for Instruction {
             Some('L') => Ok(Action::LEFT),
             Some('R') => Ok(Action::RIGHT),
             Some('F') => Ok(Action::FORWARD),
-            _ => Err(ParseError(format!("Invalid action in line '{}'", s))),
+            _ => err_parse_error!("Invalid action in line '{}'", s),
         }?;
 
         let value = s[1..].parse::<i32>()?;
