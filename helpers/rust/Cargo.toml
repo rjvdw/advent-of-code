@@ -1,6 +1,6 @@
 [package]
 name = "rdcl_aoc_helpers"
-version = "0.6.3"
+version = "0.6.4"
 authors = ["Ruud van der Weide <rj@rdcl.dev>"]
 description = "Helpers for Advent of Code"
 edition = "2018"
