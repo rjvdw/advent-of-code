@@ -1,6 +1,6 @@
 use std::cmp::Ordering;
 use std::fmt;
-use std::ops::Add;
+use std::ops::{Add, Neg, Sub};
 
 use crate::math::with_gcd::WithGcd;
 
@@ -91,6 +91,23 @@ impl Add<Polynomial> for Polynomial {
         for c in coefficients.iter_mut().rev() {
             *c = *c1.next().unwrap_or(&0) + *c2.next().unwrap_or(&0);
         }
+        Polynomial::new(&coefficients)
+    }
+}
+
+impl Sub<Polynomial> for Polynomial {
+    type Output = Polynomial;
+
+    fn sub(self, rhs: Polynomial) -> Self::Output {
+        self.add(rhs.neg())
+    }
+}
+
+impl Neg for Polynomial {
+    type Output = Polynomial;
+
+    fn neg(self) -> Self::Output {
+        let coefficients: Vec<i64> = self.coefficients.iter().map(|&c| -c).collect();
         Polynomial::new(&coefficients)
     }
 }
@@ -229,6 +246,23 @@ mod tests {
         let p3 = Polynomial::new(&[0]);
 
         assert_eq!(p1 + p2, p3);
+    }
+
+    #[test]
+    fn test_neg_polynomials() {
+        let p1 = Polynomial::new(&[1, 2, 3]);
+        let p2 = Polynomial::new(&[-1, -2, -3]);
+
+        assert_eq!(-p1, p2);
+    }
+
+    #[test]
+    fn test_subtract_polynomials() {
+        let p1 = Polynomial::new(&[10, 20, 30]);
+        let p2 = Polynomial::new(&[1, 2, 3, 4]);
+        let p3 = Polynomial::new(&[-1, 8, 17, 26]);
+
+        assert_eq!(p1 - p2, p3);
     }
 
     #[test]
