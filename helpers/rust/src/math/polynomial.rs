@@ -1,5 +1,6 @@
 use std::cmp::Ordering;
 use std::fmt;
+use std::ops::Add;
 
 use crate::math::with_gcd::WithGcd;
 
@@ -17,18 +18,18 @@ impl Polynomial {
             Polynomial {
                 coefficients: vec![0],
             }
-        } else if coefficients.len() == 1 {
-            Polynomial {
-                coefficients: coefficients.to_vec(),
-            }
         } else {
-            Polynomial {
-                coefficients: coefficients
-                    .iter()
-                    .skip_while(|&&c| c == 0)
-                    .copied()
-                    .collect(),
+            let mut coefficients: Vec<i64> = coefficients
+                .iter()
+                .skip_while(|&&c| c == 0)
+                .copied()
+                .collect();
+
+            if coefficients.is_empty() {
+                coefficients.push(0);
             }
+
+            Polynomial { coefficients }
         }
     }
 
@@ -76,6 +77,21 @@ impl Polynomial {
             i *= x;
         }
         y
+    }
+}
+
+impl Add<Polynomial> for Polynomial {
+    type Output = Polynomial;
+
+    fn add(self, rhs: Polynomial) -> Self::Output {
+        let new_len = self.coefficients.len().max(rhs.coefficients.len());
+        let mut coefficients = vec![0; new_len];
+        let mut c1 = self.coefficients.iter().rev();
+        let mut c2 = rhs.coefficients.iter().rev();
+        for c in coefficients.iter_mut().rev() {
+            *c = *c1.next().unwrap_or(&0) + *c2.next().unwrap_or(&0);
+        }
+        Polynomial::new(&coefficients)
     }
 }
 
@@ -186,6 +202,33 @@ mod tests {
         // y = 10 (x - 1/5) (x - 1/2)
         let polynomial = Polynomial::new(&[10, -7, 1]);
         assert_eq!(polynomial.find_roots(), vec![]);
+    }
+
+    #[test]
+    fn test_add_two_polynomials_of_equal_degree() {
+        let p1 = Polynomial::new(&[1, 2, 3]);
+        let p2 = Polynomial::new(&[10, 20, 30]);
+        let p3 = Polynomial::new(&[11, 22, 33]);
+
+        assert_eq!(p1 + p2, p3);
+    }
+
+    #[test]
+    fn test_add_two_polynomials_with_different_degrees() {
+        let p1 = Polynomial::new(&[1, 2, 3, 4]);
+        let p2 = Polynomial::new(&[10, 20, 30]);
+        let p3 = Polynomial::new(&[1, 12, 23, 34]);
+
+        assert_eq!(p1 + p2, p3);
+    }
+
+    #[test]
+    fn test_add_opposite_polynomials() {
+        let p1 = Polynomial::new(&[1, 2, 3]);
+        let p2 = Polynomial::new(&[-1, -2, -3]);
+        let p3 = Polynomial::new(&[0]);
+
+        assert_eq!(p1 + p2, p3);
     }
 
     #[test]
