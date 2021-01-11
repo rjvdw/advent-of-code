@@ -1,6 +1,9 @@
 use std::cmp::Ordering;
 use std::ops::{Add, Sub};
 
+pub mod polynomial;
+pub mod with_gcd;
+
 /// The absolute difference between two numbers.
 pub fn abs_diff<T>(a: T, b: T) -> T
 where

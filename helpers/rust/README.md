@@ -366,6 +366,33 @@ fn main() {
 }
 ```
 
+### `math::polynomial::Polynomial`
+
+Allows you to work with polynomials. Currently supported:
+* Creating new polynomials (`let y = Polynomial::new(&[1, -25, 5])`).
+* Formatting a polynomial in a human readable way (`format!("{}", y)`).
+* Evaluating a polynomial at a point `x` (`y.at(x)`).
+* Finding all roots of a polynomial (`y.find_roots()`).
+
+To do:
+* Performing arithmetic operations on polynomials (e.g. adding them together, multiplying them, ...).
+* Implement `Fn(i64) -> i64` for polynomials, so you can call them (`y(x)`, rather than `y.at(x)`).
+* Either implement `FromStr`, or create a macro to more easily create polynomials (e.g. `polynomial![x^2 - 25x + 5]`).
+
+#### Example
+
+```rust
+use rdcl_aoc_helpers::math::polynomial::Polynomial;
+
+fn main() {
+    let y = Polynomial::new(&[1, -25, 5]);
+    println!("Solving {} = 0", y);
+    for x in y.find_roots() {
+        println!("For x = {}, y = {}.", x, y.at(x));
+    }
+}
+```
+
 ## Parts
 
 ### `part::Part`
