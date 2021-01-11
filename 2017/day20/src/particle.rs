@@ -2,6 +2,7 @@ use std::fmt;
 use std::str::FromStr;
 
 use rdcl_aoc_helpers::error::ParseError;
+use rdcl_aoc_helpers::math::polynomial::Polynomial;
 
 #[derive(Debug, Copy, Clone)]
 pub struct Particle {
@@ -20,38 +21,49 @@ impl Particle {
         )
     }
 
-    // TODO: Implement
-    #[allow(clippy::all, dead_code, unused_variables)]
+    // TODO: Use
+    #[allow(dead_code)]
     pub fn will_collide_with(&self, other: &Particle) -> Option<i64> {
-        todo!()
+        // Two particles will collide only if at a given time t, their positions are equal. We start
+        // by findings times at which the x-coordinate is equal, and then verify if at those times
+        // the y and z-coordinates are also equal. To find the times where the x-coordinates are
+        // equal, we just need to solve a quadratic equation.
+        //
+        // The polynomials that describe the x-coordinate take the form:
+        //   x(t) = p + t v + t(t + 1)/2 a
+        //        = a/2 t^2 + (v + a/2) t + p
+        // And since we are only trying to find their roots, we can multiply the entire equation by
+        // 2, so we get rid of the divisions:
+        //   x(t) = a t^2 + (2v + a) t + 2p
+
+        let y1 = Polynomial::new(&[
+            self.acceleration.0,
+            2 * self.velocity.0 + self.acceleration.0,
+            2 * self.position.0,
+        ]);
+
+        let y2 = Polynomial::new(&[
+            other.acceleration.0,
+            2 * other.velocity.0 + other.acceleration.0,
+            2 * other.position.0,
+        ]);
+
+        (y1 - y2)
+            .find_roots()
+            .iter()
+            .copied()
+            // ignore times in the past
+            .filter(|&t| t >= 0)
+            // check if the positions actually match
+            .filter(|&t| {
+                let p0 = self.position_at_time(t);
+                let p1 = other.position_at_time(t);
+
+                p0 == p1
+            })
+            // we only need to consider the first time they collide
+            .min()
     }
-}
-
-// TODO: Implement
-#[allow(clippy::all, dead_code, unused_variables)]
-fn solve((p0, v0, a0): (i64, i64, i64), (p1, v1, a1): (i64, i64, i64)) -> Vec<i64> {
-    // f(t) = p + t v + t(t + 1)/2 a
-    // we want to solve: p0 + t v0 + t(t + 1)/2 a0 = p1 + t v1 + t(t + 1)/2 a1
-    //              <=> (p0 - p1) + t (v0 - v1) + t(t + 1)/2 (a0 - a1) = 0
-    //              <=> (a0 - a1)/2 t^2 + ((v0 - v1) - (a0 - a1)/2) t + (p0 - p1) = 0
-    //              <=> (a0 - a1) t^2 + (2v0 - 2v1 + a1 - a0) t + (2p0 - 2p1) = 0
-
-    // let:
-    let a = a0 - a1;
-    let b = 2 * v0 - 2 * v1 + a1 - a0;
-    let c = 2 * p0 - 2 * p1;
-
-    // Then we are trying to solve: a t^2 + b t + c = 0
-    // First determine the discriminant.
-    let d = b * b - 4 * a * c;
-
-    // d = 0 -> no non-integer solutions
-    if d < 0 {
-        return vec![];
-    }
-
-    // TODO, see https://cs.stackexchange.com/a/70458
-    todo!()
 }
 
 impl Iterator for Particle {
