@@ -78,6 +78,34 @@ impl Program {
                     let a = self.read_arg(&mut modes);
                     self.outbox.push_back(a);
                 }
+                5 => {
+                    // if [a] != 0, go to [b]
+                    let a = self.read_arg(&mut modes);
+                    let b = self.read_arg(&mut modes);
+                    if a != 0 {
+                        self.instruction_pointer = b;
+                    }
+                }
+                6 => {
+                    // if [a] == 0, go to [b]
+                    let a = self.read_arg(&mut modes);
+                    let b = self.read_arg(&mut modes);
+                    if a == 0 {
+                        self.instruction_pointer = b;
+                    }
+                }
+                7 => {
+                    // [c] = [a] < [b]
+                    let a = self.read_arg(&mut modes);
+                    let b = self.read_arg(&mut modes);
+                    self.write_bool_arg(&mut modes, a < b);
+                }
+                8 => {
+                    // [c] = [a] == [b]
+                    let a = self.read_arg(&mut modes);
+                    let b = self.read_arg(&mut modes);
+                    self.write_bool_arg(&mut modes, a == b);
+                }
                 99 => {
                     // HALT
                     self.status = ProgramStatus::Halted;
@@ -119,6 +147,12 @@ impl Program {
         }
     }
 
+    /// Reads the current position to find out where to write, and moves the instruction pointer one
+    /// position.
+    fn write_bool_arg(&mut self, modes: &mut i64, value: bool) {
+        self.write_arg(modes, if value { 1 } else { 0 })
+    }
+
     /// Reads the current position, and works out the mode for this position. Moves the instruction
     /// pointer one position.
     fn get_arg_and_mode(&mut self, modes: &mut i64) -> (i64, i64) {
@@ -131,8 +165,13 @@ impl Program {
     }
 
     /// Return a memory dump.
-    pub fn dump(&self) -> Vec<i64> {
+    pub fn memory_dump(&self) -> Vec<i64> {
         self.memory.clone()
+    }
+
+    /// Return an output dump.
+    pub fn output_dump(&self) -> Vec<i64> {
+        self.outbox.iter().copied().collect()
     }
 }
 
@@ -157,6 +196,7 @@ impl IndexMut<i64> for Program {
 impl FromStr for Program {
     type Err = ProgramParseError;
 
+    /// Parse an intcode program from a comma separated list of ints.
     fn from_str(line: &str) -> Result<Self, Self::Err> {
         let mut int_codes = vec![];
         for nr in line.split(',') {
@@ -166,58 +206,96 @@ impl FromStr for Program {
     }
 }
 
+/// Allows you to easily define programs from within your code. Useful for unit tests.
+#[macro_export]
+macro_rules! program {
+    ($($x:expr),+ $(,)?) => (
+        Program::new(vec![$($x),*])
+    );
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
     fn test_run_1() {
-        let mut program = Program::new(vec![1, 9, 10, 3, 2, 3, 11, 0, 99, 30, 40, 50]);
-        program.run();
+        let mut program = program![1, 9, 10, 3, 2, 3, 11, 0, 99, 30, 40, 50];
+        assert_eq!(program.run(), ProgramStatus::Halted);
         assert_eq!(
-            program.dump(),
+            program.memory_dump(),
             vec![3500, 9, 10, 70, 2, 3, 11, 0, 99, 30, 40, 50]
         );
     }
 
     #[test]
     fn test_run_2() {
-        let mut program = Program::new(vec![1, 0, 0, 0, 99]);
-        program.run();
-        assert_eq!(program.dump(), vec![2, 0, 0, 0, 99]);
+        let mut program = program![1, 0, 0, 0, 99];
+        assert_eq!(program.run(), ProgramStatus::Halted);
+        assert_eq!(program.memory_dump(), vec![2, 0, 0, 0, 99]);
     }
 
     #[test]
     fn test_run_3() {
-        let mut program = Program::new(vec![2, 3, 0, 3, 99]);
-        program.run();
-        assert_eq!(program.dump(), vec![2, 3, 0, 6, 99]);
+        let mut program = program![2, 3, 0, 3, 99];
+        assert_eq!(program.run(), ProgramStatus::Halted);
+        assert_eq!(program.memory_dump(), vec![2, 3, 0, 6, 99]);
     }
 
     #[test]
     fn test_run_4() {
-        let mut program = Program::new(vec![2, 4, 4, 5, 99, 0]);
-        program.run();
-        assert_eq!(program.dump(), vec![2, 4, 4, 5, 99, 9801]);
+        let mut program = program![2, 4, 4, 5, 99, 0];
+        assert_eq!(program.run(), ProgramStatus::Halted);
+        assert_eq!(program.memory_dump(), vec![2, 4, 4, 5, 99, 9801]);
     }
 
     #[test]
     fn test_run_5() {
-        let mut program = Program::new(vec![1, 1, 1, 4, 99, 5, 6, 0, 99]);
-        program.run();
-        assert_eq!(program.dump(), vec![30, 1, 1, 4, 2, 5, 6, 0, 99]);
+        let mut program = program![1, 1, 1, 4, 99, 5, 6, 0, 99];
+        assert_eq!(program.run(), ProgramStatus::Halted);
+        assert_eq!(program.memory_dump(), vec![30, 1, 1, 4, 2, 5, 6, 0, 99]);
     }
 
     #[test]
     fn test_run_6() {
-        let mut program = Program::new(vec![1002, 4, 3, 4, 33]);
-        program.run();
-        assert_eq!(program.dump(), vec![1002, 4, 3, 4, 99]);
+        let mut program = program![1002, 4, 3, 4, 33];
+        assert_eq!(program.run(), ProgramStatus::Halted);
+        assert_eq!(program.memory_dump(), vec![1002, 4, 3, 4, 99]);
+    }
+
+    #[test]
+    fn test_run_7() {
+        // Using position mode, consider whether the input is equal to 8; output 1 (if it is) or 0
+        // (if it is not).
+        let mut program = program![3, 9, 8, 9, 10, 9, 4, 9, 99, -1, 8];
+        program.send_message(8);
+        assert_eq!(program.run(), ProgramStatus::Halted);
+        assert_eq!(program.output_dump(), vec![1]);
+    }
+
+    #[test]
+    fn test_run_8() {
+        // Using position mode, consider whether the input is less than 8; output 1 (if it is) or 0
+        // (if it is not).
+        let mut program = program![3, 9, 7, 9, 10, 9, 4, 9, 99, -1, 8];
+        program.send_message(5);
+        assert_eq!(program.run(), ProgramStatus::Halted);
+        assert_eq!(program.output_dump(), vec![1]);
+    }
+
+    #[test]
+    fn test_run_9() {
+        // Using position mode, consider whether the input is less than 8; output 1 (if it is) or 0
+        // (if it is not).
+        let mut program = program![3, 9, 7, 9, 10, 9, 4, 9, 99, -1, 8];
+        program.send_message(10);
+        assert_eq!(program.run(), ProgramStatus::Halted);
+        assert_eq!(program.output_dump(), vec![0]);
     }
 
     #[test]
     fn test_parse() {
         let program: Program = "1,0,0,3,99".parse().unwrap();
-        assert_eq!(program.dump(), vec![1, 0, 0, 3, 99]);
+        assert_eq!(program.memory_dump(), vec![1, 0, 0, 3, 99]);
     }
 }
