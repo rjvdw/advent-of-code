@@ -1,8 +1,8 @@
-use std::cmp::Ordering;
-use std::fmt;
-use std::ops::{Add, Neg, Sub};
-
 use crate::math::with_gcd::WithGcd;
+
+mod impl_arithmetics;
+mod impl_fmt;
+mod impl_fn;
 
 /// A polynomial.
 #[derive(Debug, Clone, Eq, PartialEq)]
@@ -77,108 +77,6 @@ impl Polynomial {
             i *= x;
         }
         y
-    }
-}
-
-impl Add<Polynomial> for Polynomial {
-    type Output = Polynomial;
-
-    fn add(self, rhs: Polynomial) -> Self::Output {
-        let new_len = self.coefficients.len().max(rhs.coefficients.len());
-        let mut coefficients = vec![0; new_len];
-        let mut c1 = self.coefficients.iter().rev();
-        let mut c2 = rhs.coefficients.iter().rev();
-        for c in coefficients.iter_mut().rev() {
-            *c = *c1.next().unwrap_or(&0) + *c2.next().unwrap_or(&0);
-        }
-        Polynomial::new(&coefficients)
-    }
-}
-
-impl Sub<Polynomial> for Polynomial {
-    type Output = Polynomial;
-
-    fn sub(self, rhs: Polynomial) -> Self::Output {
-        self.add(rhs.neg())
-    }
-}
-
-impl Neg for Polynomial {
-    type Output = Polynomial;
-
-    fn neg(self) -> Self::Output {
-        let coefficients: Vec<i64> = self.coefficients.iter().map(|&c| -c).collect();
-        Polynomial::new(&coefficients)
-    }
-}
-
-// TODO: Implement FnOnce, FnMut and Fn for Polynomial, so we can do `y(x)`, rather than `y.at(x)`.
-// impl FnOnce(i64) for Polynomial {
-//     type Output = i64;
-//
-//     fn call_once(self, x: i64) -> Self::Output {
-//         self.at(x)
-//     }
-// }
-//
-// impl FnMut(i64) for Polynomial{
-//     fn call_mut(&mut self, x: i64) -> Self::Output {
-//         self.at(x)
-//     }
-// }
-//
-// impl Fn(i64) for Polynomial {
-//     fn call(&self, x: i64) -> Self::Output {
-//         self.at(x)
-//     }
-// }
-
-impl fmt::Display for Polynomial {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let n = self.degree();
-        if n == 0 {
-            write!(f, "{}", self.coefficients[0])?;
-        } else {
-            write!(
-                f,
-                "{}{}",
-                fmt_lead_coefficient(self.coefficients[0]),
-                fmt_exponent(n)
-            )?;
-            for (i, &c) in self.coefficients.iter().enumerate().skip(1) {
-                if c != 0 {
-                    write!(f, "{}{}", fmt_coefficient(c), fmt_exponent(n - i))?;
-                }
-            }
-        }
-        Ok(())
-    }
-}
-
-fn fmt_lead_coefficient(c: i64) -> String {
-    match c {
-        1 => String::new(),
-        -1 => "-".to_string(),
-        _ => c.to_string(),
-    }
-}
-
-fn fmt_coefficient(c: i64) -> String {
-    match c {
-        1 => " + ".to_string(),
-        -1 => " - ".to_string(),
-        _ => match c.cmp(&0) {
-            Ordering::Less => format!(" - {}", c.abs()),
-            _ => format!(" + {}", c),
-        },
-    }
-}
-
-fn fmt_exponent(n: usize) -> String {
-    match n {
-        0 => String::new(),
-        1 => "x".to_string(),
-        _ => format!("x^{}", n),
     }
 }
 
