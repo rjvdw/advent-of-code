@@ -8,7 +8,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "day02"
+version = "0.1.0"
+dependencies = [
+ "rdcl_aoc_helpers",
+ "shared",
+]
+
+[[package]]
 name = "rdcl_aoc_helpers"
 version = "0.6.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c595d0d161d5ba391860f0441ec3737c8afbae45d7be65e4f5c460baa6e9e317"
+
+[[package]]
+name = "shared"
+version = "0.1.0"
+dependencies = [
+ "rdcl_aoc_helpers",
+]

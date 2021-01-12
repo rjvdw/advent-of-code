@@ -1,0 +1,14 @@
+[package]
+name = "day02"
+version = "0.1.0"
+authors = ["Ruud van der Weide <rj@rdcl.dev>"]
+edition = "2018"
+default-run = "aoc-2019-2"
+
+[[bin]]
+name = "aoc-2019-2"
+path = "src/main.rs"
+
+[dependencies]
+rdcl_aoc_helpers = "0.6.5"
+shared = { path = "../shared" }
