@@ -1,3 +1,4 @@
+//! Machine that performs assembly-like instructions.
 use std::convert::TryFrom;
 
 use crate::machine::hook::{HookResult, PreExecuteHook};

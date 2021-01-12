@@ -1,3 +1,4 @@
+//! Error handling.
 use std::char::ParseCharError;
 use std::fmt;
 use std::process::exit;

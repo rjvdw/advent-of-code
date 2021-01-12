@@ -1,3 +1,4 @@
+//! Processing of command line arguments.
 use std::process::exit;
 use std::{env, fmt};
 

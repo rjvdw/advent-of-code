@@ -1,3 +1,4 @@
+//! Searching algorithms.
 use std::collections::{HashMap, HashSet};
 use std::hash::Hash;
 use std::ops::Add;

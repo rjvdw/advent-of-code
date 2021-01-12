@@ -1,3 +1,4 @@
+//! Math.
 use std::cmp::Ordering;
 use std::ops::{Add, Sub};
 

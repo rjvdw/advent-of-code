@@ -1,3 +1,4 @@
+//! I/O operations.
 use std::fs::File;
 use std::io::{BufRead, BufReader, Lines, Read};
 use std::str::FromStr;
