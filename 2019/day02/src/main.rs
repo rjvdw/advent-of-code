@@ -27,7 +27,7 @@ fn main() {
     }
 }
 
-fn run(program: &Program, noun: usize, verb: usize) -> usize {
+fn run(program: &Program, noun: i64, verb: i64) -> i64 {
     let mut program = program.clone();
     program[1] = noun;
     program[2] = verb;
@@ -35,7 +35,7 @@ fn run(program: &Program, noun: usize, verb: usize) -> usize {
     program[0]
 }
 
-fn find_correct_inputs(program: &Program, output: usize) -> Option<(usize, usize)> {
+fn find_correct_inputs(program: &Program, output: i64) -> Option<(i64, i64)> {
     for noun in 0..100 {
         for verb in 0..100 {
             if run(program, noun, verb) == output {
