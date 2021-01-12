@@ -24,6 +24,11 @@ fn example2() {
 }
 ```
 
+## Direction
+
+The `Direction` enum is a convenient enum if you are dealing with cardinal directions (i.e. up, down, left and right).
+It allows you to turn and travel (using the `CanTravel` trait).
+
 ## Error handling
 
 ### `error::WithOrExit`
