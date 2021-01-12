@@ -1,12 +1,10 @@
 use std::fs::File;
-use std::io::{BufRead, BufReader, Read};
 
 use rdcl_aoc_helpers::args::get_args;
 use rdcl_aoc_helpers::error::WithOrExit;
 
 use shared::intcode;
-use shared::intcode::program_parse_error::ProgramParseError;
-use shared::intcode::Program;
+use shared::intcode::parse::parse_input;
 
 fn main() {
     let args = get_args(&["<input file>"], 1);
@@ -27,7 +25,7 @@ fn main() {
     }
 }
 
-fn run(program: &Program, noun: i64, verb: i64) -> i64 {
+fn run(program: &intcode::Program, noun: i64, verb: i64) -> i64 {
     let mut program = program.clone();
     program[1] = noun;
     program[2] = verb;
@@ -35,7 +33,7 @@ fn run(program: &Program, noun: i64, verb: i64) -> i64 {
     program[0]
 }
 
-fn find_correct_inputs(program: &Program, output: i64) -> Option<(i64, i64)> {
+fn find_correct_inputs(program: &intcode::Program, output: i64) -> Option<(i64, i64)> {
     for noun in 0..100 {
         for verb in 0..100 {
             if run(program, noun, verb) == output {
@@ -44,11 +42,4 @@ fn find_correct_inputs(program: &Program, output: i64) -> Option<(i64, i64)> {
         }
     }
     None
-}
-
-fn parse_input<R: Read>(r: R) -> Result<intcode::Program, ProgramParseError> {
-    match BufReader::new(r).lines().next() {
-        Some(Ok(line)) => line.parse(),
-        _ => Err(ProgramParseError::EmptyProgram),
-    }
 }
