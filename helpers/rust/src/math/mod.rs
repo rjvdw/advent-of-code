@@ -1,6 +1,6 @@
 //! Math.
 use std::cmp::Ordering;
-use std::ops::{Add, Sub};
+use std::ops::{Add, Div, Mul, Rem, Sub};
 
 pub mod polynomial;
 pub mod with_gcd;
@@ -41,10 +41,15 @@ where
 }
 
 /// Computes the greatest common divisor for numbers a and b.
+/// TODO: May return negative values.
 #[allow(clippy::many_single_char_names)]
-pub fn gcd(a: u64, b: u64) -> u64 {
+pub fn gcd<T>(a: T, b: T) -> T
+where
+    T: Copy + Eq + Rem<T, Output = T> + Default,
+{
+    let zero = T::default();
     let mut ab = (a, b);
-    while ab.1 != 0 {
+    while ab.1 != zero {
         ab = (ab.1, ab.0 % ab.1);
     }
     ab.0
@@ -52,7 +57,10 @@ pub fn gcd(a: u64, b: u64) -> u64 {
 
 /// Computes the least common multiple of a and b.
 #[allow(clippy::many_single_char_names)]
-pub fn lcm(a: u64, b: u64) -> u64 {
+pub fn lcm<T>(a: T, b: T) -> T
+where
+    T: Copy + Eq + Mul<T, Output = T> + Div<T, Output = T> + Rem<T, Output = T> + Default,
+{
     let g = gcd(a, b);
     (a / g) * b
 }

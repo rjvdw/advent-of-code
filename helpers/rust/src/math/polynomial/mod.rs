@@ -42,7 +42,7 @@ impl Polynomial {
     /// Find integer values x, such that the polynomial evaluates to 0 for x. These values are
     /// sorted from smallest to largest.
     pub fn find_roots(&self) -> Vec<i64> {
-        let gcd = self.coefficients.gcd() as i64;
+        let gcd = self.coefficients.gcd();
         let last_coefficient = self
             .coefficients
             .iter()
