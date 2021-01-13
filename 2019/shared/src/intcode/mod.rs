@@ -17,6 +17,7 @@ pub mod program_status;
 pub struct Program {
     memory: Vec<i64>,
     instruction_pointer: i64,
+    relative_base: i64,
     inbox: VecDeque<i64>,
     outbox: VecDeque<i64>,
     status: ProgramStatus,
@@ -28,6 +29,7 @@ impl Program {
         Program {
             memory,
             instruction_pointer: 0,
+            relative_base: 0,
             inbox: VecDeque::new(),
             outbox: VecDeque::new(),
             status: ProgramStatus::Paused,
@@ -110,6 +112,10 @@ impl Program {
                     let b = self.read_arg(&mut modes);
                     self.write_bool_arg(&mut modes, a == b);
                 }
+                9 => {
+                    // <relative base> += [a]
+                    self.relative_base += self.read_arg(&mut modes);
+                }
                 99 => {
                     // HALT
                     self.status = ProgramStatus::Halted;
@@ -132,9 +138,11 @@ impl Program {
     /// Reads an argument, and moves the instruction pointer one position.
     fn read_arg(&mut self, modes: &mut i64) -> i64 {
         let (arg, mode) = self.get_arg_and_mode(modes);
+        let relative_base = self.relative_base;
         match mode {
             0 => self[arg],
             1 => arg,
+            2 => self[relative_base + arg],
             _ => unreachable!(),
         }
     }
@@ -143,9 +151,13 @@ impl Program {
     /// position.
     fn write_arg(&mut self, modes: &mut i64, value: i64) {
         let (arg, mode) = self.get_arg_and_mode(modes);
+        let relative_base = self.relative_base;
         match mode {
             0 => {
                 self[arg] = value;
+            }
+            2 => {
+                self[relative_base + arg] = value;
             }
             _ => unreachable!(),
         }
@@ -190,7 +202,11 @@ impl Index<i64> for Program {
     /// Read the memory at a specific index.
     fn index(&self, index: i64) -> &Self::Output {
         let index = usize::try_from(index).unwrap();
-        &self.memory[index]
+        if index < self.memory.len() {
+            &self.memory[index]
+        } else {
+            &0
+        }
     }
 }
 
@@ -198,6 +214,9 @@ impl IndexMut<i64> for Program {
     /// Allows you to modify the memory at a specific index.
     fn index_mut(&mut self, index: i64) -> &mut Self::Output {
         let index = usize::try_from(index).unwrap();
+        if index >= self.memory.len() {
+            self.memory.resize(index + 1, 0);
+        }
         &mut self.memory[index]
     }
 }
@@ -300,6 +319,31 @@ mod tests {
         program.send_message(10);
         assert_eq!(program.run(), ProgramStatus::Halted);
         assert_eq!(program.output_dump(), vec![0]);
+    }
+
+    #[test]
+    fn test_run_10() {
+        let mut program =
+            program![109, 1, 204, -1, 1001, 100, 1, 100, 1008, 100, 16, 101, 1006, 101, 0, 99];
+        assert_eq!(program.run(), ProgramStatus::Halted);
+        assert_eq!(
+            program.output_dump(),
+            vec![109, 1, 204, -1, 1001, 100, 1, 100, 1008, 100, 16, 101, 1006, 101, 0, 99]
+        );
+    }
+
+    #[test]
+    fn test_run_11() {
+        let mut program = program![1102, 34915192, 34915192, 7, 4, 7, 99, 0];
+        assert_eq!(program.run(), ProgramStatus::Halted);
+        assert_eq!(program.output_dump(), vec![34915192 * 34915192]);
+    }
+
+    #[test]
+    fn test_run_12() {
+        let mut program = program![104, 1125899906842624, 99];
+        assert_eq!(program.run(), ProgramStatus::Halted);
+        assert_eq!(program.output_dump(), vec![1125899906842624]);
     }
 
     #[test]
