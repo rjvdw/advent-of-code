@@ -6,4 +6,5 @@ pub mod input;
 pub mod machine;
 pub mod math;
 pub mod part;
+pub mod permutations;
 pub mod search;

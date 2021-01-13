@@ -422,6 +422,24 @@ fn main() {
 }
 ```
 
+## Permutations
+
+### `permutations::Permutations`
+
+Produce all permutations of a given collection.
+
+#### Example
+
+```rust
+use rdcl_aoc_helpers::permutations::Permutations;
+
+fn main() {
+    for permutation in (0..5).collect::<Permutations<u8>>() {
+        println!("{:?}", permutation);
+    }
+}
+```
+
 ## Search
 
 ### `search::Navigable`
