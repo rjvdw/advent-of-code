@@ -210,7 +210,7 @@ impl FromStr for Program {
 #[macro_export]
 macro_rules! program {
     ($($x:expr),+ $(,)?) => (
-        Program::new(vec![$($x),*])
+        $crate::intcode::Program::new(vec![$($x),*])
     );
 }
 
