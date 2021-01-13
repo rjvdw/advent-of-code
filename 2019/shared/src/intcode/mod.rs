@@ -46,6 +46,10 @@ impl Program {
 
     /// Run the program until it halts.
     pub fn run(&mut self) -> ProgramStatus {
+        if self.has_halted() {
+            panic!("Cannot run a program that has been halted.");
+        }
+
         self.status = ProgramStatus::Running;
         loop {
             let (op, mut modes) = self.read_instruction();
@@ -172,6 +176,11 @@ impl Program {
     /// Return an output dump.
     pub fn output_dump(&self) -> Vec<i64> {
         self.outbox.iter().copied().collect()
+    }
+
+    /// Check if the program has halted.
+    pub fn has_halted(&self) -> bool {
+        matches!(self.status, ProgramStatus::Halted)
     }
 }
 
