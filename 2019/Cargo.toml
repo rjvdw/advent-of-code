@@ -1,3 +1,6 @@
 [workspace]
 members = ["day*", "shared"]
 exclude = []
+
+[profile.test.package.day16]
+opt-level = 2
