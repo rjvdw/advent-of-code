@@ -36,6 +36,27 @@ impl Program {
         }
     }
 
+    /// Loads an ASCII program.
+    pub fn load_ascii(&mut self, data: &str) {
+        for &ch in data.as_bytes() {
+            self.send_message(ch as i64);
+        }
+    }
+
+    /// Dumps ASCII output.
+    pub fn dump_ascii(&self) -> String {
+        self.output_dump()
+            .iter()
+            .copied()
+            .take_while(|&b| b < 255)
+            .map(|b| b as u8)
+            .map(|b| b as char)
+            .fold(String::new(), |mut acc, ch| {
+                acc.push(ch);
+                acc
+            })
+    }
+
     /// Send a message to the program.
     pub fn send_message(&mut self, message: i64) {
         self.inbox.push_back(message);

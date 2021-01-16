@@ -29,20 +29,12 @@ fn main() {
 
 fn follow_instructions(mut program: intcode::Program, solution: &str) -> i64 {
     program[0] = 2;
-    for &ch in solution.as_bytes() {
-        program.send_message(ch as i64);
-    }
-    program.send_message(b'n' as i64);
-    program.send_message(b'\n' as i64);
+    program.load_ascii(solution);
     program.run();
 
+    // println!("{}", program.dump_ascii());
     let mut dump = program.output_dump();
     dump.pop().unwrap()
-    // let collected = dump.pop().unwrap();
-    // let output: Vec<u8> = dump.iter().map(|&c| c as u8).collect();
-    // println!("{}", std::str::from_utf8(&output).unwrap());
-    //
-    // collected
 }
 
 fn get_alignment_parameters(map: &Grid<Space>) -> Vec<usize> {
