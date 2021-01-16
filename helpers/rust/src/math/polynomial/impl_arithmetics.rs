@@ -1,4 +1,4 @@
-use std::ops::{Add, Neg, Sub};
+use std::ops::{Add, Index, Mul, Neg, Sub};
 
 use crate::math::polynomial::Polynomial;
 
@@ -31,5 +31,43 @@ impl Neg for Polynomial {
     fn neg(self) -> Self::Output {
         let coefficients: Vec<i64> = self.coefficients.iter().map(|&c| -c).collect();
         Polynomial::new(&coefficients)
+    }
+}
+
+impl Add<i64> for Polynomial {
+    type Output = Polynomial;
+
+    fn add(self, rhs: i64) -> Self::Output {
+        let mut p = self.clone();
+        *p.coefficients.last_mut().unwrap() += rhs;
+        p
+    }
+}
+
+impl Sub<i64> for Polynomial {
+    type Output = Polynomial;
+
+    fn sub(self, rhs: i64) -> Self::Output {
+        self + (-rhs)
+    }
+}
+
+impl Mul<i64> for Polynomial {
+    type Output = Polynomial;
+
+    fn mul(self, rhs: i64) -> Self::Output {
+        let mut p = self.clone();
+        for c in &mut p.coefficients {
+            *c *= rhs;
+        }
+        p
+    }
+}
+
+impl Index<usize> for Polynomial {
+    type Output = i64;
+
+    fn index(&self, index: usize) -> &Self::Output {
+        &self.coefficients[index]
     }
 }
