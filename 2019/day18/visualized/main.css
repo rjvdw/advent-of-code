@@ -1,0 +1,87 @@
+html {
+    font-size: 12px;
+    font-family: monospace;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.controls {
+    margin: 1rem;
+    min-width: 50%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.controls button {
+    cursor: pointer;
+    border: 2px solid #222;
+    background: #ddd;
+    color: #111;
+    font-size: 1.75rem;
+    padding: .25rem 1.5rem;
+}
+
+.controls button.active {
+    background: #6c6;
+    color: #111;
+}
+
+.controls button:hover, .controls button:focus {
+    box-shadow: 0 0 10px #aae;
+}
+
+.dungeon-map {
+    margin-bottom: 1rem;
+    border-collapse: collapse;
+    cursor: default;
+}
+
+.dungeon-map td {
+    box-sizing: border-box;
+    border: 1px dotted #aaa;
+    width: 1.2rem;
+    height: 1.2rem;
+    line-height: 1.2rem;
+    text-align: center;
+    vertical-align: middle;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+}
+
+.wall {
+    background: #111;
+}
+
+.door {
+    background: #444;
+    color: #eee;
+}
+
+.key {
+    background: #aae;
+}
+
+.entrance {
+    background: #6c6;
+}
+
+.highlighted {
+    font-weight: bold;
+    background: #c33;
+    color: #fff;
+}
