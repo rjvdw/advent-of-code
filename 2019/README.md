@@ -8,6 +8,7 @@ My answers for the 2019 [Advent of Code](https://adventofcode.com/2019).
 
 * Currently, my solution for day 12 makes the assumption that the repeating state will be the beginning state.
 * The rendering for the arcade of day 13 can be made more efficient, by only rendering the spaces that actually have updated.
+* The solution for day 18 is horrendously slow. I will revisit this at some point.
 
 [workflows-CI-badge]: https://github.com/rjvdw/advent-of-code/workflows/CI%202019/badge.svg
 [actions]: https://github.com/rjvdw/advent-of-code/actions?query=workflow%3A%22CI+2019%22

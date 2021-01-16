@@ -1,16 +1,20 @@
 use std::collections::{HashSet, VecDeque};
 use std::fmt;
-use std::fmt::{Display, Formatter};
+use std::fmt::{Debug, Display, Formatter};
+use std::hash::Hash;
 use std::io::{BufRead, BufReader, Read};
 
 use grid::Grid;
 use rdcl_aoc_helpers::error::ParseError;
 use rdcl_aoc_helpers::parse_error;
 
+use state::drones::WithFourDrones;
+use state::you::WithJustYou;
 use tile::Tile;
 
 use crate::state::State;
 
+mod actor;
 mod state;
 mod tile;
 
@@ -21,7 +25,16 @@ pub struct Cave {
 }
 
 impl Cave {
-    pub fn with_four_entrances(&self) -> Cave {
+    pub fn find_quickest_route_by_yourself(&self) -> Option<usize> {
+        self.find_quickest_route(WithJustYou::get_initial_state(&self))
+    }
+
+    pub fn find_quickest_route_with_four_drones(&self) -> Option<usize> {
+        let cave = self.with_four_entrances();
+        cave.find_quickest_route(WithFourDrones::get_initial_state(&cave))
+    }
+
+    pub(crate) fn with_four_entrances(&self) -> Cave {
         let mut cave = self.clone();
         'outer: for y in 0..self.layout.rows() {
             for x in 0..self.layout.cols() {
@@ -44,39 +57,53 @@ impl Cave {
         cave
     }
 
-    pub fn find_quickest_route(&self) -> Option<usize> {
-        let mut seen: HashSet<State> = HashSet::new();
-        let mut exploring: VecDeque<(State, usize)> = VecDeque::new();
+    pub(crate) fn find_quickest_route<T>(&self, initial_state: T) -> Option<usize>
+    where
+        T: State + Clone + Debug + Display + Eq + PartialEq + Hash,
+    {
+        let mut seen: HashSet<T> = HashSet::new();
+        let mut exploring: VecDeque<(T, usize)> = VecDeque::new();
 
-        let initial_state = State::initial_state(&self);
         seen.insert(initial_state.clone());
         exploring.push_back((initial_state, 0));
 
+        let mut pd = 0;
         while let Some((state, distance)) = exploring.pop_front() {
-            for ((x, y), idx, mut neighbour) in state.get_neighbours() {
-                match self.layout[y][x] {
+            if pd != distance {
+                pd = distance;
+                println!("distance={}", pd);
+            }
+            // println!("distance={}, state={}", distance, state);
+            for (mut next_state, actor) in state.get_next_states() {
+                if actor.is_done() {
+                    // no keys left for this actor to collect, disregard
+                    continue;
+                }
+
+                match self.layout[&actor] {
+                    Tile::Entrance => {}
                     Tile::Wall => {
                         continue;
                     }
                     Tile::Open => {}
-                    Tile::Entrance => {}
                     Tile::Door(key) => {
-                        if !neighbour.has_key(key) {
+                        if !actor.has_key(key) {
                             continue;
                         }
                     }
                     Tile::Key(key) => {
-                        if !neighbour.has_key(key) {
-                            neighbour.add_key(key, idx);
-                            if neighbour.nr_keys() == self.nr_keys {
+                        if !next_state.has_key(key) {
+                            next_state.receive_key(key);
+                            if next_state.nr_keys() == self.nr_keys {
                                 return Some(distance + 1);
                             }
                         }
                     }
                 }
-                if !seen.contains(&neighbour) {
-                    seen.insert(neighbour.clone());
-                    exploring.push_back((neighbour, distance + 1));
+
+                if !seen.contains(&next_state) {
+                    seen.insert(next_state.clone());
+                    exploring.push_back((next_state, distance + 1));
                 }
             }
         }
@@ -145,6 +172,8 @@ impl Display for Cave {
 
 #[cfg(test)]
 mod tests {
+    use crate::state::you::WithJustYou;
+
     use super::*;
 
     #[test]
@@ -157,7 +186,8 @@ mod tests {
             "########################",
         ];
         let cave = Cave::parse(test_input.join("\n").as_bytes()).unwrap();
-        assert_eq!(cave.find_quickest_route(), Some(132));
+        let initial_state = WithJustYou::get_initial_state(&cave);
+        assert_eq!(cave.find_quickest_route(initial_state), Some(132));
     }
 
     #[test]
@@ -174,7 +204,8 @@ mod tests {
             "#################",
         ];
         let cave = Cave::parse(test_input.join("\n").as_bytes()).unwrap();
-        assert_eq!(cave.find_quickest_route(), Some(136));
+        let initial_state = WithJustYou::get_initial_state(&cave);
+        assert_eq!(cave.find_quickest_route(initial_state), Some(136));
     }
 
     #[test]
@@ -188,7 +219,8 @@ mod tests {
             "########################",
         ];
         let cave = Cave::parse(test_input.join("\n").as_bytes()).unwrap();
-        assert_eq!(cave.find_quickest_route(), Some(81));
+        let initial_state = WithJustYou::get_initial_state(&cave);
+        assert_eq!(cave.find_quickest_route(initial_state), Some(81));
     }
 
     #[test]
@@ -205,6 +237,7 @@ mod tests {
             "#############",
         ];
         let cave = Cave::parse(test_input.join("\n").as_bytes()).unwrap();
-        assert_eq!(cave.find_quickest_route(), Some(72));
+        let initial_state = WithFourDrones::get_initial_state(&cave);
+        assert_eq!(cave.find_quickest_route(initial_state), Some(72));
     }
 }
