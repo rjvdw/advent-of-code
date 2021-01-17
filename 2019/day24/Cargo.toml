@@ -1,0 +1,22 @@
+[package]
+name = "day24"
+version = "0.1.0"
+authors = ["Ruud van der Weide <rj@rdcl.dev>"]
+edition = "2018"
+default-run = "aoc-2019-24"
+
+[lib]
+name = "game_of_life"
+path = "src/game_of_life/lib.rs"
+
+[[bin]]
+name = "aoc-2019-24"
+path = "src/main.rs"
+
+[[bin]]
+name = "aoc-2019-24-visualisation"
+path = "src/visualisation.rs"
+
+[dependencies]
+rdcl_aoc_helpers = "0.6.7"
+termion = "1.5.5"
