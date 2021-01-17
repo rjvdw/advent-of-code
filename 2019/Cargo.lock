@@ -195,6 +195,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "day25"
+version = "0.1.0"
+dependencies = [
+ "rdcl_aoc_helpers",
+ "shared",
+ "termion",
+]
+
+[[package]]
 name = "grid"
 version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"

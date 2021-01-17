@@ -1,0 +1,19 @@
+[package]
+name = "day25"
+version = "0.1.0"
+authors = ["Ruud van der Weide <rj@rdcl.dev>"]
+edition = "2018"
+default-run = "aoc-2019-25"
+
+[[bin]]
+name = "aoc-2019-25"
+path = "src/main.rs"
+
+[[bin]]
+name = "aoc-2019-25-play"
+path = "src/play.rs"
+
+[dependencies]
+rdcl_aoc_helpers = "0.6.7"
+termion = "1.5.5"
+shared = { path = "../shared" }

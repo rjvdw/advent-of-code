@@ -48,13 +48,28 @@ impl Program {
         self.output_dump()
             .iter()
             .copied()
-            .take_while(|&b| b < 255)
+            .take_while(|&b| b <= 255)
             .map(|b| b as u8)
             .map(|b| b as char)
             .fold(String::new(), |mut acc, ch| {
                 acc.push(ch);
                 acc
             })
+    }
+
+    /// Receive messages from the program, and interpret them as ASCII.
+    pub fn receive_ascii(&mut self) -> String {
+        let mut output = String::new();
+        while let Some(message) = self.outbox.pop_front() {
+            if message > 255 {
+                // quick, put it back!
+                self.outbox.push_front(message);
+                // now leave, and pretend that nothing has happened...
+                break;
+            }
+            output.push((message as u8) as char);
+        }
+        output
     }
 
     /// Send a message to the program.
