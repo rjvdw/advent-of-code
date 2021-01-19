@@ -142,7 +142,6 @@ dependencies = [
 name = "day18"
 version = "0.1.0"
 dependencies = [
- "grid",
  "rdcl_aoc_helpers",
 ]
 

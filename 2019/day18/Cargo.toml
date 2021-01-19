@@ -5,14 +5,9 @@ authors = ["Ruud van der Weide <rj@rdcl.dev>"]
 edition = "2018"
 default-run = "aoc-2019-18"
 
-[lib]
-name = "cave"
-path = "src/cave/mod.rs"
-
 [[bin]]
 name = "aoc-2019-18"
 path = "src/main.rs"
 
 [dependencies]
 rdcl_aoc_helpers = "0.6.7"
-grid = "0.2.3"

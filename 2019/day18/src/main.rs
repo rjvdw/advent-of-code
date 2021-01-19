@@ -1,38 +1,41 @@
 use std::fs::File;
-use std::thread;
 
 use rdcl_aoc_helpers::args::get_args;
 use rdcl_aoc_helpers::error::WithOrExit;
 
-use cave::Cave;
+use crate::cave::four_way::FourWayCave;
+use crate::cave::simple::SimpleCave;
+use crate::cave::Cave;
+
+mod cave;
 
 fn main() {
     let args = get_args(&["<input file>"], 1);
+
     let file = File::open(&args[1]).or_exit_with(1);
+    let simple_cave = SimpleCave::parse(file).or_exit_with(1);
 
-    let cave_part_1 = Cave::parse(file).or_exit_with(1);
-    let cave_part_2 = cave_part_1.clone();
+    let file = File::open(&args[1]).or_exit_with(1);
+    let four_way_cave = FourWayCave::parse(file).or_exit_with(1);
 
-    let part1 = thread::spawn(
-        move || match cave_part_1.find_quickest_route_by_yourself() {
-            Some(distance) => println!(
-                "[part 1] The quickest route that reaches all keys has length {}.",
-                distance
-            ),
-            None => eprintln!("[part 1] There is no route that reaches all keys."),
-        },
-    );
+    // println!("simple cave:");
+    // println!("{}", simple_cave);
 
-    let part2 = thread::spawn(
-        move || match cave_part_2.find_quickest_route_with_four_drones() {
-            Some(distance) => println!(
-                "[part 2] The quickest route that reaches all keys has length {}.",
-                distance
-            ),
-            None => eprintln!("[part 2] There is no route that reaches all keys."),
-        },
-    );
+    // println!("four way cave:");
+    // println!("{}", four_way_cave);
 
-    part1.join().unwrap();
-    part2.join().unwrap();
+    match simple_cave.find_shortest_path() {
+        Some(distance) => println!(
+            "The shortest path in the simple maze that finds all keys has length {}.",
+            distance
+        ),
+        None => eprintln!("There is no path that finds all keys."),
+    }
+    match four_way_cave.find_shortest_path() {
+        Some(distance) => println!(
+            "The shortest path in the four-way maze that finds all keys has length {}.",
+            distance
+        ),
+        None => eprintln!("There is no path that finds all keys."),
+    }
 }

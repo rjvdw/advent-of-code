@@ -1,23 +1,23 @@
 use std::fmt;
 use std::fmt::{Display, Formatter};
 
-#[derive(Debug, Copy, Clone, Eq, PartialEq, Hash)]
-pub(crate) enum Tile {
+#[derive(Debug, Copy, Clone, Hash, Eq, PartialEq)]
+pub(in crate::cave) enum Tile {
     Entrance,
-    Wall,
     Open,
-    Door(char),
+    Wall,
     Key(char),
+    Door(char),
 }
 
 impl Display for Tile {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Tile::Entrance => write!(f, "@"),
-            Tile::Wall => write!(f, "#"),
             Tile::Open => write!(f, "."),
-            Tile::Door(ch) => write!(f, "{}", ch.to_ascii_uppercase()),
-            Tile::Key(ch) => write!(f, "{}", ch),
+            Tile::Wall => write!(f, "#"),
+            Tile::Key(key) => write!(f, "{}", key),
+            Tile::Door(key) => write!(f, "{}", key.to_ascii_uppercase()),
         }
     }
 }
