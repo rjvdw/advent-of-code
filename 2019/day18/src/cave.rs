@@ -5,6 +5,7 @@ use rdcl_aoc_helpers::error::ParseError;
 pub mod four_way;
 mod grid;
 mod gridterator;
+mod reachable;
 pub mod simple;
 mod tile;
 

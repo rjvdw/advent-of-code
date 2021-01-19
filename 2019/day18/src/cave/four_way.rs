@@ -5,7 +5,6 @@ use std::io::Read;
 use rdcl_aoc_helpers::error::ParseError;
 
 use crate::cave::grid::Grid;
-use crate::cave::tile::Tile;
 use crate::cave::Cave;
 
 #[derive(Debug, Clone)]
@@ -20,33 +19,14 @@ impl Cave for FourWayCave {
     }
 
     fn parse<R: Read>(r: R) -> Result<Self, ParseError> {
-        let mut layout = Grid::parse(r)?;
-        let mut entrance = (0, 0);
-        for (x, y) in &layout {
-            if let Tile::Entrance = layout[(x, y)] {
-                entrance = (x, y);
-                break;
-            }
-        }
-
-        let (x, y) = entrance;
+        let layout = Grid::parse(r)?;
+        assert_eq!(layout.entrances.len(), 4);
         let entrances = [
-            (x - 1, y - 1),
-            (x + 1, y - 1),
-            (x - 1, y + 1),
-            (x + 1, y + 1),
+            layout.entrances[0],
+            layout.entrances[1],
+            layout.entrances[2],
+            layout.entrances[3],
         ];
-
-        layout[(x, y)] = Tile::Wall;
-        layout[(x, y - 1)] = Tile::Wall;
-        layout[(x, y + 1)] = Tile::Wall;
-        layout[(x - 1, y)] = Tile::Wall;
-        layout[(x + 1, y)] = Tile::Wall;
-        layout[(x - 1, y - 1)] = Tile::Entrance;
-        layout[(x + 1, y - 1)] = Tile::Entrance;
-        layout[(x - 1, y + 1)] = Tile::Entrance;
-        layout[(x + 1, y + 1)] = Tile::Entrance;
-
         Ok(FourWayCave { layout, entrances })
     }
 }

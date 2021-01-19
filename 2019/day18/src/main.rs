@@ -10,32 +10,101 @@ use crate::cave::Cave;
 mod cave;
 
 fn main() {
-    let args = get_args(&["<input file>"], 1);
+    let args = get_args(&["<input file part 1>", "<input file part 2>"], 1);
 
-    let file = File::open(&args[1]).or_exit_with(1);
-    let simple_cave = SimpleCave::parse(file).or_exit_with(1);
+    let file_p1 = File::open(&args[1]).or_exit_with(1);
+    let cave_p1 = SimpleCave::parse(file_p1).or_exit_with(1);
 
-    let file = File::open(&args[1]).or_exit_with(1);
-    let four_way_cave = FourWayCave::parse(file).or_exit_with(1);
+    let file_p2 = File::open(&args[2]).or_exit_with(1);
+    let cave_p2 = FourWayCave::parse(file_p2).or_exit_with(1);
 
-    // println!("simple cave:");
-    // println!("{}", simple_cave);
+    // println!("part 1:");
+    // println!("{}", cave_p1);
 
-    // println!("four way cave:");
-    // println!("{}", four_way_cave);
+    // println!("part 2:");
+    // println!("{}", cave_p2);
 
-    match simple_cave.find_shortest_path() {
+    match cave_p1.find_shortest_path() {
         Some(distance) => println!(
-            "The shortest path in the simple maze that finds all keys has length {}.",
+            "[part 1] The shortest path that finds all keys has length {}.",
             distance
         ),
         None => eprintln!("There is no path that finds all keys."),
     }
-    match four_way_cave.find_shortest_path() {
+    match cave_p2.find_shortest_path() {
         Some(distance) => println!(
-            "The shortest path in the four-way maze that finds all keys has length {}.",
+            "[part 2] The shortest path that finds all keys has length {}.",
             distance
         ),
         None => eprintln!("There is no path that finds all keys."),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_1() {
+        let input_string = vec!["#########", "#b.A.@.a#", "#########"];
+        let cave = SimpleCave::parse(input_string.join("\n").as_bytes()).unwrap();
+        assert_eq!(cave.find_shortest_path(), Some(8));
+    }
+
+    #[test]
+    fn test_2() {
+        let input_string = vec![
+            "########################",
+            "#f.D.E.e.C.b.A.@.a.B.c.#",
+            "######################.#",
+            "#d.....................#",
+            "########################",
+        ];
+        let cave = SimpleCave::parse(input_string.join("\n").as_bytes()).unwrap();
+        assert_eq!(cave.find_shortest_path(), Some(86));
+    }
+
+    #[test]
+    fn test_3() {
+        let input_string = vec![
+            "########################",
+            "#...............b.C.D.f#",
+            "#.######################",
+            "#.....@.a.B.c.d.A.e.F.g#",
+            "########################",
+        ];
+        let cave = SimpleCave::parse(input_string.join("\n").as_bytes()).unwrap();
+        assert_eq!(cave.find_shortest_path(), Some(132));
+    }
+
+    #[test]
+    fn test_4() {
+        let input_string = vec![
+            "#################",
+            "#i.G..c...e..H.p#",
+            "########.########",
+            "#j.A..b...f..D.o#",
+            "########@########",
+            "#k.E..a...g..B.n#",
+            "########.########",
+            "#l.F..d...h..C.m#",
+            "#################",
+        ];
+        let cave = SimpleCave::parse(input_string.join("\n").as_bytes()).unwrap();
+        assert_eq!(cave.find_shortest_path(), Some(136));
+    }
+
+    #[test]
+    fn test_5() {
+        let input_string = vec![
+            "########################",
+            "#@..............ac.GI.b#",
+            "###d#e#f################",
+            "###A#B#C################",
+            "###g#h#i################",
+            "########################",
+        ];
+        let cave = SimpleCave::parse(input_string.join("\n").as_bytes()).unwrap();
+        assert_eq!(cave.find_shortest_path(), Some(81));
     }
 }
