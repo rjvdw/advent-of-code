@@ -107,4 +107,60 @@ mod tests {
         let cave = SimpleCave::parse(input_string.join("\n").as_bytes()).unwrap();
         assert_eq!(cave.find_shortest_path(), Some(81));
     }
+
+    #[test]
+    fn test_6() {
+        let input_string = vec![
+            "#######", "#a.#Cd#", "##@#@##", "#######", "##@#@##", "#cB#Ab#", "#######",
+        ];
+        let cave = FourWayCave::parse(input_string.join("\n").as_bytes()).unwrap();
+        assert_eq!(cave.find_shortest_path(), Some(8));
+    }
+
+    #[test]
+    fn test_7() {
+        let input_string = vec![
+            "###############",
+            "#d.ABC.#.....a#",
+            "######@#@######",
+            "###############",
+            "######@#@######",
+            "#b.....#.....c#",
+            "###############",
+        ];
+        let cave = FourWayCave::parse(input_string.join("\n").as_bytes()).unwrap();
+        assert_eq!(cave.find_shortest_path(), Some(24));
+    }
+
+    #[test]
+    fn test_8() {
+        let input_string = vec![
+            "#############",
+            "#DcBa.#.GhKl#",
+            "#.###@#@#I###",
+            "#e#d#####j#k#",
+            "###C#@#@###J#",
+            "#fEbA.#.FgHi#",
+            "#############",
+        ];
+        let cave = FourWayCave::parse(input_string.join("\n").as_bytes()).unwrap();
+        assert_eq!(cave.find_shortest_path(), Some(32));
+    }
+
+    #[test]
+    fn test_9() {
+        let input_string = vec![
+            "#############",
+            "#g#f.D#..h#l#",
+            "#F###e#E###.#",
+            "#dCba@#@BcIJ#",
+            "#############",
+            "#nK.L@#@G...#",
+            "#M###N#H###.#",
+            "#o#m..#i#jk.#",
+            "#############",
+        ];
+        let cave = FourWayCave::parse(input_string.join("\n").as_bytes()).unwrap();
+        assert_eq!(cave.find_shortest_path(), Some(72));
+    }
 }

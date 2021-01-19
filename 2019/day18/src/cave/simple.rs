@@ -1,5 +1,3 @@
-mod state;
-
 use std::collections::{BinaryHeap, HashSet};
 use std::fmt;
 use std::fmt::{Display, Formatter};
@@ -11,6 +9,8 @@ use crate::cave::grid::Grid;
 use crate::cave::simple::state::{HashedState, ScoredState, State};
 use crate::cave::Cave;
 
+mod state;
+
 #[derive(Debug, Clone)]
 pub struct SimpleCave {
     layout: Grid,
@@ -19,12 +19,14 @@ pub struct SimpleCave {
 
 impl Cave for SimpleCave {
     fn find_shortest_path(&self) -> Option<usize> {
-        let mut exploring: BinaryHeap<ScoredState> = BinaryHeap::new();
-        exploring.push(ScoredState(State {
+        let mut layout = self.layout.clone();
+        let initial_state = State {
             position: self.entrance,
             keys: vec![],
             distance: 0,
-        }));
+        };
+        let mut exploring: BinaryHeap<ScoredState> = BinaryHeap::new();
+        exploring.push(ScoredState(initial_state));
 
         let mut seen: HashSet<HashedState> = HashSet::new();
 
@@ -37,13 +39,12 @@ impl Cave for SimpleCave {
                     return best;
                 }
             }
-            // println!("{:?}", state);
             let hashed_state = HashedState(state.clone());
             if seen.contains(&hashed_state) {
                 continue;
             }
             seen.insert(hashed_state);
-            for reachable in self.layout.get_reachable(state.position, &state.keys) {
+            for reachable in layout.get_reachable(state.position, &state.keys) {
                 let mut next_state = State {
                     position: reachable.position,
                     keys: state.keys.clone(),
@@ -51,8 +52,7 @@ impl Cave for SimpleCave {
                 };
                 next_state.keys.push(reachable.key);
                 next_state.keys.sort_unstable();
-                if next_state.keys.len() == self.layout.keys.len() {
-                    // println!("    -> {}", next_state.distance);
+                if next_state.keys.len() == layout.keys.len() {
                     match best {
                         Some(distance) => {
                             best = Some(distance.min(next_state.distance));
@@ -62,11 +62,9 @@ impl Cave for SimpleCave {
                         }
                     }
                 } else {
-                    // println!("    -> {:?}", next_state);
                     exploring.push(ScoredState(next_state));
                 }
             }
-            // println!();
         }
 
         best

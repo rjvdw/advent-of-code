@@ -1,4 +1,4 @@
-use std::collections::{HashSet, VecDeque};
+use std::collections::{HashMap, HashSet, VecDeque};
 use std::fmt;
 use std::fmt::{Display, Formatter};
 use std::io::{BufRead, BufReader, Read};
@@ -19,6 +19,8 @@ pub(in crate::cave) struct Grid {
     pub(in crate::cave) entrances: Vec<(usize, usize)>,
     pub(in crate::cave) keys: HashSet<(usize, usize)>,
     pub(in crate::cave) doors: HashSet<(usize, usize)>,
+    #[allow(clippy::type_complexity)]
+    cache: HashMap<((usize, usize), Vec<char>), Vec<Reachable>>,
 }
 
 impl Grid {
@@ -31,6 +33,7 @@ impl Grid {
             entrances: vec![],
             keys: HashSet::new(),
             doors: HashSet::new(),
+            cache: HashMap::new(),
         };
 
         for (y, line) in BufReader::new(r).lines().enumerate() {
@@ -70,10 +73,21 @@ impl Grid {
 
     /// Returns all interesting points that can be reached from your current position.
     pub(in crate::cave) fn get_reachable(
-        &self,
+        &mut self,
         from: (usize, usize),
         keys: &[char],
     ) -> Vec<Reachable> {
+        let cache_key = &(from, keys.to_vec());
+        if !self.cache.contains_key(cache_key) {
+            self.cache.insert(
+                (from, keys.to_vec()),
+                self.compute_get_reachable(from, keys),
+            );
+        }
+        self.cache.get(cache_key).unwrap().to_vec()
+    }
+
+    fn compute_get_reachable(&self, from: (usize, usize), keys: &[char]) -> Vec<Reachable> {
         let mut reachable = vec![];
 
         let mut exploring = VecDeque::new();
