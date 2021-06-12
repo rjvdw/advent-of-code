@@ -39,8 +39,7 @@ fn main() {
 }
 
 fn fight(player: &Player, boss: &Boss, part: &Part) -> Option<u32> {
-    let mut game_states: Vec<(Player, Boss, u32)> = Vec::new();
-    game_states.push((player.clone(), boss.clone(), 0));
+    let mut game_states: Vec<(Player, Boss, u32)> = vec![(player.clone(), boss.clone(), 0)];
 
     let mut best_so_far: Option<u32> = None;
 

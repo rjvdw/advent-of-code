@@ -21,9 +21,7 @@ fn main() {
 
 fn get_score_after(sequence: &str, elf1_score: u8, elf2_score: u8, scoring_size: usize) -> String {
     let nr_steps = sequence.parse::<usize>().unwrap();
-    let mut scores = Vec::new();
-    scores.push(elf1_score);
-    scores.push(elf2_score);
+    let mut scores = vec![elf1_score, elf2_score];
     let mut elf1 = 0;
     let mut elf2 = 1;
     while scores.len() < nr_steps + scoring_size {
@@ -44,9 +42,7 @@ fn get_score_after(sequence: &str, elf1_score: u8, elf2_score: u8, scoring_size:
 }
 
 fn first_score_that_satisfies(sequence: &str, elf1_score: u8, elf2_score: u8) -> usize {
-    let mut scores = Vec::new();
-    scores.push(elf1_score);
-    scores.push(elf2_score);
+    let mut scores = vec![elf1_score, elf2_score];
     let mut elf1 = 0;
     let mut elf2 = 1;
     let needle = sequence.bytes().map(|b| b - b'0').collect::<Vec<u8>>();

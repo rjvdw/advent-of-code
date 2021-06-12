@@ -21,7 +21,7 @@ impl Coordinates {
             90 => Coordinates(-self.1, self.0),
             180 => Coordinates(-self.0, -self.1),
             270 => Coordinates(self.1, -self.0),
-            _ => panic!(format!("Invalid rotation: {}", degrees)),
+            _ => panic!("Invalid rotation: {}", degrees),
         }
     }
 }

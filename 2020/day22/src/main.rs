@@ -137,8 +137,7 @@ fn play_recursive_combat(initial_game_state: &[Player]) -> Option<Player> {
 
         match winner {
             Some((round, idx)) => {
-                let mut cards: Vec<u8> = Vec::new();
-                cards.push(round.0);
+                let mut cards: Vec<u8> = vec![round.0];
 
                 for (round_idx, round) in rounds.iter().enumerate() {
                     if round_idx != idx {

@@ -65,9 +65,7 @@ where
     R: Fn(Grid<u8>) -> Grid<u8>,
     F: Fn(Grid<u8>) -> Grid<u8>,
 {
-    let mut v = vec![];
-
-    v.push(grid.clone()); // original grid
+    let mut v = vec![grid.clone()]; // original grid
     grid = rotate(grid);
     v.push(grid.clone()); // rotated 1x
     grid = rotate(grid);

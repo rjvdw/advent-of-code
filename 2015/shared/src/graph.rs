@@ -119,10 +119,11 @@ where
                         let first = path.first().unwrap();
                         let last = path.last().unwrap();
 
-                        match graph.get(last).map(|sg| sg.get(first)).flatten() {
-                            Some(d) => Some((path, distance + *d)),
-                            None => None,
-                        }
+                        graph
+                            .get(last)
+                            .map(|sg| sg.get(first))
+                            .flatten()
+                            .map(|d| (path, distance + *d))
                     }
                 })
                 .filter(|opt| opt.is_some())
