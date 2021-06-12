@@ -40,8 +40,7 @@ pub trait Navigable {
 
             if current == end {
                 let mut point = current;
-                let mut path = Vec::new();
-                path.push(point.clone());
+                let mut path = vec![point.clone()];
                 while let Some(p) = came_from.get(point) {
                     point = p;
                     path.push(p.clone());

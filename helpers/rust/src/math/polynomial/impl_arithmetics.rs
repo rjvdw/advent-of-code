@@ -38,7 +38,7 @@ impl Add<i64> for Polynomial {
     type Output = Polynomial;
 
     fn add(self, rhs: i64) -> Self::Output {
-        let mut p = self.clone();
+        let mut p = self;
         *p.coefficients.last_mut().unwrap() += rhs;
         p
     }
@@ -56,7 +56,7 @@ impl Mul<i64> for Polynomial {
     type Output = Polynomial;
 
     fn mul(self, rhs: i64) -> Self::Output {
-        let mut p = self.clone();
+        let mut p = self;
         for c in &mut p.coefficients {
             *c *= rhs;
         }
