@@ -50,6 +50,24 @@ fn calculate_nr_of_min_jolt_differences_times_nr_of_max_jolt_differences(
     Some(diff_lower * diff_upper)
 }
 
+/// Counts the number of paths from start to end, where each individual step does not exceed a
+/// specified threshold.
+///
+/// We iterate through the list from end to start, and keep track per element how many paths there
+/// are from the _current_ element to the end. We can find the next count, by simply checking which
+/// elements can be reached from our _current_ element, and then sum the number of paths for those
+/// elements. For example, let's say we have the input list [1, 3, 4, 5] and a max jolt
+/// difference of 3. We start at 0, and end at the highest element + 3, so let's add those elements
+/// to the list to get [0, 1, 3, 4, 5, 8]. We loop through this list in reverse order, so let's
+/// start by considering how many paths exist from 5 to 8: Only one single path. Next is 4. The only
+/// element that can be reached from 4 is 5, so the number of paths from 4 to 8 is equal to the
+/// number of paths from 5 to 8: Only one single path. Next is 3. There are two elements that can be
+/// reached from 3: 4 and 5. There is one path from 4 to 8 and one path from 5 to 8, so the number
+/// of paths from 3 to 8 is two. We can keep this up all the way to 0, to find that the total number
+/// of paths is two.
+///
+/// One final optimisation: Since the elements in the list are unique, and only have integer values,
+/// we only need to keep track of `max_jolt_difference` elements, since each step adds at least one.
 fn count_paths_from_outlet_to_device(joltage_ratings: &[u32], max_jolt_difference: u32) -> u64 {
     let mut joltage_ratings = joltage_ratings.to_vec();
     joltage_ratings.push(0); // we start at 0
