@@ -103,7 +103,7 @@ where
         } else {
             let mut record = mem::replace(&mut self.current, T::new());
             self.exhausted = true;
-            while let Some(line) = self.lines.next() {
+            for line in &mut self.lines {
                 let line = line.or_exit_with(self.exit_code_on_fail);
                 if self.current.indicates_new_record(&line) {
                     self.exhausted = false;
