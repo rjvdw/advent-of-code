@@ -25,6 +25,8 @@ jobs:
             ~/.cargo/registry/cache
             ~/.cargo/git
           key: ${{ runner.os }}-targets
+      - name: update
+        run: rustup update
       - name: fmt
         run: cargo fmt -- --check
       - name: clippy
