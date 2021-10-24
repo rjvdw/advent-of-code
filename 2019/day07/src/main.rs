@@ -35,7 +35,7 @@ where
     let mut best = i64::MIN;
     let permutations: Permutations<i64> = phase_settings.collect();
     for phase_settings in permutations {
-        let mut amplifiers = Amplifiers::new(&program, count);
+        let mut amplifiers = Amplifiers::new(program, count);
         let output = amplifiers.run(&phase_settings, 0, debugging);
         if output > best {
             best = output;

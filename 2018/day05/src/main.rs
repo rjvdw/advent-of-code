@@ -77,7 +77,7 @@ fn reduce_polymer(polymer: &str) -> String {
     }
 
     current = ll[current];
-    reconstruct(&units, &ll, current)
+    reconstruct(units, &ll, current)
 }
 
 fn reconstruct(units: &[u8], ll: &[usize], mut current: usize) -> String {

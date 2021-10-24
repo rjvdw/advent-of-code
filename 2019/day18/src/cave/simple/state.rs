@@ -37,7 +37,7 @@ impl Eq for ScoredState {}
 
 impl PartialOrd for ScoredState {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        Some(self.cmp(&other))
+        Some(self.cmp(other))
     }
 }
 

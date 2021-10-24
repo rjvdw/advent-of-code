@@ -78,8 +78,7 @@ where
                 distance_req,
             )
         })
-        .filter(|opt| opt.is_some())
-        .map(|opt| opt.unwrap());
+        .flatten();
 
     match distance_req {
         MinOrMax::Min => iter.min_by_key(|(_, distance)| *distance),
@@ -126,8 +125,7 @@ where
                             .map(|d| (path, distance + *d))
                     }
                 })
-                .filter(|opt| opt.is_some())
-                .map(|opt| opt.unwrap());
+                .flatten();
 
             match distance_req {
                 MinOrMax::Min => iter.min_by_key(|(_, distance)| *distance),
@@ -144,8 +142,7 @@ where
             .map(|(traveled, distance)| {
                 traverse_graph(graph, &traveled, distance, circular, distance_req)
             })
-            .filter(|opt| opt.is_some())
-            .map(|opt| opt.unwrap());
+            .flatten();
 
         match distance_req {
             MinOrMax::Min => iter.min_by_key(|(_, distance)| *distance),

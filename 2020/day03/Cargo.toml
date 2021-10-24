@@ -2,7 +2,7 @@
 name = "day03"
 version = "0.1.0"
 authors = ["Ruud van der Weide <rj@rdcl.dev>"]
-edition = "2018"
+edition = "2021"
 default-run = "aoc-2020-3"
 
 [[bin]]
@@ -10,4 +10,4 @@ name = "aoc-2020-3"
 path = "src/main.rs"
 
 [dependencies]
-rdcl_aoc_helpers = "0.6.0"
+rdcl_aoc_helpers = "0.7.0"

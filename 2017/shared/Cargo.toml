@@ -2,6 +2,6 @@
 name = "shared"
 version = "0.1.0"
 authors = ["Ruud van der Weide <rj@rdcl.dev>"]
-edition = "2018"
+edition = "2021"
 
 [dependencies]

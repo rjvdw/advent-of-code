@@ -91,7 +91,7 @@ fn play_recursive_combat(initial_game_state: &[Player]) -> Option<Player> {
                 // if there was a previous round in this game that had exactly the same cards in the
                 // same order in the same players' decks, the game instantly ends in a win for
                 // player 1
-                if seen.contains(&player) {
+                if seen.contains(player) {
                     return game_state.iter().find(|player| player.nr == 1).cloned();
                 }
                 seen.insert(player.clone());

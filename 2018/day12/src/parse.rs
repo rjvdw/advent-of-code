@@ -38,7 +38,7 @@ pub fn parse_test_input(lines: &[&str]) -> (Vec<bool>, u32) {
     let mut rules = 0;
 
     for line in lines {
-        match parse_line(&line).unwrap() {
+        match parse_line(line).unwrap() {
             ParseResult::EmptyLine => {}
             ParseResult::InitialState(state) => {
                 initial_state = state;

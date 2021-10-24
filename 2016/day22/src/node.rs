@@ -97,7 +97,7 @@ fn parse_xy(part: &str) -> Result<(usize, usize), ParseError> {
 }
 
 fn parse_size(part: &str) -> Result<u64, ParseError> {
-    if let Some(r) = part.strip_suffix("T") {
+    if let Some(r) = part.strip_suffix('T') {
         Ok(r.parse()?)
     } else {
         Err(parse_error!("Invalid input: {}", part))

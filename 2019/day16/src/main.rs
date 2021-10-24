@@ -143,7 +143,7 @@ mod tests {
         println!("{:?}", signal);
         let expected = get_embedded_message(signal, 16);
 
-        let actual = fft_with_shortcut(16, to_signal(&input_string, 1), 2);
+        let actual = fft_with_shortcut(16, to_signal(input_string, 1), 2);
 
         assert_eq!(actual, expected);
     }
@@ -153,7 +153,7 @@ mod tests {
         let input_string = "03036732577212944063491565474664";
         let message = fft_with_shortcut(
             input_string[0..7].parse().or_exit_with(1),
-            to_signal(&input_string, 10_000),
+            to_signal(input_string, 10_000),
             100,
         );
         assert_eq!(message, "84462026");
@@ -164,7 +164,7 @@ mod tests {
         let input_string = "02935109699940807407585447034323";
         let message = fft_with_shortcut(
             input_string[0..7].parse().or_exit_with(1),
-            to_signal(&input_string, 10_000),
+            to_signal(input_string, 10_000),
             100,
         );
         assert_eq!(message, "78725270");
@@ -175,7 +175,7 @@ mod tests {
         let input_string = "03081770884921959731165446850517";
         let message = fft_with_shortcut(
             input_string[0..7].parse().or_exit_with(1),
-            to_signal(&input_string, 10_000),
+            to_signal(input_string, 10_000),
             100,
         );
         assert_eq!(message, "53553731");

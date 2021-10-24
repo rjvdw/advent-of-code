@@ -17,7 +17,7 @@ impl Value {
         }
     }
 
-    pub(crate) fn to_tape(&self, tape: &mut HashSet<i64>, cursor: i64) {
+    pub(crate) fn to_tape(self, tape: &mut HashSet<i64>, cursor: i64) {
         match self {
             Value::Zero => {
                 tape.remove(&cursor);

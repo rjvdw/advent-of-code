@@ -44,7 +44,7 @@ fn print_solution(state: &[bool], step: usize, offset: i64) {
     println!(
         "After {} steps, the sum is {}.",
         step,
-        calculate_sum(&state, offset)
+        calculate_sum(state, offset)
     );
 }
 

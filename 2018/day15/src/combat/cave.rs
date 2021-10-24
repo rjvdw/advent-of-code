@@ -135,8 +135,7 @@ impl Cave {
                     .iter()
                     .find(|u| u.is_alive() && u.position == c && unit.opposes(u))
             })
-            .filter(|o| o.is_some())
-            .map(|o| o.unwrap())
+            .flatten()
             .copied()
             .collect();
 

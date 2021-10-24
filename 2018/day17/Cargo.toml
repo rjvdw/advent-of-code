@@ -2,17 +2,17 @@
 name = "day17"
 version = "0.1.0"
 authors = ["Ruud van der Weide <rj@rdcl.dev>"]
-edition = "2018"
-default-run = "aoc-2018-17"
+edition = "2021"
+default-run = "aoc-2021-17"
 
 [lib]
 name = "ground"
 path = "src/ground/lib.rs"
 
 [[bin]]
-name = "aoc-2018-17"
+name = "aoc-2021-17"
 path = "src/main.rs"
 
 [dependencies]
-rdcl_aoc_helpers = "0.6.0"
+rdcl_aoc_helpers = "0.7.0"
 termion = "1.5.5"

@@ -82,7 +82,7 @@ impl Ground {
         let mut tiles = Vec::new();
 
         let mut i = x;
-        while side.within_bounds(&self, i) {
+        while side.within_bounds(self, i) {
             // clay encountered, stop flowing
             if self.clay.contains(&(i, y)) {
                 return (tiles, None);

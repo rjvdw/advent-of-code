@@ -77,7 +77,7 @@ fn improve_recipes(scores: &mut Vec<u8>, elf1: usize, elf2: usize) -> (usize, us
     for digit in combined.to_string().chars().map(|ch| (ch as u8) - b'0') {
         scores.push(digit);
     }
-    (next_recipe(elf1, &scores), next_recipe(elf2, &scores))
+    (next_recipe(elf1, scores), next_recipe(elf2, scores))
 }
 
 fn next_recipe(elf: usize, scores: &[u8]) -> usize {

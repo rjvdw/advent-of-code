@@ -61,8 +61,7 @@ impl Navigable for Grid {
         neighbours
             .iter()
             .map(|xy| self.map.get(xy))
-            .filter(|node_opt| node_opt.is_some())
-            .map(|node_opt| node_opt.unwrap())
+            .flatten()
             .filter(|node1| node1.fits_on(&self.start))
             .map(|&node| (1, node))
             .collect()

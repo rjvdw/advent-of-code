@@ -33,7 +33,7 @@ fn main() {
 }
 
 fn balance_packages_without_trunk(packages: &[u32]) -> Option<u64> {
-    let weight_per_group = weight(&packages) / 3;
+    let weight_per_group = weight(packages) / 3;
     let mut groupings = find_shortest_group(packages, weight_per_group);
     groupings.sort_unstable_by_key(|grouping| quantum_entanglement(grouping));
 
@@ -49,7 +49,7 @@ fn balance_packages_without_trunk(packages: &[u32]) -> Option<u64> {
 }
 
 fn balance_packages_with_trunk(packages: &[u32]) -> Option<u64> {
-    let weight_per_group = weight(&packages) / 4;
+    let weight_per_group = weight(packages) / 4;
     let groupings = find_shortest_group(packages, weight_per_group);
 
     // FIXME: Just like part 1, verify that the remaining packages can actually be split in 3 groups

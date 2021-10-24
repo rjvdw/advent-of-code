@@ -143,7 +143,7 @@ impl IntoIterator for &Grid {
     type IntoIter = Gridterator;
 
     fn into_iter(self) -> Self::IntoIter {
-        Gridterator::new(&self)
+        Gridterator::new(self)
     }
 }
 

@@ -42,9 +42,9 @@ fn do_art(enhancement_rules: &[Mapping<u8>], iterations: usize) -> Grid<u8> {
 
     for _ in 1..=iterations {
         if painting.cols() % 2 == 0 {
-            painting = enhance(&enhancement_rules, 2, painting);
+            painting = enhance(enhancement_rules, 2, painting);
         } else {
-            painting = enhance(&enhancement_rules, 3, painting);
+            painting = enhance(enhancement_rules, 3, painting);
         }
     }
 
