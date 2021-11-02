@@ -1,22 +1,22 @@
-name: "CI 2020"
+name: "CI 2020 (rust)"
 
 on:
   push:
     branches:
       - '**'
     paths:
-      - '2020/**'
-      - '.github/workflows/ci-2020.yml'
+      - 'rust/2020/**'
+      - '.github/workflows/ci-2020-rust.yml'
 
 defaults:
   run:
-    working-directory: 2020
+    working-directory: rust/2020
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - uses: actions/cache@v2
         with:
           path: |

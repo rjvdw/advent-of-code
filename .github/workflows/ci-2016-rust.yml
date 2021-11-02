@@ -1,22 +1,22 @@
-name: "CI 2016"
+name: "CI 2016 (rust)"
 
 on:
   push:
     branches:
       - '**'
     paths:
-      - '2016/**'
-      - '.github/workflows/ci-2016.yml'
+      - 'rust/2016/**'
+      - '.github/workflows/ci-2016-rust.yml'
 
 defaults:
   run:
-    working-directory: 2016
+    working-directory: rust/2016
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - uses: actions/cache@v2
         with:
           path: |

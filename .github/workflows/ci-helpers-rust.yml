@@ -1,22 +1,22 @@
-name: 'CI Rust Helpers'
+name: 'CI Helpers (rust)'
 
 on:
   push:
     branches:
       - '**'
     paths:
-      - 'helpers/rust/**'
+      - 'rust/helpers/**'
       - '.github/workflows/ci-helpers-rust.yml'
 
 defaults:
   run:
-    working-directory: helpers/rust
+    working-directory: rust/helpers
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - uses: actions/cache@v2
         with:
           path: |

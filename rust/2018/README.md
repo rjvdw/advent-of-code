@@ -13,6 +13,6 @@ My answers for the 2018 [Advent of Code](https://adventofcode.com/2018).
 * The solution for day 22 is quite slow. Also, I could not use the A* implementation from the helpers, so I had to copy paste. Would be nice if this can be fixed.
 
 
-[workflows-CI-badge]: https://github.com/rjvdw/advent-of-code/workflows/CI%202018/badge.svg
-[actions]: https://github.com/rjvdw/advent-of-code/actions?query=workflow%3A%22CI+2018%22
+[workflows-CI-badge]: https://github.com/rjvdw/advent-of-code/actions/workflows/ci-2018-rust.yml/badge.svg
+[actions]: https://github.com/rjvdw/advent-of-code/actions/workflows/ci-2018-rust.yml
 [day-11-spoilers-1]: https://www.reddit.com/r/adventofcode/comments/5hoia9/2018_day_11_solutions/db1v1ws

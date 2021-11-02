@@ -13,6 +13,6 @@ My answers for the 2016 [Advent of Code](https://adventofcode.com/2016).
 * For day 24, I feel that there are some heuristics that can be applied on the `flood_fill` method. Right now I am doing an exhaustive search, but I think some branches can be ignored.
 
 
-[workflows-CI-badge]: https://github.com/rjvdw/advent-of-code/workflows/CI%202016/badge.svg
-[actions]: https://github.com/rjvdw/advent-of-code/actions?query=workflow%3A%22CI+2016%22
+[workflows-CI-badge]: https://github.com/rjvdw/advent-of-code/actions/workflows/ci-2016-rust.yml/badge.svg
+[actions]: https://github.com/rjvdw/advent-of-code/actions/workflows/ci-2016-rust.yml
 [day-11-spoilers-1]: https://www.reddit.com/r/adventofcode/comments/5hoia9/2016_day_11_solutions/db1v1ws
