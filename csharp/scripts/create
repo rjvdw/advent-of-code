@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+set -e
+
+if [ "$#" -eq 2 ]; then
+  year=$1
+  day=$( printf %02d $2 )
+elif [ "$#" -eq 1 ]; then
+  year=$( date +%Y )
+  day=$( printf %02d $1 )
+else
+  echo "Usage: $0 <year> <day>"
+  exit 1
+fi
+
+echo "Creating project $year/Day$day"
+
+set -x
+
+dotnet new console --output $year/Day$day -f net6.0
+dotnet sln add $year/Day$day
+dotnet new xunit --output $year/Day$day.Test -f net6.0
+dotnet sln add $year/Day$day.Test
+dotnet add $year/Day$day.Test reference $year/Day$day
