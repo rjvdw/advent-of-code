@@ -1,0 +1,23 @@
+name: "CI (C#)"
+
+on:
+  push:
+    branches:
+      - '**'
+    paths:
+      - 'csharp/**'
+      - '.github/workflows/ci-csharp.yml'
+
+defaults:
+  run:
+    working-directory: csharp
+
+jobs:
+  builds:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0.x'
+      - run: dotnet test
