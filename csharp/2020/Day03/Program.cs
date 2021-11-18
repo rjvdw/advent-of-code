@@ -50,37 +50,24 @@
             for (var position = new Point(0, 0); position.Y < _height; position += (right, down))
             {
                 if (IsTreeAt(position))
-                {
                     nrTrees += 1;
-                }
             }
 
             return nrTrees;
         }
 
-        private bool IsTreeAt(Point point)
-        {
-            return _rows[point.Y][point.X % _width];
-        }
+        private bool IsTreeAt(Point point) => _rows[point.Y][point.X % _width];
 
-        public override string ToString()
-        {
-            return string.Join('\n', _rows
+        public override string ToString() =>
+            string.Join('\n', _rows
                 .Select(row => string.Join("", row
                     .Select(cell => cell ? '#' : '.'))));
-        }
     }
 
     internal record Point(int X, int Y)
     {
-        public static implicit operator Point((int x, int y) point)
-        {
-            return new Point(point.x, point.y);
-        }
+        public static implicit operator Point((int x, int y) point) => new(point.x, point.y);
 
-        public static Point operator +(Point p1, Point p2)
-        {
-            return new Point(p1.X + p2.X, p1.Y + p2.Y);
-        }
+        public static Point operator +(Point p1, Point p2) => new(p1.X + p2.X, p1.Y + p2.Y);
     }
 }

@@ -13,20 +13,15 @@
             }
 
             var inputFile = args[0];
-            var lines = File
+            var entries = File
                 .ReadAllLines(inputFile)
+                .Select(PasswordEntry.Parse)
                 .ToList();
 
-            var nrValidPasswords1 = lines
-                .Select(PasswordEntry.Parse)
-                .Count(entry => entry.IsValidAccordingTo1());
-
+            var nrValidPasswords1 = entries.Count(entry => entry.IsValidAccordingTo1());
             Console.WriteLine($"The solution to part 1 is: {nrValidPasswords1}");
 
-            var nrValidPasswords2 = lines
-                .Select(PasswordEntry.Parse)
-                .Count(entry => entry.IsValidAccordingTo2());
-
+            var nrValidPasswords2 = entries.Count(entry => entry.IsValidAccordingTo2());
             Console.WriteLine($"The solution to part 2 is: {nrValidPasswords2}");
         }
     }

@@ -19,57 +19,31 @@
                 .ToList();
             var target = int.Parse(args[1]);
 
-            var solution1 = SolvePart1(numbers, target);
-            if (solution1 == null)
-            {
-                Console.WriteLine("There is no solution for part 1.");
-            }
-            else
-            {
-                Console.WriteLine("The solution to part 1 is: " + solution1);
-            }
+            var solution1 = FindNumbers(numbers, target, 2);
+            Console.WriteLine($"The solution to part 1 is: {solution1?.ToString() ?? "n/a"}");
 
-            var solution2 = SolvePart2(numbers, target);
-            if (solution2 == null)
-            {
-                Console.WriteLine("There is no solution for part 2.");
-            }
-            else
-            {
-                Console.WriteLine("The solution to part 2 is: " + solution2);
-            }
+            var solution2 = FindNumbers(numbers, target, 3);
+            Console.WriteLine($"The solution to part 2 is: {solution2?.ToString() ?? "n/a"}");
         }
 
-        public static int? SolvePart1(List<int> numbers, int target)
+        public static int? FindNumbers(List<int> numbers, int target, int count, int offset = 0)
         {
-            for (var i = 0; i < numbers.Count; i += 1)
+            switch (count)
             {
-                for (var j = i + 1; j < numbers.Count; j += 1)
-                {
-                    if (numbers[i] + numbers[j] == target)
-                    {
-                        return numbers[i] * numbers[j];
-                    }
-                }
+                case < 1:
+                    return null;
+                case 1:
+                    return numbers.Contains(target) ? target : null;
             }
 
-            return null;
-        }
-
-        public static int? SolvePart2(List<int> numbers, int target)
-        {
-            for (var i = 0; i < numbers.Count; i += 1)
+            var upper = numbers.Count + 1 - count;
+            for (var i = offset; i < upper; i += 1)
             {
-                for (var j = i + 1; j < numbers.Count; j += 1)
-                {
-                    for (var k = j + 1; k < numbers.Count; k += 1)
-                    {
-                        if (numbers[i] + numbers[j] + numbers[k] == target)
-                        {
-                            return numbers[i] * numbers[j] * numbers[k];
-                        }
-                    }
-                }
+                var nr = numbers[i];
+                if (target <= nr) continue;
+                var result = FindNumbers(numbers, target - nr, count - 1, i + 1);
+                if (result != null)
+                    return result * nr;
             }
 
             return null;
