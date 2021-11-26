@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+set -e
+
+if [ "$#" -eq 2 ]; then
+  year=$1
+  day=$( printf %02d $2 )
+elif [ "$#" -eq 1 ]; then
+  year=$( date +%Y )
+  day=$( printf %02d $1 )
+else
+  echo "Usage: $0 <year> <day>"
+  exit 1
+fi
+
+echo "Removing project $year/Day$day"
+
+set -x
+
+dotnet sln remove $year/Day$day
+dotnet sln remove $year/Day$day.Test
+rm -r $year/Day$day $year/Day$day.Test
