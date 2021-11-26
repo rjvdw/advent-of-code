@@ -1,4 +1,4 @@
-name: "CI (F#)"
+name: "F#"
 
 on:
   push:

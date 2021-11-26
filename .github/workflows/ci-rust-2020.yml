@@ -1,16 +1,16 @@
-name: "CI 2015 (rust)"
+name: "rust 2020"
 
 on:
   push:
     branches:
       - '**'
     paths:
-      - 'rust/2015/**'
-      - '.github/workflows/ci-2015-rust.yml'
+      - 'rust/2020/**'
+      - '.github/workflows/ci-2020-rust.yml'
 
 defaults:
   run:
-    working-directory: rust/2015
+    working-directory: rust/2020
 
 jobs:
   build:

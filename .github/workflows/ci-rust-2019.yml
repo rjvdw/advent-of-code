@@ -1,4 +1,4 @@
-name: "CI 2019 (rust)"
+name: "rust 2019"
 
 on:
   push:
