@@ -1,0 +1,23 @@
+name: "C# 2021"
+
+on:
+  push:
+    branches:
+      - '**'
+    paths:
+      - 'csharp/AoC2021/**'
+      - '.github/workflows/ci-csharp-2021.yml'
+
+defaults:
+  run:
+    working-directory: csharp/AoC2021
+
+jobs:
+  builds:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0.x'
+      - run: dotnet test
