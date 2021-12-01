@@ -6,7 +6,7 @@ on:
       - '**'
     paths:
       - 'rust/helpers/**'
-      - '.github/workflows/ci-helpers-rust.yml'
+      - '.github/workflows/ci-rust-helpers.yml'
 
 defaults:
   run:

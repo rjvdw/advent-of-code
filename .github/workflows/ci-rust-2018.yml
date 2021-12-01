@@ -6,7 +6,7 @@ on:
       - '**'
     paths:
       - 'rust/2018/**'
-      - '.github/workflows/ci-2018-rust.yml'
+      - '.github/workflows/ci-rust-2018.yml'
 
 defaults:
   run:
