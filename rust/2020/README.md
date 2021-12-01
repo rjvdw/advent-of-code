@@ -12,5 +12,5 @@ My answers for the 2020 [Advent of Code](https://adventofcode.com/2020).
   * Maybe do something clever, so not all rotations have to be marked explicitely.
 
 
-[workflows-CI-badge]: https://github.com/rjvdw/advent-of-code/actions/workflows/ci-2020-rust.yml/badge.svg
-[actions]: https://github.com/rjvdw/advent-of-code/actions/workflows/ci-2020-rust.yml
+[workflows-CI-badge]: https://github.com/rjvdw/advent-of-code/actions/workflows/ci-rust-2020.yml/badge.svg
+[actions]: https://github.com/rjvdw/advent-of-code/actions/workflows/ci-rust-2020.yml

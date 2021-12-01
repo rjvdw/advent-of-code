@@ -1,5 +1,7 @@
 # Helpers for [Advent of Code][aoc]
 
+[![Pipeline status][workflows-CI-badge]][actions]
+
 This crate contains some helper methods that I regularly use in my [Advent of Code][aoc] solutions.
 
 ## Processing of command line arguments
@@ -457,3 +459,6 @@ Implement this trait to be able to use [A*] to find the shortest path between tw
 [io::Error]: https://doc.rust-lang.org/std/io/struct.Error.html
 [num::ParseIntError]: https://doc.rust-lang.org/std/num/struct.ParseIntError.html
 [str::FromStr]: https://doc.rust-lang.org/std/str/trait.FromStr.html
+
+[workflows-CI-badge]: https://github.com/rjvdw/advent-of-code/actions/workflows/ci-rust-helpers.yml/badge.svg
+[actions]: https://github.com/rjvdw/advent-of-code/actions/workflows/ci-rust-helpers.yml

@@ -13,5 +13,5 @@ My answers for the 2015 [Advent of Code](https://adventofcode.com/2015).
 * For day 24, I should verify if the grouping that is found for part 2 is actually valid (i.e. that the remaining packages can be split up in three equal groups).
 
 
-[workflows-CI-badge]: https://github.com/rjvdw/advent-of-code/actions/workflows/ci-2015-rust.yml/badge.svg
-[actions]: https://github.com/rjvdw/advent-of-code/actions/workflows/ci-2015-rust.yml
+[workflows-ci-rust-badge]: https://github.com/rjvdw/advent-of-code/actions/workflows/ci-2015.yml/badge.svg
+[actions]: https://github.com/rjvdw/advent-of-code/actions/workflows/ci-rust-2015.yml
