@@ -13,10 +13,10 @@ else
   exit 1
 fi
 
-echo "Removing project $year/Day$day"
+echo "Removing project Day$day from solution AoC$year"
 
 set -x
 
-dotnet sln remove $year/Day$day
-dotnet sln remove $year/Day$day.Test
-rm -r $year/Day$day $year/Day$day.Test
+dotnet sln remove Day$day
+dotnet sln remove Day$day.Test
+rm -r Day$day Day$day.Test

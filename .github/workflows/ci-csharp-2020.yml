@@ -1,16 +1,16 @@
-name: "C#"
+name: "C# 2020"
 
 on:
   push:
     branches:
       - '**'
     paths:
-      - 'csharp/**'
-      - '.github/workflows/ci-csharp.yml'
+      - 'csharp/AoC2020/**'
+      - '.github/workflows/ci-csharp-2020.yml'
 
 defaults:
   run:
-    working-directory: csharp
+    working-directory: csharp/AoC2020
 
 jobs:
   builds:
