@@ -1,16 +1,16 @@
-name: "F#"
+name: "F# 2021"
 
 on:
   push:
     branches:
       - '**'
     paths:
-      - 'fsharp/**'
-      - '.github/workflows/ci-fsharp.yml'
+      - 'fsharp/AoC2021/**'
+      - '.github/workflows/ci-fsharp-2021.yml'
 
 defaults:
   run:
-    working-directory: fsharp
+    working-directory: fsharp/AoC2021
 
 jobs:
   builds:

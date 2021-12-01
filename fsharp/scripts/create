@@ -13,12 +13,24 @@ else
   exit 1
 fi
 
-echo "Creating project $year/Day$day"
+if [ ! -f "AoC$year/AoC$year.sln" ]; then
+  echo "Creating solution AoC$year"
+  mkdir -p AoC$year
+  pushd AoC$year
+  dotnet new sln
+else
+  pushd AoC$year
+fi
+
+
+echo "Creating project Day$day in solution AoC$year"
 
 set -x
 
-dotnet new console --language 'F#' --output $year/Day$day -f net6.0
-dotnet sln add $year/Day$day
-dotnet new xunit --language 'F#' --output $year/Day$day.Test -f net6.0
-dotnet sln add $year/Day$day.Test
-dotnet add $year/Day$day.Test reference $year/Day$day
+dotnet new console  --language 'F#' --output Day$day -f net6.0
+dotnet sln add Day$day
+dotnet new xunit  --language 'F#' --output Day$day.Test -f net6.0
+dotnet sln add Day$day.Test
+dotnet add Day$day.Test reference Day$day
+
+popd
