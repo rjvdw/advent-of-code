@@ -148,7 +148,7 @@ fn count_dragons(image: &str) -> usize {
 
     let image_lines = image
         .split('\n')
-        .map(|line| parse_image_line(line))
+        .map(parse_image_line)
         .collect::<Vec<u128>>();
 
     // assumption: the image is square

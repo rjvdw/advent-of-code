@@ -68,6 +68,7 @@ pub enum ItemCategory {
 #[derive(Debug, Clone)]
 pub struct Item {
     category: ItemCategory,
+    #[allow(dead_code)]
     name: String,
     cost: u32,
     pub(in crate::game_objects) damage: u32,

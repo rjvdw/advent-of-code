@@ -28,18 +28,10 @@ enum ParsingMode {
     MarkerValue,
 }
 
+#[derive(Default)]
 struct Marker {
     length: usize,
     repeat: usize,
-}
-
-impl Default for Marker {
-    fn default() -> Self {
-        Marker {
-            length: 0,
-            repeat: 0,
-        }
-    }
 }
 
 fn decompress(line: &str) -> String {

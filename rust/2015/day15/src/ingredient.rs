@@ -4,7 +4,7 @@ use std::str::FromStr;
 use rdcl_aoc_helpers::error::ParseError;
 use rdcl_aoc_helpers::parse_error;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct Ingredient {
     name: String,
     capacity: i32,
@@ -25,19 +25,6 @@ impl Ingredient {
 
     pub fn get_calories(&self) -> i32 {
         self.calories
-    }
-}
-
-impl Default for Ingredient {
-    fn default() -> Self {
-        Ingredient {
-            name: Default::default(),
-            capacity: Default::default(),
-            durability: Default::default(),
-            flavor: Default::default(),
-            texture: Default::default(),
-            calories: Default::default(),
-        }
     }
 }
 
