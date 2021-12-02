@@ -2,6 +2,8 @@
 
 set -e
 
+pushd "$( dirname "$( dirname "${BASH_SOURCE[0]}" )" )"
+
 if [ "$#" -eq 2 ]; then
   year=$1
   day=$( printf %02d $2 )
@@ -11,6 +13,13 @@ elif [ "$#" -eq 1 ]; then
 else
   echo "Usage: $0 <year> <day>"
   exit 1
+fi
+
+if [ ! -f "AoC$year/AoC$year.sln" ]; then
+  echo "Solution AoC$year does not exist"
+  exit 1
+else
+  pushd AoC$year
 fi
 
 echo "Removing project Day$day from solution AoC$year"
