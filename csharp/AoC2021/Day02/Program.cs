@@ -1,6 +1,6 @@
 ﻿namespace Day02
 {
-    // https://adventofcode.com/2021/day/1
+    // https://adventofcode.com/2021/day/2
     public static class Program
     {
         public static void Main(string[] args)
