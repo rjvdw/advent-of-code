@@ -1,4 +1,6 @@
-﻿namespace Day02
+﻿using System.ComponentModel;
+
+namespace Day02
 {
     // https://adventofcode.com/2021/day/2
     public static class Program
@@ -45,8 +47,6 @@
                     case Direction.Down:
                         depth += instruction.Distance;
                         break;
-                    default:
-                        throw new ArgumentException("Invalid enum value for direction", nameof(instruction.Direction));
                 }
             }
 
@@ -73,8 +73,6 @@
                     case Direction.Down:
                         aim += instruction.Distance;
                         break;
-                    default:
-                        throw new ArgumentException("Invalid enum value for direction", nameof(instruction.Direction));
                 }
             }
 
