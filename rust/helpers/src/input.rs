@@ -95,6 +95,21 @@ where
     exhausted: bool,
 }
 
+impl<T, U> MappedMultiLines<T, U>
+where
+    T: MultilineFromStr + Default,
+    U: Iterator<Item = io::Result<String>>,
+{
+    pub fn from_iterator(iter: U, exit_code_on_fail: i32) -> MappedMultiLines<T, U> {
+        MappedMultiLines {
+            exit_code_on_fail,
+            lines: iter,
+            current: T::default(),
+            exhausted: false,
+        }
+    }
+}
+
 impl<T, U> Iterator for MappedMultiLines<T, U>
 where
     T: MultilineFromStr,
