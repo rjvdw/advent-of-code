@@ -2,6 +2,7 @@
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
+TestResults
 x64/
 x86/
 build/
