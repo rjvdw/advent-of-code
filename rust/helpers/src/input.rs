@@ -84,15 +84,21 @@ pub trait MultilineFromStr {
 }
 
 /// Iterator over the lines that have been mapped to the requested type.
-pub struct MappedMultiLines<T: MultilineFromStr, R: Read> {
+pub struct MappedMultiLines<T, U>
+where
+    T: MultilineFromStr,
+    U: Iterator<Item = io::Result<String>>,
+{
     exit_code_on_fail: i32,
-    lines: Lines<BufReader<R>>,
+    lines: U,
     current: T,
     exhausted: bool,
 }
 
-impl<T: MultilineFromStr, R: Read> Iterator for MappedMultiLines<T, R>
+impl<T, U> Iterator for MappedMultiLines<T, U>
 where
+    T: MultilineFromStr,
+    U: Iterator<Item = io::Result<String>>,
     <T as MultilineFromStr>::Err: fmt::Debug,
 {
     type Item = T;
@@ -126,14 +132,14 @@ pub trait WithReadMultiLines<R: Read> {
     fn read_multi_lines<T: MultilineFromStr>(
         self,
         exit_code_on_fail: i32,
-    ) -> MappedMultiLines<T, R>;
+    ) -> MappedMultiLines<T, Lines<BufReader<R>>>;
 }
 
 impl WithReadMultiLines<File> for File {
     fn read_multi_lines<T: MultilineFromStr>(
         self,
         exit_code_on_fail: i32,
-    ) -> MappedMultiLines<T, File> {
+    ) -> MappedMultiLines<T, Lines<BufReader<File>>> {
         MappedMultiLines {
             exit_code_on_fail,
             lines: BufReader::new(self).lines(),
@@ -147,7 +153,7 @@ impl WithReadMultiLines<File> for io::Result<File> {
     fn read_multi_lines<T: MultilineFromStr>(
         self,
         exit_code_on_fail: i32,
-    ) -> MappedMultiLines<T, File> {
+    ) -> MappedMultiLines<T, Lines<BufReader<File>>> {
         self.or_exit_with(exit_code_on_fail)
             .read_multi_lines(exit_code_on_fail)
     }
