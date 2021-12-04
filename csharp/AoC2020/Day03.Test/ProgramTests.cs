@@ -36,7 +36,7 @@ public class ProgramTests
 
     private static Track GetTrack()
     {
-        return new Track(new string[]
+        return new Track(new[]
         {
             "..##.......",
             "#...#...#..",

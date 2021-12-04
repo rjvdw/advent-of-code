@@ -1,5 +1,3 @@
-using System.Text.RegularExpressions;
-
 namespace Day02;
 
 public readonly struct Instruction
@@ -7,7 +5,7 @@ public readonly struct Instruction
     public readonly Direction Direction;
     public readonly int Distance;
 
-    public Instruction(Direction direction, int distance)
+    private Instruction(Direction direction, int distance)
     {
         Direction = direction;
         Distance = distance;
@@ -24,7 +22,7 @@ public readonly struct Instruction
             "forward" => new Instruction(Direction.Forward, distance),
             "down" => new Instruction(Direction.Down, distance),
             "up" => new Instruction(Direction.Up, distance),
-            _ => throw new ArgumentException($"Invalid input: {s}."),
+            _ => throw new ArgumentException($"Invalid input: {s}.")
         };
     }
 }
