@@ -45,10 +45,10 @@ public class Passport
         return passport;
     }
 
-    private record FieldProperty(PropertyInfo Property, FieldAttribute Attribute);
+    private sealed record FieldProperty(PropertyInfo Property, FieldAttribute Attribute);
 
     private static IEnumerable<PropertyInfo> GetProperties() =>
-        typeof(Passport).GetProperties(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+        typeof(Passport).GetProperties();
 
     private static List<FieldProperty> GetFields() => GetProperties()
         .Select(property => (property, Attribute.GetCustomAttribute(property, typeof(FieldAttribute))))
