@@ -18,5 +18,5 @@ name = "aoc-2021-18-visualisation"
 path = "src/visualisation.rs"
 
 [dependencies]
-rdcl_aoc_helpers = "0.7.0"
+rdcl_aoc_helpers = "0.8.1"
 termion = "1.5.5"

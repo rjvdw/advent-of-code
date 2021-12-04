@@ -6,21 +6,21 @@ version = 3
 name = "day01"
 version = "0.1.0"
 dependencies = [
- "rdcl_aoc_helpers 0.7.0",
+ "rdcl_aoc_helpers",
 ]
 
 [[package]]
 name = "day02"
 version = "0.1.0"
 dependencies = [
- "rdcl_aoc_helpers 0.7.0",
+ "rdcl_aoc_helpers",
 ]
 
 [[package]]
 name = "day03"
 version = "0.1.0"
 dependencies = [
- "rdcl_aoc_helpers 0.7.0",
+ "rdcl_aoc_helpers",
 ]
 
 [[package]]
@@ -28,7 +28,7 @@ name = "day04"
 version = "0.1.0"
 dependencies = [
  "grid",
- "rdcl_aoc_helpers 0.8.1",
+ "rdcl_aoc_helpers",
 ]
 
 [[package]]
@@ -45,12 +45,6 @@ name = "no-std-compat"
 version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b93853da6d84c2e3c7d730d6473e8817692dd89be387eb01b94d7f108ecb5b8c"
-
-[[package]]
-name = "rdcl_aoc_helpers"
-version = "0.7.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fe3c2cbf923476562e44e4ecf98230b0a628fe8fc555241f1d69578c1969921e"
 
 [[package]]
 name = "rdcl_aoc_helpers"
