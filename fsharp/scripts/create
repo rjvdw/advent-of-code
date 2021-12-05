@@ -29,10 +29,7 @@ echo "Creating project Day$day in solution AoC$year"
 
 set -x
 
-dotnet new console  --language 'F#' --output Day$day -f net6.0
+dotnet new aocsolution --language 'F#' --output Day$day
 dotnet sln add Day$day
-dotnet new xunit  --language 'F#' --output Day$day.Test -f net6.0
-dotnet sln add Day$day.Test
-dotnet add Day$day.Test reference Day$day
 
 popd
