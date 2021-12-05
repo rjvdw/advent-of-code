@@ -1,9 +1,8 @@
-using System.Collections.Generic;
 using Xunit;
 
-namespace Day01.Test;
+namespace Day01;
 
-public class ProgramTests
+public class ProgramTest
 {
     [Fact]
     public void TestCountIncreasesWithWindow1()

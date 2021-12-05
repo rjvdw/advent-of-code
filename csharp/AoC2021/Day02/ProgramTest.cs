@@ -1,10 +1,8 @@
-using System.Collections.Generic;
-using System.Linq;
 using Xunit;
 
-namespace Day02.Test;
+namespace Day02;
 
-public class ProgramTests
+public class ProgramTest
 {
     [Fact]
     public void TestFollowInstructions()

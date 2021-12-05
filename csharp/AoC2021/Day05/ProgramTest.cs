@@ -1,10 +1,8 @@
-using System.Collections.Generic;
-using System.Linq;
 using Xunit;
 
-namespace Day05.Test;
+namespace Day05;
 
-public class ProgramTests
+public class ProgramTest
 {
     [Fact]
     public void TestCountDangerousPoints()

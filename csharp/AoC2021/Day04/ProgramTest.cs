@@ -1,9 +1,8 @@
-using System.Collections.Generic;
 using Xunit;
 
-namespace Day04.Test;
+namespace Day04;
 
-public class ProgramTests
+public class ProgramTest
 {
     [Fact]
     public void TestPlay()
