@@ -9,4 +9,5 @@ then failwith $"Usage: {argv[0]} <INPUT FILE>"
 let lines = List.ofSeq(File.ReadLines(argv[1]))
 let numbers = List.map int lines
 
-printfn $"{Solution.countIncreases numbers}"
+printfn $"{Solution.countIncreases 1 numbers}"
+printfn $"{Solution.countIncreases 3 numbers}"
