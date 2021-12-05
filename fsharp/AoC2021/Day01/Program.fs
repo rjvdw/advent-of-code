@@ -1,9 +1,12 @@
-﻿// For more information see https://aka.ms/fsharp-console-apps
-printfn "Hello from F#"
+﻿open System
+open System.IO
 
-module Tests =
-    open Xunit
+let argv = Environment.GetCommandLineArgs()
 
-    [<Fact>]
-    let ``Test 1`` () =
-        Assert.Equal(0, 0)
+if argv.Length <> 2
+then failwith $"Usage: {argv[0]} <INPUT FILE>"
+
+let lines = List.ofSeq(File.ReadLines(argv[1]))
+let numbers = List.map int lines
+
+printfn $"{Solution.countIncreases numbers}"
