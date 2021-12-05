@@ -1,12 +1,14 @@
 ﻿open System
 open System.IO
 
-let argv = Environment.GetCommandLineArgs()
+// https://adventofcode.com/2021/day/1
 
-if argv.Length <> 2
-then failwith $"Usage: {argv[0]} <INPUT FILE>"
+let args = Environment.GetCommandLineArgs()
 
-let lines = List.ofSeq(File.ReadLines(argv[1]))
+if args.Length <> 2
+then failwith $"Usage: {args[0]} <INPUT FILE>"
+
+let lines = List.ofSeq(File.ReadLines(args[1]))
 let numbers = List.map int lines
 
 printfn $"{Solution.countIncreases 1 numbers}"
