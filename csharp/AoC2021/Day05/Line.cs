@@ -14,6 +14,7 @@ public readonly struct Line
     }
 
     public bool IsHorizontal() => P1.Y == P2.Y;
+
     public bool IsVertical() => P1.X == P2.X;
 
     public IEnumerable<Point> GetPoints()

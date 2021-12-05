@@ -19,12 +19,12 @@ fn main() {
     let lines = File::open(&args[1]).read_lines(1).collect::<Vec<Line>>();
 
     println!(
-        "Considering horizontal and vertical lines, there are {} points where multiple lines overlap.",
+        "Not considering diagonals, there are {} points where multiple lines overlap.",
         count_points_where_multiple_lines_overlap(&lines, false),
     );
 
     println!(
-        "Also considering diagonal lines, there are {} points where multiple lines overlap.",
+        "Considering diagonals, there are {} points where multiple lines overlap.",
         count_points_where_multiple_lines_overlap(&lines, true),
     );
 }

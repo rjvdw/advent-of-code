@@ -15,10 +15,10 @@ public static class Program
         var lines = File.ReadAllLines(inputFile).Select(Line.Parse).ToList();
 
         var count1 = CountDangerousPoints(lines, false);
-        Console.WriteLine($"Considering horizontal and vertical lines, there are {count1} points where multiple lines overlap");
+        Console.WriteLine($"Not considering diagonals, there are {count1} points where multiple lines overlap.");
 
         var count2 = CountDangerousPoints(lines, true);
-        Console.WriteLine($"Also considering diagonal lines, there are {count2} points where multiple lines overlap");
+        Console.WriteLine($"Considering diagonals, there are {count2} points where multiple lines overlap.");
     }
 
     public static int CountDangerousPoints(IEnumerable<Line> lines, bool includeDiagonals)
