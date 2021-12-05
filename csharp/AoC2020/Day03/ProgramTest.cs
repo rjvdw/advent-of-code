@@ -1,8 +1,8 @@
 using Xunit;
 
-namespace Day03.Test;
+namespace Day03;
 
-public class ProgramTests
+public class ProgramTest
 {
     [Fact]
     public void Test1()

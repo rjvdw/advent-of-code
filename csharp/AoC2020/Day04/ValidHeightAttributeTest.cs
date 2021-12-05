@@ -1,8 +1,8 @@
 using Xunit;
 
-namespace Day04.Test;
+namespace Day04;
 
-public class ValidHeightAttributeTests
+public class ValidHeightAttributeTest
 {
     [Fact]
     public void TestValidHeights()
