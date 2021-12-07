@@ -5,10 +5,10 @@ open System.IO
 
 let args = Environment.GetCommandLineArgs()
 
-if args.Length <> 2
-then failwith $"Usage: {args[0]} <INPUT FILE>"
+if args.Length <> 2 then
+    failwith $"Usage: {args[0]} <INPUT FILE>"
 
-let lines = List.ofSeq(File.ReadLines(args[1]))
+let lines = List.ofSeq (File.ReadLines(args[1]))
 let numbers = List.map int lines
 
 printfn $"{Solution.countIncreases 1 numbers}"

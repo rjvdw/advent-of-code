@@ -17,7 +17,9 @@ let folderWithAim (depth: int, position: int, aim: int) (instruction: Instructio
     | Up x -> (depth, position, aim - x)
 
 let computeDepthAndPositionWithAim (instructions: seq<Instruction>) =
-    let depth, position, _ = Seq.fold folderWithAim (0, 0, 0) instructions
+    let depth, position, _ =
+        Seq.fold folderWithAim (0, 0, 0) instructions
+
     (depth, position)
 
 module Tests =

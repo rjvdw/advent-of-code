@@ -16,7 +16,11 @@ let parse (lines: list<string>) =
         | numbers :: "" :: boards -> (numbers, boards)
         | _ -> failwith "Invalid input"
 
-    let numbers = numbersLine.Split(',') |> Seq.map uint8 |> List.ofSeq
+    let numbers =
+        numbersLine.Split(',')
+        |> Seq.map uint8
+        |> List.ofSeq
+
     let boards = boardLines |> Board.parseBoards
 
     (numbers, boards)
@@ -24,9 +28,9 @@ let parse (lines: list<string>) =
 let numbers, boards = parse lines
 
 match Solution.play boards numbers with
-| Some(score) -> printfn $"The score of the winning board is {score}."
+| Some (score) -> printfn $"The score of the winning board is {score}."
 | _ -> eprintfn "No board will win with these numbers."
 
 match Solution.findLosingBoard boards numbers with
-| Some(score) -> printfn $"The score of the losing board is {score}."
+| Some (score) -> printfn $"The score of the losing board is {score}."
 | _ -> eprintfn "No board will win with these numbers."
