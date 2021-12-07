@@ -2,7 +2,7 @@ module Solution
 
 let countIncreases windowSize =
     Seq.windowed windowSize
-    >> Seq.map Array.sum
+    >> Seq.map Seq.sum
     >> Seq.windowed 2
     >> Seq.filter (fun el -> el[0] < el[1])
     >> Seq.length
