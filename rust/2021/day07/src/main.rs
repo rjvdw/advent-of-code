@@ -75,15 +75,11 @@ fn compute_fuel_cost_naive(points: &[u32], point: u32) -> u32 {
 }
 
 fn compute_fuel_cost_correct(points: &[u32], point: u32) -> u32 {
-    points.iter().map(|&p| fuel_cost(abs_diff(p, point))).sum()
-}
-
-fn fuel_cost(distance: u32) -> u32 {
-    *CACHE
-        .lock()
-        .unwrap()
-        .entry(distance)
-        .or_insert_with(|| (0..=distance).sum())
+    points
+        .iter()
+        .map(|&p| abs_diff(p, point))
+        .map(|d| (d * (d + 1)) / 2)
+        .sum()
 }
 
 #[cfg(test)]
