@@ -1,7 +1,6 @@
-﻿using System.Collections;
+﻿namespace Day07;
 
-namespace Day07;
-
+// https://adventofcode.com/2021/day/7
 public static class Program
 {
     public static void Main(string[] args)
@@ -20,12 +19,12 @@ public static class Program
             .ToList();
 
         var (optimalPoint1, fuelCost1) = FindOptimalPoint(points, ComputeFuelCostNaive)!.Value;
-        Console.WriteLine($"Using the naive fuel computation, " +
+        Console.WriteLine("Using the naive fuel computation, " +
                           $"the optimal point is {optimalPoint1}, " +
                           $"with a cost of {fuelCost1}.");
 
         var (optimalPoint2, fuelCost2) = FindOptimalPoint(points, ComputeFuelCostCorrect)!.Value;
-        Console.WriteLine($"Using the correct fuel computation, " +
+        Console.WriteLine("Using the correct fuel computation, " +
                           $"the optimal point is {optimalPoint2}, " +
                           $"with a cost of {fuelCost2}.");
     }
@@ -49,7 +48,7 @@ public static class Program
             {
                 null => (point, fuelCost),
                 var (_, c) when c > fuelCost => (point, fuelCost),
-                _ => optimum,
+                _ => optimum
             };
         }
 

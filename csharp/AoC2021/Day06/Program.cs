@@ -1,5 +1,6 @@
 ﻿namespace Day06;
 
+// https://adventofcode.com/2021/day/6
 public static class Program
 {
     private const ulong GestationPeriod = 9;
