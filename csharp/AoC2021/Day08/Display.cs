@@ -24,21 +24,21 @@ public record Display(byte[] Digits, byte[] Output)
         var f = mapping[5];
         var g = mapping[6];
 
-        var decoded = (uint)0;
+        var decoded = 0U;
         foreach (var segments in Output)
         {
             var digit = segments switch
             {
-                var x when x == (a | b | c | e | f | g) => (uint)0,
-                var x when x == (c | f) => (uint)1,
-                var x when x == (a | c | d | e | g) => (uint)2,
-                var x when x == (a | c | d | f | g) => (uint)3,
-                var x when x == (b | c | d | f) => (uint)4,
-                var x when x == (a | b | d | f | g) => (uint)5,
-                var x when x == (a | b | d | e | f | g) => (uint)6,
-                var x when x == (a | c | f) => (uint)7,
-                var x when x == (a | b | c | d | e | f | g) => (uint)8,
-                var x when x == (a | b | c | d | f | g) => (uint)9,
+                var x when x == (a | b | c | e | f | g) => 0U,
+                var x when x == (c | f) => 1U,
+                var x when x == (a | c | d | e | g) => 2U,
+                var x when x == (a | c | d | f | g) => 3U,
+                var x when x == (b | c | d | f) => 4U,
+                var x when x == (a | b | d | f | g) => 5U,
+                var x when x == (a | b | d | e | f | g) => 6U,
+                var x when x == (a | c | f) => 7U,
+                var x when x == (a | b | c | d | e | f | g) => 8U,
+                var x when x == (a | b | c | d | f | g) => 9U,
                 _ => throw new ArgumentException("Invalid mapping provided", nameof(mapping))
             };
             decoded *= 10;

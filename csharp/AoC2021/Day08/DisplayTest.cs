@@ -22,7 +22,7 @@ public class DisplayTest
                 Display.A | Display.C | Display.D | Display.F | Display.G
             });
 
-        Assert.Equal((uint)123, display.GetOutput(_defaultMapping));
+        Assert.Equal(123U, display.GetOutput(_defaultMapping));
     }
 
     [Fact]
@@ -38,7 +38,7 @@ public class DisplayTest
                 Display.A | Display.C | Display.F
             });
 
-        Assert.Equal((uint)4567, display.GetOutput(_defaultMapping));
+        Assert.Equal(4567U, display.GetOutput(_defaultMapping));
     }
 
     [Fact]
@@ -54,7 +54,7 @@ public class DisplayTest
                 Display.A | Display.B | Display.C | Display.D | Display.F | Display.G
             });
 
-        Assert.Equal((uint)8899, display.GetOutput(_defaultMapping));
+        Assert.Equal(8899U, display.GetOutput(_defaultMapping));
     }
 
     [Fact]
@@ -90,7 +90,7 @@ public class DisplayTest
             Display.B, Display.C, Display.D, Display.E, Display.F, Display.G, Display.A
         };
 
-        Assert.Equal((uint)2345, display.GetOutput(mapping));
+        Assert.Equal(2345U, display.GetOutput(mapping));
     }
 
     [Fact]

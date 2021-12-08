@@ -41,7 +41,7 @@ public class ProgramTest
             "egadfb cdbfeg cegd fecab cgb gbdefca cg fgcdab egfdb bfceg | gbdfcae bgc cg cgb",
             "gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce"
         }.Select(Display.Parse);
-        Assert.Equal((uint)61229, Program.DecodeDisplays(displays));
+        Assert.Equal(61229U, Program.DecodeDisplays(displays));
     }
 
     [Fact]

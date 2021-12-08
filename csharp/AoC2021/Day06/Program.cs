@@ -31,7 +31,7 @@ public static class Program
 
         return values
             .Select(v => FiboAlt(n + GestationPeriod - v - 1, cache))
-            .Aggregate((ulong)0, (sum, next) => sum + next);
+            .Aggregate(0UL, (sum, next) => sum + next);
     }
 
     private static ulong FiboAlt(ulong n, IDictionary<ulong, ulong> cache)

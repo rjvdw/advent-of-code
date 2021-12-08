@@ -27,7 +27,7 @@ public static class Program
     public static uint DecodeDisplays(IEnumerable<Display> displays) =>
         displays
             .Select(Decode)
-            .Aggregate((uint)0, (a, v) => a + v);
+            .Aggregate(0U, (a, v) => a + v);
 
     public static uint Decode(Display display)
     {

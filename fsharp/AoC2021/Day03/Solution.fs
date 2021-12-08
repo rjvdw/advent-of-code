@@ -1,13 +1,13 @@
 module Solution
 
 let maskSeq =
-    Seq.unfold (fun x -> Some(x, x * uint16 2)) (uint16 0b1)
+    Seq.unfold (fun x -> Some(x, x * 2us)) 0b1us
 
 let countBits (mask: uint16) =
     Seq.map (fun x -> x &&& mask)
     >> Seq.fold
         (fun (c0, c1) x ->
-            if x = uint16 0 then
+            if x = 0us then
                 (c0 + 1, c1)
             else
                 (c0, c1 + 1))
@@ -23,7 +23,7 @@ let computePowerConsumption len (values: seq<uint16>) =
                 if c0 > c1 then (g, e ||| mask)
                 elif c0 = c1 then (g, e)
                 else (g ||| mask, e))
-            (uint16 0, uint16 0)
+            (0us, 0us)
 
     (uint32 g) * (uint32 e)
 
@@ -34,9 +34,9 @@ let rec filterRatings p (mask: uint16) (values: list<uint16>) =
             if p (countBits mask values) then
                 mask
             else
-                uint16 0
+                0us
 
-        let nextMask = mask / uint16 2
+        let nextMask = mask / 2us
 
         let nextList =
             List.filter (fun v -> (v &&& mask) = bit) values
@@ -62,41 +62,41 @@ module Tests =
     open Xunit
 
     let testData =
-        [ uint16 0b00100
-          uint16 0b11110
-          uint16 0b10110
-          uint16 0b10111
-          uint16 0b10101
-          uint16 0b01111
-          uint16 0b00111
-          uint16 0b11100
-          uint16 0b10000
-          uint16 0b11001
-          uint16 0b00010
-          uint16 0b01010 ]
+        [ 0b00100us
+          0b11110us
+          0b10110us
+          0b10111us
+          0b10101us
+          0b01111us
+          0b00111us
+          0b11100us
+          0b10000us
+          0b11001us
+          0b00010us
+          0b01010us ]
 
     [<Fact>]
     let ``Test mask sequence`` () =
         Assert.Equal(
-            [ uint16 1
-              uint16 2
-              uint16 4
-              uint16 8 ],
+            [ 1us
+              2us
+              4us
+              8us ],
             maskSeq |> Seq.take 4
         )
 
     [<Fact>]
     let ``Test bit counter`` () =
-        Assert.Equal((5, 7), countBits (uint16 0b10000) testData)
-        Assert.Equal((7, 5), countBits (uint16 0b01000) testData)
-        Assert.Equal((4, 8), countBits (uint16 0b00100) testData)
-        Assert.Equal((5, 7), countBits (uint16 0b00010) testData)
-        Assert.Equal((7, 5), countBits (uint16 0b00001) testData)
+        Assert.Equal((5, 7), countBits 0b10000us testData)
+        Assert.Equal((7, 5), countBits 0b01000us testData)
+        Assert.Equal((4, 8), countBits 0b00100us testData)
+        Assert.Equal((5, 7), countBits 0b00010us testData)
+        Assert.Equal((7, 5), countBits 0b00001us testData)
 
     [<Fact>]
     let ``Test power consumption`` () =
-        Assert.Equal(uint32 198, computePowerConsumption 5 testData)
+        Assert.Equal(198u, computePowerConsumption 5 testData)
 
     [<Fact>]
     let ``Test life support rating`` () =
-        Assert.Equal(uint32 230, computeLifeSupportRating 5 testData)
+        Assert.Equal(230u, computeLifeSupportRating 5 testData)

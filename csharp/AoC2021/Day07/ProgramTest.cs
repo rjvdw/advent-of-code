@@ -8,22 +8,22 @@ public class ProgramTest
     public void TestComputeFuelCostNaive()
     {
         var values = new List<uint> { 16, 1, 2, 0, 4, 2, 7, 1, 2, 14 };
-        Assert.Equal((uint)37, Program.ComputeFuelCostNaive(values, 2));
+        Assert.Equal(37U, Program.ComputeFuelCostNaive(values, 2));
     }
 
     [Fact]
     public void TestComputeFuelCostCorrect()
     {
         var values = new List<uint> { 16, 1, 2, 0, 4, 2, 7, 1, 2, 14 };
-        Assert.Equal((uint)206, Program.ComputeFuelCostCorrect(values, 2));
-        Assert.Equal((uint)168, Program.ComputeFuelCostCorrect(values, 5));
+        Assert.Equal(206U, Program.ComputeFuelCostCorrect(values, 2));
+        Assert.Equal(168U, Program.ComputeFuelCostCorrect(values, 5));
     }
 
     [Fact]
     public void TestFindOptimalPoint()
     {
         var values = new List<uint> { 16, 1, 2, 0, 4, 2, 7, 1, 2, 14 };
-        Assert.Equal(((uint)2, (uint)37), Program.FindOptimalPoint(values, Program.ComputeFuelCostNaive));
-        Assert.Equal(((uint)5, (uint)168), Program.FindOptimalPoint(values, Program.ComputeFuelCostCorrect));
+        Assert.Equal((2U, 37U), Program.FindOptimalPoint(values, Program.ComputeFuelCostNaive));
+        Assert.Equal((5U, 168U), Program.FindOptimalPoint(values, Program.ComputeFuelCostCorrect));
     }
 }
