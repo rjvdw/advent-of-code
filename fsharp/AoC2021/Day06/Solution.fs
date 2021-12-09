@@ -13,16 +13,17 @@ let solve (days: int) (values: seq<int>) =
     |> Seq.fold (fun sum count -> sum + count) 0UL
 
 module Tests =
+    open FsUnit
     open Xunit
 
     [<Fact>]
     let ``Test solver`` () =
         let values = [ 3; 4; 3; 1; 2 ]
-        Assert.Equal(5UL, solve 0 values)
-        Assert.Equal(5UL, solve 1 values)
-        Assert.Equal(6UL, solve 2 values)
-        Assert.Equal(7UL, solve 3 values)
-        Assert.Equal(9UL, solve 4 values)
-        Assert.Equal(10UL, solve 5 values)
-        Assert.Equal(5934UL, solve 80 values)
-        Assert.Equal(26984457539UL, solve 256 values)
+        values |> solve 0 |> should equal 5UL
+        values |> solve 1 |> should equal 5UL
+        values |> solve 2 |> should equal 6UL
+        values |> solve 3 |> should equal 7UL
+        values |> solve 4 |> should equal 9UL
+        values |> solve 5 |> should equal 10UL
+        values |> solve 80 |> should equal 5934UL
+        values |> solve 256 |> should equal 26984457539UL

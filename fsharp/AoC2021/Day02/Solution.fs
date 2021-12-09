@@ -23,32 +23,29 @@ let computeDepthAndPositionWithAim (instructions: seq<Instruction>) =
     (depth, position)
 
 module Tests =
+    open FsUnit
     open Xunit
 
     [<Fact>]
     let ``Test depth and position without Aim`` () =
-        let testInput =
-            List.map
-                parse
-                [ "forward 5"
-                  "down 5"
-                  "forward 8"
-                  "up 3"
-                  "down 8"
-                  "forward 2" ]
-
-        Assert.Equal((10, 15), computeDepthAndPosition testInput)
+        [ "forward 5"
+          "down 5"
+          "forward 8"
+          "up 3"
+          "down 8"
+          "forward 2" ]
+        |> Seq.map parse
+        |> computeDepthAndPosition
+        |> should equal (10, 15)
 
     [<Fact>]
     let ``Test depth and position with Aim`` () =
-        let testInput =
-            List.map
-                parse
-                [ "forward 5"
-                  "down 5"
-                  "forward 8"
-                  "up 3"
-                  "down 8"
-                  "forward 2" ]
-
-        Assert.Equal((60, 15), computeDepthAndPositionWithAim testInput)
+        [ "forward 5"
+          "down 5"
+          "forward 8"
+          "up 3"
+          "down 8"
+          "forward 2" ]
+        |> Seq.map parse
+        |> computeDepthAndPositionWithAim
+        |> should equal (60, 15)

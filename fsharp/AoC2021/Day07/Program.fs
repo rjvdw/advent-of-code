@@ -6,7 +6,7 @@ open System.IO
 let args = Environment.GetCommandLineArgs()
 
 if args.Length <> 2 then
-    failwith $"Usage: {args[0]} <INPUT FILE> <NR DAYS>"
+    failwith $"Usage: {args[0]} <INPUT FILE>"
 
 let input = File.ReadLines(args[1]) |> Seq.head
 let values = input.Split(',') |> Seq.ofArray |> Seq.map uint

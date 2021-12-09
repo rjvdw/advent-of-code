@@ -71,6 +71,7 @@ let parseBoards (lines: seq<string>) =
     |> List.map parseBoard
 
 module tests =
+    open FsUnit
     open Xunit
 
     [<Fact>]
@@ -112,7 +113,7 @@ module tests =
               Dim = 5
               Marked = Set.empty }
 
-        Assert.Equal(expected, parseBoard lines)
+        lines |> parseBoard |> should equal expected
 
     [<Fact>]
     let ``The correct position should be marked when marking a number`` () =
@@ -146,9 +147,8 @@ module tests =
               Dim = 5
               Marked = Set.empty }
 
-        let board = mark 23uy board
-        Assert.Equal(1, board.Marked.Count)
-        Assert.True(board.Marked.Contains(7))
+        (mark 23uy board).Marked
+        |> should equivalent (set [ 7 ])
 
     [<Fact>]
     let ``A board without any numbers marked should not be marked as bingo`` () =
@@ -182,7 +182,7 @@ module tests =
               Dim = 5
               Marked = Set.empty }
 
-        Assert.False(bingo board)
+        board |> bingo |> should be False
 
     [<Fact>]
     let ``A board with some numbers marked that do not form a row or column should not be marked as bingo`` () =
@@ -216,7 +216,7 @@ module tests =
               Dim = 5
               Marked = set [ 1; 2; 5; 8; 11; 16; 21 ] }
 
-        Assert.False(bingo board)
+        board |> bingo |> should be False
 
     [<Fact>]
     let ``A board with a full column should be marked as bingo`` () =
@@ -250,7 +250,7 @@ module tests =
               Dim = 5
               Marked = set [ 1; 6; 11; 16; 21 ] }
 
-        Assert.True(bingo board)
+        board |> bingo |> should be True
 
     [<Fact>]
     let ``A board with a full row should be marked as bingo`` () =
@@ -284,7 +284,7 @@ module tests =
               Dim = 5
               Marked = set [ 5; 6; 7; 8; 9 ] }
 
-        Assert.True(bingo board)
+        board |> bingo |> should be True
 
     [<Fact>]
     let ``The correct score should be computed for a board`` () =
@@ -330,4 +330,4 @@ module tests =
                         21
                         24 ] }
 
-        Assert.Equal(4512u, score 24uy board)
+        board |> score 24uy |> should equal 4512u

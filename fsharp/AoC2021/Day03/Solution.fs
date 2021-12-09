@@ -59,6 +59,7 @@ let computeLifeSupportRating len (values: list<uint16>) =
     oxy * co2
 
 module Tests =
+    open FsUnit
     open Xunit
 
     let testData =
@@ -77,26 +78,20 @@ module Tests =
 
     [<Fact>]
     let ``Test mask sequence`` () =
-        Assert.Equal(
-            [ 1us
-              2us
-              4us
-              8us ],
-            maskSeq |> Seq.take 4
-        )
+        maskSeq |> Seq.take 4 |> should equal [ 1us ; 2us ; 4us ; 8us ]
 
     [<Fact>]
     let ``Test bit counter`` () =
-        Assert.Equal((5, 7), countBits 0b10000us testData)
-        Assert.Equal((7, 5), countBits 0b01000us testData)
-        Assert.Equal((4, 8), countBits 0b00100us testData)
-        Assert.Equal((5, 7), countBits 0b00010us testData)
-        Assert.Equal((7, 5), countBits 0b00001us testData)
+        testData |> countBits 0b10000us |> should equal (5, 7)
+        testData |> countBits 0b01000us |> should equal (7, 5)
+        testData |> countBits 0b00100us |> should equal (4, 8)
+        testData |> countBits 0b00010us |> should equal (5, 7)
+        testData |> countBits 0b00001us |> should equal (7, 5)
 
     [<Fact>]
     let ``Test power consumption`` () =
-        Assert.Equal(198u, computePowerConsumption 5 testData)
+        testData |> computePowerConsumption 5 |> should equal 198u
 
     [<Fact>]
     let ``Test life support rating`` () =
-        Assert.Equal(230u, computeLifeSupportRating 5 testData)
+        testData |> computeLifeSupportRating 5 |> should equal 230u

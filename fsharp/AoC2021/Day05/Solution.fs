@@ -36,36 +36,37 @@ let countDangerousPoints (includeDiagonals: bool) (lines: seq<Line>) =
     |> Seq.length
 
 module Tests =
+    open FsUnit
     open Xunit
 
     [<Fact>]
     let ``Test the correct number of dangerous points are counted (excluding diagonals)`` () =
-        let lines = List.map Line.parse [
-            "0,9 -> 5,9"
-            "8,0 -> 0,8"
-            "9,4 -> 3,4"
-            "2,2 -> 2,1"
-            "7,0 -> 7,4"
-            "6,4 -> 2,0"
-            "0,9 -> 2,9"
-            "3,4 -> 1,4"
-            "0,0 -> 8,8"
-            "5,5 -> 8,2"
-        ]
-        Assert.Equal(5, countDangerousPoints false lines)
+        [ "0,9 -> 5,9"
+          "8,0 -> 0,8"
+          "9,4 -> 3,4"
+          "2,2 -> 2,1"
+          "7,0 -> 7,4"
+          "6,4 -> 2,0"
+          "0,9 -> 2,9"
+          "3,4 -> 1,4"
+          "0,0 -> 8,8"
+          "5,5 -> 8,2" ]
+        |> List.map Line.parse
+        |> countDangerousPoints false
+        |> should equal 5
 
     [<Fact>]
     let ``Test the correct number of dangerous points are counted (including diagonals)`` () =
-        let lines = List.map Line.parse [
-            "0,9 -> 5,9"
-            "8,0 -> 0,8"
-            "9,4 -> 3,4"
-            "2,2 -> 2,1"
-            "7,0 -> 7,4"
-            "6,4 -> 2,0"
-            "0,9 -> 2,9"
-            "3,4 -> 1,4"
-            "0,0 -> 8,8"
-            "5,5 -> 8,2"
-        ]
-        Assert.Equal(12, countDangerousPoints true lines)
+        [ "0,9 -> 5,9"
+          "8,0 -> 0,8"
+          "9,4 -> 3,4"
+          "2,2 -> 2,1"
+          "7,0 -> 7,4"
+          "6,4 -> 2,0"
+          "0,9 -> 2,9"
+          "3,4 -> 1,4"
+          "0,0 -> 8,8"
+          "5,5 -> 8,2" ]
+        |> List.map Line.parse
+        |> countDangerousPoints true
+        |> should equal 12

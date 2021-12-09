@@ -23,53 +23,78 @@ let findOptimalPoint (computeFuel: seq<uint> -> uint -> uint) (points: seq<uint>
     |> Seq.minBy snd
 
 module Tests =
+    open FsUnit
     open Xunit
 
     [<Fact>]
     let ``Test naive fuel cost`` () =
-        let points =
-            [ 16u
-              1u
-              2u
-              0u
-              4u
-              2u
-              7u
-              1u
-              2u
-              14u ]
-
-        Assert.Equal(37u, computeFuelNaive points 2u)
+        ([ 16u
+           1u
+           2u
+           0u
+           4u
+           2u
+           7u
+           1u
+           2u
+           14u ],
+         2u)
+        ||> computeFuelNaive
+        |> should equal 37u
 
     [<Fact>]
     let ``Test correct fuel cost`` () =
-        let points =
-            [ 16u
-              1u
-              2u
-              0u
-              4u
-              2u
-              7u
-              1u
-              2u
-              14u ]
+        ([ 16u
+           1u
+           2u
+           0u
+           4u
+           2u
+           7u
+           1u
+           2u
+           14u ],
+         2u)
+        ||> computeFuelCorrect
+        |> should equal 206u
 
-        Assert.Equal(206u, computeFuelCorrect points 2u)
-        Assert.Equal(168u, computeFuelCorrect points 5u)
+        ([ 16u
+           1u
+           2u
+           0u
+           4u
+           2u
+           7u
+           1u
+           2u
+           14u ],
+         5u)
+        ||> computeFuelCorrect
+        |> should equal 168u
 
     let ``Test finding the optimal point`` () =
-        let points =
-            [ 16u
-              1u
-              2u
-              0u
-              4u
-              2u
-              7u
-              1u
-              2u
-              14u ]
+        [ 16u
+          1u
+          2u
+          0u
+          4u
+          2u
+          7u
+          1u
+          2u
+          14u ]
+        |> findOptimalPoint computeFuelNaive
+        |> should equal (2u, 37u)
 
-        Assert.Equal((2u, 37u), findOptimalPoint computeFuelNaive points)
-        Assert.Equal((5u, 168u), findOptimalPoint computeFuelCorrect points)
+        [ 16u
+          1u
+          2u
+          0u
+          4u
+          2u
+          7u
+          1u
+          2u
+          14u ]
+        |> findOptimalPoint computeFuelCorrect
+        |> should equal (5u, 168u)
