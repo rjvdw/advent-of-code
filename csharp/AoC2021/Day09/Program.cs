@@ -1,5 +1,6 @@
 ﻿namespace Day09;
 
+/// https://adventofcode.com/2021/day/9
 public static class Program
 {
     public static void Main(string[] args)
