@@ -63,6 +63,8 @@ public record HeightMap : DigitMap
         return sizes;
     }
 
+    public override string ToString() => base.ToString();
+
     private HeightMap(List<byte> heights, int rows, int cols) : base(heights, rows, cols)
     {
     }
