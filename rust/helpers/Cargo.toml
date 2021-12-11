@@ -8,3 +8,5 @@ repository = "https://github.com/rjvdw/advent-of-code/"
 license = "MIT OR Apache-2.0"
 
 [dependencies]
+itertools = "0.10.3"
+grid = "0.6.0"
