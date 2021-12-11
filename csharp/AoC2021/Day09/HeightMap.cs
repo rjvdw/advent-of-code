@@ -1,24 +1,19 @@
 using System.Text;
+using Shared;
 
 namespace Day09;
 
-public record HeightMap
+public record HeightMap : DigitMap
 {
-    private readonly List<byte> _heights;
-    private readonly int _rows;
-    private readonly int _cols;
-
-    public byte this[(int Row, int Col) index] => _heights[index.Row * _cols + index.Col];
-
     public IEnumerable<(int Row, int Col)> FindLowPoints()
     {
         var lowPoints = new List<(int, int)>();
-        for (var row = 0; row < _rows; row += 1)
+        for (var row = 0; row < Rows; row += 1)
         {
-            for (var col = 0; col < _cols; col += 1)
+            for (var col = 0; col < Cols; col += 1)
             {
                 var value = this[(row, col)];
-                var isLowPoint = Neighbours((row, col))
+                var isLowPoint = Neighbours((row, col), false)
                     .Select(p => this[p])
                     .All(v => v > value);
                 if (isLowPoint)
@@ -51,7 +46,7 @@ public record HeightMap
                 count += 1;
 
                 var neighbours =
-                    from neighbour in Neighbours(toExplore.Pop())
+                    from neighbour in Neighbours(toExplore.Pop(), false)
                     where this[neighbour] != 9 && !seen.Contains(neighbour)
                     select neighbour;
 
@@ -68,49 +63,13 @@ public record HeightMap
         return sizes;
     }
 
-    public override string ToString()
+    private HeightMap(List<byte> heights, int rows, int cols) : base(heights, rows, cols)
     {
-        StringBuilder sb = new();
-        for (var i = 0; i < _heights.Count; i += 1)
-        {
-            if (i != 0 && i % _cols == 0)
-                sb.Append('\n');
-            sb.Append(_heights[i]);
-        }
-
-        return sb.ToString();
-    }
-
-    private HeightMap(List<byte> heights, int rows, int cols)
-    {
-        _heights = heights;
-        _rows = rows;
-        _cols = cols;
-    }
-
-    private IEnumerable<(int Row, int Col)> Neighbours((int Row, int Col) position)
-    {
-        var neighbours = new List<(int Row, int Col)>();
-        if (position.Row > 0) neighbours.Add((position.Row - 1, position.Col));
-        if (position.Col > 0) neighbours.Add((position.Row, position.Col - 1));
-        if (position.Row + 1 < _rows) neighbours.Add((position.Row + 1, position.Col));
-        if (position.Col + 1 < _cols) neighbours.Add((position.Row, position.Col + 1));
-        return neighbours;
     }
 
     public static HeightMap Parse(IEnumerable<string> lines)
     {
-        var heights = new List<byte>();
-        var rows = 0;
-        var cols = 0;
-
-        foreach (var line in lines)
-        {
-            rows += 1;
-            cols = line.Length;
-            heights.AddRange(line.ToCharArray().Select(ch => (byte)(ch - '0')));
-        }
-
+        var (heights, rows, cols) = ParseLines(lines);
         return new HeightMap(heights, rows, cols);
     }
 }
