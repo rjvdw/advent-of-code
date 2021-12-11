@@ -67,6 +67,7 @@ version = "0.1.0"
 dependencies = [
  "grid",
  "rdcl_aoc_helpers",
+ "shared",
 ]
 
 [[package]]
@@ -102,3 +103,11 @@ name = "rdcl_aoc_helpers"
 version = "0.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "961a82997b6840c691d2e4b718927aa35ebc0c5f709771da4985b7f88146c777"
+
+[[package]]
+name = "shared"
+version = "0.1.0"
+dependencies = [
+ "grid",
+ "rdcl_aoc_helpers",
+]

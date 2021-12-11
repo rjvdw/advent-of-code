@@ -1,15 +1,9 @@
 [package]
-name = "day09"
+name = "shared"
 version = "0.1.0"
 authors = ["Ruud van der Weide <rj@rdcl.dev>"]
 edition = "2021"
-default-run = "aoc-2021-9"
-
-[[bin]]
-name = "aoc-2021-9"
-path = "src/main.rs"
 
 [dependencies]
 rdcl_aoc_helpers = "0.8.1"
 grid = "0.6.0"
-shared = { path = "../shared" }

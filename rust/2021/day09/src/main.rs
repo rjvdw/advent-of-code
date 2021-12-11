@@ -1,21 +1,18 @@
 extern crate rdcl_aoc_helpers;
 
 use std::collections::HashSet;
-use std::fs::File;
-use std::io;
-use std::io::{BufRead, BufReader};
 
-use grid::{grid, Grid};
+use grid::Grid;
 use rdcl_aoc_helpers::args::get_args;
-use rdcl_aoc_helpers::error::{ParseError, WithOrExit};
+use rdcl_aoc_helpers::error::WithOrExit;
+
+use shared::numeric_grid;
 
 /// https://adventofcode.com/2021/day/9
 fn main() {
     let args = get_args(&["<input file>"], 1);
 
-    let file = File::open(&args[1]).or_exit_with(1);
-    let lines = BufReader::new(file).lines();
-    let height_map = parse_input(lines).or_exit_with(1);
+    let height_map = numeric_grid::read(&args[1]).or_exit_with(1);
 
     let low_points = find_low_points(&height_map);
     let values = low_points
@@ -99,24 +96,10 @@ fn find_basins(height_map: &Grid<u8>, points: &[(usize, usize)]) -> Vec<usize> {
     sizes
 }
 
-fn parse_input<I>(mut lines: I) -> Result<Grid<u8>, ParseError>
-where
-    I: Iterator<Item = io::Result<String>>,
-{
-    let mut grid = grid![];
-    for line in &mut lines {
-        grid.push_row(
-            line?
-                .chars()
-                .map(|ch| (ch as u8) - b'0')
-                .collect::<Vec<u8>>(),
-        );
-    }
-    Ok(grid)
-}
-
 #[cfg(test)]
 mod tests {
+    use grid::grid;
+
     use super::*;
 
     #[test]
@@ -139,19 +122,6 @@ mod tests {
         let height_map = get_test_data();
         let low_points = find_low_points(&height_map);
         assert_eq!(find_basins(&height_map, &low_points), vec![3, 9, 14, 9]);
-    }
-
-    #[test]
-    fn test_parse_input() {
-        let lines = vec![
-            Ok("2199943210".to_string()),
-            Ok("3987894921".to_string()),
-            Ok("9856789892".to_string()),
-            Ok("8767896789".to_string()),
-            Ok("9899965678".to_string()),
-        ];
-
-        assert_eq!(parse_input(lines.into_iter()), Ok(get_test_data()));
     }
 
     fn get_test_data() -> Grid<u8> {
