@@ -21,31 +21,3 @@ let computeDepthAndPositionWithAim (instructions: seq<Instruction>) =
         Seq.fold folderWithAim (0, 0, 0) instructions
 
     (depth, position)
-
-module Tests =
-    open FsUnit
-    open Xunit
-
-    [<Fact>]
-    let ``Test depth and position without Aim`` () =
-        [ "forward 5"
-          "down 5"
-          "forward 8"
-          "up 3"
-          "down 8"
-          "forward 2" ]
-        |> Seq.map parse
-        |> computeDepthAndPosition
-        |> should equal (10, 15)
-
-    [<Fact>]
-    let ``Test depth and position with Aim`` () =
-        [ "forward 5"
-          "down 5"
-          "forward 8"
-          "up 3"
-          "down 8"
-          "forward 2" ]
-        |> Seq.map parse
-        |> computeDepthAndPositionWithAim
-        |> should equal (60, 15)

@@ -5,11 +5,12 @@ open System.IO
 
 let args = Environment.GetCommandLineArgs()
 
-if args.Length <> 2 then
-    failwith $"Usage: {args[0]} <INPUT FILE>"
+if args.Length <> 3 then
+    failwith "Usage: $0 <INPUT FILE> <WINDOW SIZE>"
 
-let lines = List.ofSeq (File.ReadLines(args[1]))
-let numbers = List.map int lines
+let numbers =
+    List.ofSeq (File.ReadLines(args[1]))
+    |> List.map int
+let windowSize = int args[2]
 
-printfn $"{Solution.countIncreases 1 numbers}"
-printfn $"{Solution.countIncreases 3 numbers}"
+printfn $"{Solution.countIncreases windowSize numbers}"
