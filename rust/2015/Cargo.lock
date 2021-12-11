@@ -208,6 +208,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "either"
+version = "1.6.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e78d4f1cc4ae33bbfc157ed5d5a5ef3bc29227303d595861deb238fcec4e9457"
+
+[[package]]
 name = "fancy-regex"
 version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -215,6 +221,24 @@ checksum = "36996e5f56f32ca51a937f325094fa450b32df871af1a89be331b7145b931bfc"
 dependencies = [
  "bit-set",
  "regex",
+]
+
+[[package]]
+name = "grid"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bed7999ee197fb0a5736c294af0289caf9681fafabd57ea7fa6af61bf3a19eec"
+dependencies = [
+ "no-std-compat",
+]
+
+[[package]]
+name = "itertools"
+version = "0.10.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a9a9d19fa1e79b6215ff29b9d6880b706147f16e9b1dbb1e4e5947b5b02bc5e3"
+dependencies = [
+ "either",
 ]
 
 [[package]]
@@ -242,10 +266,20 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "308cc39be01b73d0d18f82a0e7b2a3df85245f84af96fdddc5d202d27e47b86a"
 
 [[package]]
-name = "rdcl_aoc_helpers"
-version = "0.8.1"
+name = "no-std-compat"
+version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "961a82997b6840c691d2e4b718927aa35ebc0c5f709771da4985b7f88146c777"
+checksum = "b93853da6d84c2e3c7d730d6473e8817692dd89be387eb01b94d7f108ecb5b8c"
+
+[[package]]
+name = "rdcl_aoc_helpers"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c3b936a89fbbde379b66111ce9cf1f4ce81840b7a2736675ef67d67136b9fe85"
+dependencies = [
+ "grid",
+ "itertools",
+]
 
 [[package]]
 name = "regex"

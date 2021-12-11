@@ -211,12 +211,27 @@ dependencies = [
 ]
 
 [[package]]
+name = "either"
+version = "1.6.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e78d4f1cc4ae33bbfc157ed5d5a5ef3bc29227303d595861deb238fcec4e9457"
+
+[[package]]
 name = "grid"
 version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bed7999ee197fb0a5736c294af0289caf9681fafabd57ea7fa6af61bf3a19eec"
 dependencies = [
  "no-std-compat",
+]
+
+[[package]]
+name = "itertools"
+version = "0.10.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a9a9d19fa1e79b6215ff29b9d6880b706147f16e9b1dbb1e4e5947b5b02bc5e3"
+dependencies = [
+ "either",
 ]
 
 [[package]]
@@ -315,9 +330,13 @@ checksum = "b8f8bdf33df195859076e54ab11ee78a1b208382d3a26ec40d142ffc1ecc49ef"
 
 [[package]]
 name = "rdcl_aoc_helpers"
-version = "0.8.1"
+version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "961a82997b6840c691d2e4b718927aa35ebc0c5f709771da4985b7f88146c777"
+checksum = "c3b936a89fbbde379b66111ce9cf1f4ce81840b7a2736675ef67d67136b9fe85"
+dependencies = [
+ "grid",
+ "itertools",
+]
 
 [[package]]
 name = "redox_syscall"
