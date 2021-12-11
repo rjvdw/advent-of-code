@@ -1,7 +1,9 @@
 use std::collections::HashSet;
 
 use grid::{grid, Grid};
+
 use rdcl_aoc_helpers::error::ParseError;
+use rdcl_aoc_helpers::grid::iterators::WithGridIterator;
 use rdcl_aoc_helpers::input::MultilineFromStr;
 use rdcl_aoc_helpers::parse_error;
 
@@ -25,11 +27,9 @@ impl Board {
     }
 
     pub fn mark(&mut self, nr: u8) {
-        for row in 0..self.dim() {
-            for col in 0..self.dim() {
-                if self.numbers[row][col] == nr {
-                    self.marked.insert((row, col));
-                }
+        for (row, col) in self.numbers.iter_row_col() {
+            if self.numbers[row][col] == nr {
+                self.marked.insert((row, col));
             }
         }
     }
@@ -41,11 +41,9 @@ impl Board {
     pub fn score(&self) -> u32 {
         let mut score = 0;
 
-        for row in 0..self.dim() {
-            for col in 0..self.dim() {
-                if !self.marked.contains(&(row, col)) {
-                    score += self.numbers[row][col] as u32;
-                }
+        for (row, col) in self.numbers.iter_row_col() {
+            if !self.marked.contains(&(row, col)) {
+                score += self.numbers[row][col] as u32;
             }
         }
 

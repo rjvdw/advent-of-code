@@ -3,9 +3,11 @@ extern crate rdcl_aoc_helpers;
 use std::collections::HashSet;
 
 use grid::Grid;
+
 use rdcl_aoc_helpers::args::get_args;
 use rdcl_aoc_helpers::error::WithOrExit;
-
+use rdcl_aoc_helpers::grid::iterators::WithGridIterator;
+use rdcl_aoc_helpers::grid::neighbours::WithNeighbours;
 use shared::numeric_grid;
 
 /// https://adventofcode.com/2021/day/9
@@ -33,37 +35,18 @@ fn main() {
 
 fn find_low_points(height_map: &Grid<u8>) -> Vec<(usize, usize)> {
     let mut low_points = vec![];
-    for row in 0..height_map.rows() {
-        for col in 0..height_map.cols() {
-            let value = height_map[row][col];
-            let is_low_point = neighbours(height_map, row, col)
-                .iter()
-                .map(|&(row, col)| height_map[row][col])
-                .all(|v| v > value);
-            if is_low_point {
-                low_points.push((row, col));
-            }
+    for (row, col) in height_map.iter_row_col() {
+        let value = height_map[row][col];
+        let is_low_point = height_map
+            .neighbours((row, col), false)
+            .iter()
+            .map(|&(row, col)| height_map[row][col])
+            .all(|v| v > value);
+        if is_low_point {
+            low_points.push((row, col));
         }
     }
     low_points
-}
-
-fn neighbours(height_map: &Grid<u8>, row: usize, col: usize) -> Vec<(usize, usize)> {
-    let mut neighbours = vec![];
-    if row > 0 {
-        neighbours.push((row - 1, col));
-    }
-    if col > 0 {
-        neighbours.push((row, col - 1));
-    }
-    if row + 1 < height_map.rows() {
-        neighbours.push((row + 1, col));
-    }
-    if col + 1 < height_map.cols() {
-        neighbours.push((row, col + 1));
-    }
-
-    neighbours
 }
 
 fn calculate_risk(points: &[u8]) -> u32 {
@@ -83,7 +66,7 @@ fn find_basins(height_map: &Grid<u8>, points: &[(usize, usize)]) -> Vec<usize> {
         to_explore.push(point);
         while let Some((row, col)) = to_explore.pop() {
             count += 1;
-            for (row, col) in neighbours(height_map, row, col) {
+            for (row, col) in height_map.neighbours((row, col), false) {
                 let value = height_map[row][col];
                 if !seen.contains(&(row, col)) && value != 9 {
                     seen.insert((row, col));

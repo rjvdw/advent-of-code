@@ -3,10 +3,11 @@ extern crate rdcl_aoc_helpers;
 use std::collections::HashSet;
 
 use grid::Grid;
-use itertools::Itertools;
+
 use rdcl_aoc_helpers::args::get_args_repeating;
 use rdcl_aoc_helpers::error::WithOrExit;
-
+use rdcl_aoc_helpers::grid::iterators::WithGridIterator;
+use rdcl_aoc_helpers::grid::neighbours::WithNeighbours;
 use shared::numeric_grid;
 
 const MAX_RUNS: usize = 10000;
@@ -74,31 +75,21 @@ where
 fn tick(octopuses: &Grid<u8>) -> (Grid<u8>, usize) {
     let (rows, cols) = octopuses.size();
 
-    // this includes the point itself, but since a point can only flash once, this is not a problem
-    let neighbours = |row, col| {
-        (row..row + 3)
-            .cartesian_product(col..col + 3)
-            .filter(|&(r, c)| r > 0 && c > 0 && r - 1 < rows && c - 1 < cols)
-            .map(|(r, c)| (r - 1, c - 1))
-    };
-
     let mut next = Grid::new(rows, cols);
     let mut flashed: HashSet<(usize, usize)> = HashSet::new();
     let mut going_to_flash: Vec<(usize, usize)> = vec![];
 
-    for row in 0..rows {
-        for col in 0..cols {
-            next[row][col] = octopuses[row][col] + 1;
-            if next[row][col] > 9 {
-                going_to_flash.push((row, col));
-            }
+    for (row, col) in octopuses.iter_row_col() {
+        next[row][col] = octopuses[row][col] + 1;
+        if next[row][col] > 9 {
+            going_to_flash.push((row, col));
         }
     }
 
-    while let Some((row, col)) = going_to_flash.pop() {
-        if !flashed.contains(&(row, col)) {
-            flashed.insert((row, col));
-            for (r, c) in neighbours(row, col) {
+    while let Some(p) = going_to_flash.pop() {
+        if !flashed.contains(&p) {
+            flashed.insert(p);
+            for (r, c) in next.neighbours(p, true) {
                 next[r][c] += 1;
                 if next[r][c] > 9 {
                     going_to_flash.push((r, c));
