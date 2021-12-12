@@ -4,3 +4,9 @@ My solutions for [Advent of Code](https://adventofcode.com).
 
 * [2020](AoC2020/)
 * [2021](AoC2021/)
+
+## Install project template
+
+```bash
+dotnet new --install ./templates/RdclDev.AdventOfCode
+```
