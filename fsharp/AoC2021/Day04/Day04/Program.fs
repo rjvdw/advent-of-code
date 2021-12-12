@@ -6,11 +6,11 @@ open System.IO
 let args = Environment.GetCommandLineArgs()
 
 if args.Length <> 2 then
-    failwith $"Usage: {args[0]} <INPUT FILE>"
+    failwith "Usage: $0 <INPUT FILE>"
 
-let lines = File.ReadLines(args[1]) |> List.ofSeq
+let lines = File.ReadLines args.[1] |> List.ofSeq
 
-let parse (lines: list<string>) =
+let parse (lines: string list) =
     let numbersLine, boardLines =
         match lines with
         | numbers :: "" :: boards -> (numbers, boards)

@@ -6,10 +6,10 @@ open System.IO
 let args = Environment.GetCommandLineArgs()
 
 if args.Length <> 2 then
-    failwith $"Usage: {args[0]} <INPUT FILE>"
+    failwith "Usage: $0 <INPUT FILE>"
 
 let dims, map =
-    File.ReadLines(args[1]) |> Solution.parse
+    File.ReadLines args.[1] |> Solution.parse
 
 let lowPoints = map |> Solution.findLowPoints dims
 

@@ -6,10 +6,11 @@ open System.IO
 let args = Environment.GetCommandLineArgs()
 
 if args.Length <> 2 then
-    failwith $"Usage: {args[0]} <INPUT FILE>"
+    failwith "Usage: $0 <INPUT FILE>"
 
-let lines = List.ofSeq (File.ReadLines(args[1]))
-let instructions = List.map Instruction.parse lines
+let instructions =
+    File.ReadLines args.[1]
+    |> Seq.map Instruction.parse
 
 let depth1, position1 =
     Solution.computeDepthAndPosition instructions

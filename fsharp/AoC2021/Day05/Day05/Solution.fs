@@ -26,7 +26,7 @@ type Line =
     member this.points =
         (asSeq this.P1.X this.P2.X, asSeq this.P1.Y this.P2.Y ) ||> Seq.map2 (fun x y -> { X = x; Y = y })
 
-let countDangerousPoints (includeDiagonals: bool) (lines: seq<Line>) =
+let countDangerousPoints (includeDiagonals: bool) (lines: Line seq) =
     lines
     |> Seq.filter (fun line -> includeDiagonals || line.isStraight)
     |> Seq.collect (fun line -> line.points)

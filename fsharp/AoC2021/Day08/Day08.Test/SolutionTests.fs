@@ -56,7 +56,7 @@ let ``Test get output 123`` () =
           C ||| F
           A ||| C ||| D ||| E ||| G
           A ||| C ||| D ||| F ||| G ]
-    let mapping = [ A ; B ; C ; D ; E ; F ; G ]
+    let mapping = [| A ; B ; C ; D ; E ; F ; G |]
     getOutput output mapping |> should equal 123u
 
 [<Fact>]
@@ -66,7 +66,7 @@ let ``Test get output 4567`` () =
           A ||| B ||| D ||| F ||| G
           A ||| B ||| D ||| E ||| F ||| G
           A ||| C ||| F ]
-    let mapping = [ A ; B ; C ; D ; E ; F ; G ]
+    let mapping = [| A ; B ; C ; D ; E ; F ; G |]
     getOutput output mapping |> should equal 4567u
 
 [<Fact>]
@@ -76,7 +76,7 @@ let ``Test get output 8899`` () =
           A ||| B ||| C ||| D ||| E ||| F ||| G
           A ||| B ||| C ||| D ||| F ||| G
           A ||| B ||| C ||| D ||| F ||| G ]
-    let mapping = [ A ; B ; C ; D ; E ; F ; G ]
+    let mapping = [| A ; B ; C ; D ; E ; F ; G |]
     getOutput output mapping |> should equal 8899u
 
 [<Fact>]
@@ -86,7 +86,7 @@ let ``Test get output invalid`` () =
           F ||| G
           F ||| G
           F ||| G ]
-    let mapping = [ A ; B ; C ; D ; E ; F ; G ]
+    let mapping = [| A ; B ; C ; D ; E ; F ; G |]
     (fun () -> getOutput output mapping |> ignore) |> should throw typeof<ArgumentException>
 
 [<Fact>]
@@ -96,7 +96,7 @@ let ``Test get output with valid mapping`` () =
           B ||| D ||| E ||| G ||| A
           C ||| D ||| E ||| G
           B ||| C ||| E ||| G ||| A ]
-    let mapping = [ B ; C ; D ; E ; F ; G ; A ]
+    let mapping = [| B ; C ; D ; E ; F ; G ; A |]
     getOutput output mapping |> should equal 2345u
 
 [<Fact>]
@@ -106,5 +106,5 @@ let ``Test get output with invalid mapping`` () =
           B ||| D ||| E ||| G ||| A
           C ||| D ||| E ||| G
           B ||| C ||| E ||| G ||| A ]
-    let mapping = [ A ; A ; A ; A ; A ; A ; A ]
+    let mapping = [| A ; A ; A ; A ; A ; A ; A |]
     (fun () -> getOutput output mapping |> ignore) |> should throw typeof<ArgumentException>

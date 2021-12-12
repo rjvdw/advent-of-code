@@ -13,10 +13,9 @@ let neighbours (rows: int, cols: int) (idx: int) =
     |> Array.filter (fun (r, c) -> r >= 0 && r < rows && c >= 0 && c < cols)
     |> Array.map (fun (r, c) -> r * cols + c)
 
-let findLowPoints (dims: int * int) (map: array<byte>) =
+let findLowPoints (dims: int * int) (map: byte array) =
     let nb =
-        neighbours dims
-        >> Array.map (fun i -> map |> Array.item i)
+        neighbours dims >> Array.map (fun i -> map.[i])
 
     let isLowPoint (idx: int, value: byte) =
         idx |> nb |> Array.forall (fun v -> v > value)
@@ -26,18 +25,15 @@ let findLowPoints (dims: int * int) (map: array<byte>) =
     |> Seq.filter isLowPoint
     |> Seq.map fst
 
-let findBasin (dims: int * int) (map: array<byte>) (point: int) =
+let findBasin (dims: int * int) (map: byte array) (point: int) =
     let mutable seen = HashSet<int>()
     seen.Add(point) |> ignore
 
     let nb =
         neighbours dims
-        >> Array.filter
-            (fun i ->
-                (map |> Array.item i) <> 9uy
-                && not (seen.Contains i))
+        >> Array.filter (fun i -> map.[i] <> 9uy && not (seen.Contains i))
 
-    let rec find (stack: list<int>) =
+    let rec find (stack: int list) =
         match stack with
         | head :: tail ->
             let n = head |> nb |> Array.toList
@@ -47,11 +43,11 @@ let findBasin (dims: int * int) (map: array<byte>) (point: int) =
 
     [ point ] |> find
 
-let findBasins (dims: int * int) (map: array<byte>) (points: seq<int>) =
+let findBasins (dims: int * int) (map: byte array) (points: int seq) =
     let find = findBasin dims map
     points |> Seq.map find
 
-let parse (lines: seq<string>) =
+let parse (lines: string seq) =
     let dims, map =
         lines
         |> Seq.map (Seq.map (fun ch -> (byte ch) - (byte '0')))

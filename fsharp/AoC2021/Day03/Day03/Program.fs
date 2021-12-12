@@ -6,9 +6,9 @@ open System.IO
 let args = Environment.GetCommandLineArgs()
 
 if args.Length <> 2 then
-    failwith $"Usage: {args[0]} <INPUT FILE>"
+    failwith "Usage: $0 <INPUT FILE>"
 
-let lines = List.ofSeq (File.ReadLines(args[1]))
+let lines = File.ReadLines args.[1] |> Seq.toList
 
 let readings =
     List.map (fun line -> Convert.ToUInt16(line, 2)) lines

@@ -13,7 +13,7 @@ let countBits (mask: uint16) =
                 (c0, c1 + 1))
         (0, 0)
 
-let computePowerConsumption len (values: seq<uint16>) =
+let computePowerConsumption len (values: uint16 seq) =
     let g, e =
         maskSeq
         |> Seq.take len
@@ -27,7 +27,7 @@ let computePowerConsumption len (values: seq<uint16>) =
 
     (uint32 g) * (uint32 e)
 
-let rec filterRatings p (mask: uint16) (values: list<uint16>) =
+let rec filterRatings p (mask: uint16) (values: uint16 list) =
     match values with
     | _ :: _ :: _ ->
         let bit =
@@ -45,7 +45,7 @@ let rec filterRatings p (mask: uint16) (values: list<uint16>) =
     | head :: _ -> uint32 head
     | _ -> failwith "Empty ratings list"
 
-let computeLifeSupportRating len (values: list<uint16>) =
+let computeLifeSupportRating len (values: uint16 list) =
     let mask = maskSeq |> Seq.item (len - 1)
 
     let oxy =

@@ -8,7 +8,7 @@ let folder (depth: int, position: int) (instruction: Instruction) =
     | Down x -> (depth + x, position)
     | Up x -> (depth - x, position)
 
-let computeDepthAndPosition (instructions: seq<Instruction>) = Seq.fold folder (0, 0) instructions
+let computeDepthAndPosition (instructions: Instruction seq) = instructions |> Seq.fold folder (0, 0)
 
 let folderWithAim (depth: int, position: int, aim: int) (instruction: Instruction) =
     match instruction with
@@ -16,7 +16,7 @@ let folderWithAim (depth: int, position: int, aim: int) (instruction: Instructio
     | Down x -> (depth, position, aim + x)
     | Up x -> (depth, position, aim - x)
 
-let computeDepthAndPositionWithAim (instructions: seq<Instruction>) =
+let computeDepthAndPositionWithAim (instructions: Instruction seq) =
     let depth, position, _ =
         Seq.fold folderWithAim (0, 0, 0) instructions
 

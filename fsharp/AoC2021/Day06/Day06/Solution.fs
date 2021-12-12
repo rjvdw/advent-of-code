@@ -5,7 +5,7 @@ let fibSeq =
     |> Seq.unfold (fun (n0, n1, n2, n3, n4, n5, n6, n7, n8) -> Some(n0, (n1, n2, n3, n4, n5, n6, n7, n8, n0 + n2)))
 
 
-let solve (days: int) (values: seq<int>) =
+let solve (days: int) (values: int seq) =
     let day n = fibSeq |> Seq.cache |> Seq.item n
 
     values

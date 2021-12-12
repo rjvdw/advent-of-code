@@ -6,10 +6,10 @@ open System.IO
 let args = Environment.GetCommandLineArgs()
 
 if args.Length <> 2 then
-    failwith $"Usage: {args[0]} <INPUT FILE>"
+    failwith "Usage: $0 <INPUT FILE>"
 
 let results =
-    File.ReadLines(args[1])
+    File.ReadLines args.[1]
     |> Seq.map Solution.parse
     |> Seq.toList
 
@@ -34,4 +34,4 @@ let valid_score =
     |> List.sort
     |> List.toArray
 
-printfn $"The middle score of all valid lines is {valid_score[valid_score.Length / 2]}."
+printfn $"The middle score of all valid lines is {valid_score.[valid_score.Length / 2]}."

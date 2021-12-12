@@ -20,14 +20,14 @@ let G = 0b01000000uy
 let countSegments (digit: byte) =
     [A;B;C;D;E;F;G] |> Seq.filter (fun segment -> (digit &&& segment) <> 0uy) |> Seq.length
 
-let getOutput (output: seq<byte>) (mapping: list<byte>) =
-    let a = mapping[0]
-    let b = mapping[1]
-    let c = mapping[2]
-    let d = mapping[3]
-    let e = mapping[4]
-    let f = mapping[5]
-    let g = mapping[6]
+let getOutput (output: byte seq) (mapping: byte array) =
+    let a = mapping.[0]
+    let b = mapping.[1]
+    let c = mapping.[2]
+    let d = mapping.[3]
+    let e = mapping.[4]
+    let f = mapping.[5]
+    let g = mapping.[6]
 
     let mapper (segments: byte) =
         match segments with
@@ -47,14 +47,14 @@ let getOutput (output: seq<byte>) (mapping: list<byte>) =
     |> Seq.map mapper
     |> Seq.fold (fun decoded digit -> 10u * decoded + digit) 0u
 
-let countEasyDigits (input: list<seq<byte> * seq<byte>>) =
+let countEasyDigits (input: (byte seq * byte seq) seq) =
     input
     |> Seq.collect snd
     |> Seq.map countSegments
     |> Seq.filter (fun count -> count = 2 || count = 3 || count = 4 || count = 7)
     |> Seq.length
 
-let decodeDisplay (digits: seq<byte>, output: seq<byte>) =
+let decodeDisplay (digits: byte seq, output: byte seq) =
     let digitsWithCounts =
         digits
         |> Seq.map (fun digit -> (countSegments digit, digit))
@@ -64,38 +64,38 @@ let decodeDisplay (digits: seq<byte>, output: seq<byte>) =
     |> List.iter
         (fun (count, digit) ->
             match count with
-            | 2 -> decoded[1] <- digit
-            | 3 -> decoded[7] <- digit
-            | 4 -> decoded[4] <- digit
-            | 7 -> decoded[8] <- digit
+            | 2 -> decoded.[1] <- digit
+            | 3 -> decoded.[7] <- digit
+            | 4 -> decoded.[4] <- digit
+            | 7 -> decoded.[8] <- digit
             | _ -> ())
     digitsWithCounts
     |> List.iter
         (fun (count, digit) ->
             match count with
-            | 6 when (digit ||| decoded[4]) = digit -> decoded[9] <- digit
-            | 6 when (digit ||| decoded[1]) = digit -> decoded[0] <- digit
-            | 6 -> decoded[6] <- digit
+            | 6 when (digit ||| decoded.[4]) = digit -> decoded.[9] <- digit
+            | 6 when (digit ||| decoded.[1]) = digit -> decoded.[0] <- digit
+            | 6 -> decoded.[6] <- digit
             | _ -> ())
     digitsWithCounts
     |> List.iter
         (fun (count, digit) ->
             match count with
-            | 5 when (digit ||| decoded[6]) = decoded[6] -> decoded[5] <- digit
-            | 5 when (digit ||| decoded[9]) = decoded[9] -> decoded[3] <- digit
-            | 5 -> decoded[2] <- digit
+            | 5 when (digit ||| decoded.[6]) = decoded.[6] -> decoded.[5] <- digit
+            | 5 when (digit ||| decoded.[9]) = decoded.[9] -> decoded.[3] <- digit
+            | 5 -> decoded.[2] <- digit
             | _ -> ())
     let mutable mapping = [| 0uy ; 0uy ; 0uy ; 0uy ; 0uy ; 0uy ; 0uy |]
-    mapping[0] <- decoded[1] ^^^ decoded[7] // compare 1 and 7 to find a
-    mapping[2] <- decoded[5] ^^^ decoded[9] // compare 5 and 9 to find c
-    mapping[3] <- decoded[0] ^^^ decoded[8] // compare 0 and 8 to find d
-    mapping[4] <- decoded[8] ^^^ decoded[9] // compare 8 and 9 to find e
-    mapping[1] <- (decoded[8] - mapping[4]) ^^^ decoded[3] // compare (8 - e) and 3 to find b
-    mapping[5] <- (decoded[8] - mapping[1]) ^^^ decoded[2] // compare (8 - b) and 2 to find f
-    mapping[6] <- (decoded[4] ||| mapping[0]) ^^^ decoded[9] // compare (4 + a) and 9 to find g
-    getOutput output (mapping |> List.ofArray)
+    mapping.[0] <- decoded.[1] ^^^ decoded.[7] // compare 1 and 7 to find a
+    mapping.[2] <- decoded.[5] ^^^ decoded.[9] // compare 5 and 9 to find c
+    mapping.[3] <- decoded.[0] ^^^ decoded.[8] // compare 0 and 8 to find d
+    mapping.[4] <- decoded.[8] ^^^ decoded.[9] // compare 8 and 9 to find e
+    mapping.[1] <- (decoded.[8] - mapping.[4]) ^^^ decoded.[3] // compare (8 - e) and 3 to find b
+    mapping.[5] <- (decoded.[8] - mapping.[1]) ^^^ decoded.[2] // compare (8 - b) and 2 to find f
+    mapping.[6] <- (decoded.[4] ||| mapping.[0]) ^^^ decoded.[9] // compare (4 + a) and 9 to find g
+    getOutput output mapping
 
-let decodeDisplays: (seq<byte> * seq<byte>) list -> uint32 = List.map decodeDisplay >> List.sum
+let decodeDisplays: (byte seq * byte seq) seq -> uint32 = Seq.map decodeDisplay >> Seq.sum
 
 let parseChar (ch: char) =
     match ch with

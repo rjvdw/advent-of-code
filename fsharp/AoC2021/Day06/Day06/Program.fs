@@ -6,10 +6,10 @@ open System.IO
 let args = Environment.GetCommandLineArgs()
 
 if args.Length <> 3 then
-    failwith $"Usage: {args[0]} <INPUT FILE> <NR DAYS>"
+    failwith "Usage: $0 <INPUT FILE> <NR DAYS>"
 
-let input = File.ReadLines(args[1]) |> Seq.head
-let values = input.Split(',') |> Seq.ofArray |> Seq.map int
-let days = int args[2]
+let input = File.ReadLines args.[1] |> Seq.head
+let values = input.Split(',') |> Array.map int
+let days = int args.[2]
 
 printfn $"After {days} days, there are {Solution.solve days values} lantern fish."

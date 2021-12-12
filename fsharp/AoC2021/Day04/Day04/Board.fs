@@ -3,7 +3,7 @@ module Board
 open System
 
 type Board =
-    { Numbers: List<byte>
+    { Numbers: byte list
       Dim: int
       Marked: Set<int> }
 
@@ -45,7 +45,7 @@ let score (number: byte) (board: Board) =
 
     (uint32 number) * sum
 
-let parseBoard (lines: seq<string>) =
+let parseBoard (lines: string seq) =
     let dim, numbers =
         lines
         |> Seq.map (fun line -> line.Split(' ', StringSplitOptions.RemoveEmptyEntries))
@@ -57,8 +57,8 @@ let parseBoard (lines: seq<string>) =
       Dim = dim
       Marked = Set.empty }
 
-let parseBoards (lines: seq<string>) =
-    let folder (groups: list<list<string>>, nextGroup: list<string>) (line: string) =
+let parseBoards (lines: string seq) =
+    let folder (groups: string list list, nextGroup: string list) (line: string) =
         if line = "" then
             (nextGroup |> List.rev) :: groups, []
         else

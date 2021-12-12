@@ -2,7 +2,7 @@ module Solution
 
 type GameResult = { LastNumber: byte; Score: byte }
 
-let rec play (boards: list<Board.Board>) (numbers: list<byte>) =
+let rec play (boards: Board.Board list) (numbers: byte list) =
     match numbers with
     | number :: nextNumbers ->
         let nextBoards = boards |> List.map (Board.mark number)
@@ -12,7 +12,7 @@ let rec play (boards: list<Board.Board>) (numbers: list<byte>) =
         | _ -> play nextBoards nextNumbers
     | _ -> None
 
-let rec findLosingBoard (boards: list<Board.Board>) (numbers: list<byte>) =
+let rec findLosingBoard (boards: Board.Board list) (numbers: byte list) =
     match numbers with
     | number :: nextNumbers ->
         let markedBoards = boards |> List.map (Board.mark number)
