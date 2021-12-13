@@ -4,9 +4,6 @@ public static class Solution
 {
     public static int CountIncreases(List<int> numbers, int windowSize)
     {
-        if (numbers.Count < windowSize)
-            return 0;
-
         var count = 0;
         var window = numbers.Take(windowSize).ToList();
         var index = 0;
