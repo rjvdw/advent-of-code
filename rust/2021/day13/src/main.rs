@@ -24,15 +24,15 @@ fn main() {
     );
 
     let mut count = 0;
-    while let Some(m) = manual.fold() {
+    while manual.nr_folds() > 0 {
+        manual.fold();
         count += 1;
         println!(
             "After {} fold{}, there are {} dots visible in the manual.",
             count,
             if count == 1 { "" } else { "s" },
-            m.count_visible_dots(),
+            manual.count_visible_dots(),
         );
-        manual = m;
     }
 
     println!("The manual now looks like this:");

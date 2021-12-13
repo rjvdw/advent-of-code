@@ -11,37 +11,35 @@ pub enum Fold {
 }
 
 impl Fold {
-    fn execute(&self, dots: &HashSet<Dot>) -> HashSet<Dot> {
-        let mut folded = HashSet::new();
+    fn execute(self, dots: &HashSet<Dot>) -> HashSet<Dot> {
         match self {
-            Fold::Up(y) => {
-                let y = *y;
-                for dot in dots {
-                    folded.insert(if dot.y > y {
+            Fold::Up(y) => dots
+                .iter()
+                .map(|dot| {
+                    if dot.y > y {
                         Dot {
                             x: dot.x,
                             y: y - (dot.y - y),
                         }
                     } else {
                         *dot
-                    });
-                }
-            }
-            Fold::Left(x) => {
-                let x = *x;
-                for dot in dots {
-                    folded.insert(if dot.x > x {
+                    }
+                })
+                .collect(),
+            Fold::Left(x) => dots
+                .iter()
+                .map(|dot| {
+                    if dot.x > x {
                         Dot {
                             x: x - (dot.x - x),
                             y: dot.y,
                         }
                     } else {
                         *dot
-                    });
-                }
-            }
+                    }
+                })
+                .collect(),
         }
-        folded
     }
 }
 
@@ -70,16 +68,18 @@ impl fmt::Debug for Dot {
 pub struct Manual {
     dots: HashSet<Dot>,
     folds: Vec<Fold>,
+    pointer: usize,
 }
 
 impl Manual {
-    pub fn fold(&self) -> Option<Manual> {
-        let fold = self.folds.first()?;
+    pub fn fold(&mut self) {
+        let fold = self.folds[self.pointer];
+        self.pointer += 1;
+        self.dots = fold.execute(&self.dots);
+    }
 
-        Some(Manual {
-            dots: fold.execute(&self.dots),
-            folds: self.folds[1..].to_vec(),
-        })
+    pub fn nr_folds(&self) -> usize {
+        self.folds.len() - self.pointer
     }
 
     pub fn count_visible_dots(&self) -> usize {
@@ -93,6 +93,7 @@ impl Manual {
         let mut manual = Manual {
             dots: HashSet::new(),
             folds: vec![],
+            pointer: 0,
         };
 
         for line in lines {
@@ -160,18 +161,18 @@ mod tests {
 
     #[test]
     fn test_fold() {
-        let manual = get_test_data();
+        let mut manual = get_test_data();
         assert_eq!(manual.count_visible_dots(), 18);
 
-        let manual = manual.fold().unwrap();
+        manual.fold();
         assert_eq!(manual.count_visible_dots(), 17);
     }
 
     #[test]
     fn test_display() {
         let mut manual = get_test_data();
-        while let Some(m) = manual.fold() {
-            manual = m;
+        while manual.nr_folds() > 0 {
+            manual.fold();
         }
         assert_eq!(
             format!("{}", manual),
