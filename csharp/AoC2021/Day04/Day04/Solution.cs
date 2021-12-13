@@ -38,17 +38,17 @@ public static class Solution
         return losingBoard;
     }
 
-    public static (List<int>, List<Board>) ParseInput(string[] lines)
+    public static (List<int>, List<Board>) ParseInput(IEnumerable<string> lines)
     {
-        var enumerator = lines.GetEnumerator();
+        using var enumerator = lines.GetEnumerator();
 
         // first line contains the numbers
         if (!enumerator.MoveNext())
             throw new ArgumentException("Invalid input", nameof(lines));
-        var numbers = ((string)enumerator.Current!).Split(',').Select(int.Parse).ToList();
+        var numbers = enumerator.Current.Split(',').Select(int.Parse).ToList();
 
         // next line must be empty
-        if (!enumerator.MoveNext() || !string.IsNullOrEmpty((string?)enumerator.Current))
+        if (!enumerator.MoveNext() || !string.IsNullOrEmpty(enumerator.Current))
             throw new ArgumentException("Invalid input", nameof(lines));
 
         // remaining lines describe the bingo boards
@@ -57,7 +57,7 @@ public static class Solution
         boards.Add(board);
         while (enumerator.MoveNext())
         {
-            var line = (string)enumerator.Current!;
+            var line = enumerator.Current;
             if (string.IsNullOrEmpty(line))
             {
                 board = new Board();

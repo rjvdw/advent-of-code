@@ -8,7 +8,7 @@ if (args.Length != 1)
     Environment.Exit(1);
 }
 
-var (numbers, boards) = Solution.ParseInput(File.ReadAllLines(args[0]));
+var (numbers, boards) = Solution.ParseInput(File.ReadLines(args[0]));
 
 var result1 = Solution.Play(boards, numbers);
 if (result1 == null)
