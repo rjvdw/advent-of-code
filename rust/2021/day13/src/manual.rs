@@ -10,39 +10,6 @@ pub enum Fold {
     Left(i32),
 }
 
-impl Fold {
-    fn execute(self, dots: &HashSet<Dot>) -> HashSet<Dot> {
-        match self {
-            Fold::Up(y) => dots
-                .iter()
-                .map(|dot| {
-                    if dot.y > y {
-                        Dot {
-                            x: dot.x,
-                            y: y - (dot.y - y),
-                        }
-                    } else {
-                        *dot
-                    }
-                })
-                .collect(),
-            Fold::Left(x) => dots
-                .iter()
-                .map(|dot| {
-                    if dot.x > x {
-                        Dot {
-                            x: x - (dot.x - x),
-                            y: dot.y,
-                        }
-                    } else {
-                        *dot
-                    }
-                })
-                .collect(),
-        }
-    }
-}
-
 impl fmt::Debug for Fold {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
@@ -73,9 +40,22 @@ pub struct Manual {
 
 impl Manual {
     pub fn fold(&mut self) {
-        let fold = self.folds[self.pointer];
+        self.dots = self
+            .dots
+            .iter()
+            .map(|dot| match self.folds[self.pointer] {
+                Fold::Up(y) if dot.y > y => Dot {
+                    x: dot.x,
+                    y: y - (dot.y - y),
+                },
+                Fold::Left(x) if dot.x > x => Dot {
+                    x: x - (dot.x - x),
+                    y: dot.y,
+                },
+                _ => *dot,
+            })
+            .collect();
         self.pointer += 1;
-        self.dots = fold.execute(&self.dots);
     }
 
     pub fn nr_folds(&self) -> usize {
