@@ -41,7 +41,7 @@ public class Analysis
             ']' => 57UL,
             '}' => 1197UL,
             '>' => 25137,
-            _ => throw new InvalidOperationException($"illegal character: {_invalidCharacter}")
+            _ => throw new InvalidOperationException($"illegal character: {_invalidCharacter}"),
         },
         AnalysisType.Valid => _missingCharacters!
             .ToCharArray()
@@ -51,10 +51,10 @@ public class Analysis
                 ']' => 2UL,
                 '}' => 3UL,
                 '>' => 4UL,
-                _ => throw new InvalidOperationException($"illegal character: {ch}")
+                _ => throw new InvalidOperationException($"illegal character: {ch}"),
             })
             .Aggregate(0UL, (acc, v) => 5 * acc + v),
-        _ => throw new InvalidOperationException($"Invalid validation result: %A{this}")
+        _ => throw new InvalidOperationException($"Invalid validation result: %A{this}"),
     };
 
     private static Analysis Valid(string missingCharacters) => new(AnalysisType.Valid, null, missingCharacters);
@@ -102,7 +102,7 @@ public class Analysis
                 '[' => ']',
                 '{' => '}',
                 '<' => '>',
-                _ => throw new InvalidOperationException()
+                _ => throw new InvalidOperationException(),
             }));
 
         return Valid(missing);
@@ -111,6 +111,6 @@ public class Analysis
     public enum AnalysisType
     {
         Invalid,
-        Valid
+        Valid,
     }
 }

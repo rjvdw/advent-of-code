@@ -7,7 +7,7 @@ public class DisplayTest
 {
     private readonly byte[] _defaultMapping =
     {
-        Display.A, Display.B, Display.C, Display.D, Display.E, Display.F, Display.G
+        Display.A, Display.B, Display.C, Display.D, Display.E, Display.F, Display.G,
     };
 
     [Fact]
@@ -20,7 +20,7 @@ public class DisplayTest
                 Display.A | Display.B | Display.C | Display.E | Display.F | Display.G,
                 Display.C | Display.F,
                 Display.A | Display.C | Display.D | Display.E | Display.G,
-                Display.A | Display.C | Display.D | Display.F | Display.G
+                Display.A | Display.C | Display.D | Display.F | Display.G,
             });
 
         Assert.Equal(123U, display.GetOutput(_defaultMapping));
@@ -36,7 +36,7 @@ public class DisplayTest
                 Display.B | Display.C | Display.D | Display.F,
                 Display.A | Display.B | Display.D | Display.F | Display.G,
                 Display.A | Display.B | Display.D | Display.E | Display.F | Display.G,
-                Display.A | Display.C | Display.F
+                Display.A | Display.C | Display.F,
             });
 
         Assert.Equal(4567U, display.GetOutput(_defaultMapping));
@@ -52,7 +52,7 @@ public class DisplayTest
                 Display.A | Display.B | Display.C | Display.D | Display.E | Display.F | Display.G,
                 Display.A | Display.B | Display.C | Display.D | Display.E | Display.F | Display.G,
                 Display.A | Display.B | Display.C | Display.D | Display.F | Display.G,
-                Display.A | Display.B | Display.C | Display.D | Display.F | Display.G
+                Display.A | Display.B | Display.C | Display.D | Display.F | Display.G,
             });
 
         Assert.Equal(8899U, display.GetOutput(_defaultMapping));
@@ -68,7 +68,7 @@ public class DisplayTest
                 Display.F | Display.G,
                 Display.F | Display.G,
                 Display.F | Display.G,
-                Display.F | Display.G
+                Display.F | Display.G,
             });
 
         Assert.Throws<ArgumentException>(() => display.GetOutput(_defaultMapping));
@@ -84,11 +84,11 @@ public class DisplayTest
                 Display.B | Display.D | Display.E | Display.F | Display.A,
                 Display.B | Display.D | Display.E | Display.G | Display.A,
                 Display.C | Display.D | Display.E | Display.G,
-                Display.B | Display.C | Display.E | Display.G | Display.A
+                Display.B | Display.C | Display.E | Display.G | Display.A,
             });
         byte[] mapping =
         {
-            Display.B, Display.C, Display.D, Display.E, Display.F, Display.G, Display.A
+            Display.B, Display.C, Display.D, Display.E, Display.F, Display.G, Display.A,
         };
 
         Assert.Equal(2345U, display.GetOutput(mapping));
@@ -104,11 +104,11 @@ public class DisplayTest
                 Display.B | Display.D | Display.E | Display.F | Display.A,
                 Display.B | Display.D | Display.E | Display.G | Display.A,
                 Display.C | Display.D | Display.E | Display.G,
-                Display.B | Display.C | Display.E | Display.G | Display.A
+                Display.B | Display.C | Display.E | Display.G | Display.A,
             });
         byte[] mapping =
         {
-            Display.A, Display.A, Display.A, Display.A, Display.A, Display.A, Display.A
+            Display.A, Display.A, Display.A, Display.A, Display.A, Display.A, Display.A,
         };
 
         Assert.Throws<ArgumentException>(() => display.GetOutput(mapping));

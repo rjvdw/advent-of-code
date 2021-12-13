@@ -39,7 +39,7 @@ public record Display(byte[] Digits, byte[] Output)
                 var x when x == (a | c | f) => 7U,
                 var x when x == (a | b | c | d | e | f | g) => 8U,
                 var x when x == (a | b | c | d | f | g) => 9U,
-                _ => throw new ArgumentException("Invalid mapping provided", nameof(mapping))
+                _ => throw new ArgumentException("Invalid mapping provided", nameof(mapping)),
             };
             decoded *= 10;
             decoded += digit;
@@ -74,7 +74,7 @@ public record Display(byte[] Digits, byte[] Output)
                 'e' => E,
                 'f' => F,
                 'g' => G,
-                _ => 0
+                _ => 0,
             };
         return bytes;
     }

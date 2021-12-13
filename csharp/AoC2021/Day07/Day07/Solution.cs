@@ -21,7 +21,7 @@ public static class Solution
             {
                 null => (point, fuelCost),
                 var (_, c) when c > fuelCost => (point, fuelCost),
-                _ => optimum
+                _ => optimum,
             };
         }
 

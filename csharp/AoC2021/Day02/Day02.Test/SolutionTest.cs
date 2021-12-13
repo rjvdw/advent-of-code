@@ -16,7 +16,7 @@ public class SolutionTest
                 "forward 8",
                 "up 3",
                 "down 8",
-                "forward 2"
+                "forward 2",
             }
             .Select(Instruction.Parse)
             .ToList();
@@ -34,7 +34,7 @@ public class SolutionTest
                 "forward 8",
                 "up 3",
                 "down 8",
-                "forward 2"
+                "forward 2",
             }
             .Select(Instruction.Parse)
             .ToList();

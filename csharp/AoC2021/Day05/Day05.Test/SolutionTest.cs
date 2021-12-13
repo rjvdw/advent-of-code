@@ -20,7 +20,7 @@ public class SolutionTest
             "0,9 -> 2,9",
             "3,4 -> 1,4",
             "0,0 -> 8,8",
-            "5,5 -> 8,2"
+            "5,5 -> 8,2",
         }.Select(Line.Parse).ToList();
         Assert.Equal(5, Solution.CountDangerousPoints(lines, false));
         Assert.Equal(12, Solution.CountDangerousPoints(lines, true));

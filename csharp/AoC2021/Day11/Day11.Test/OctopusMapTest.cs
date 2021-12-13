@@ -13,7 +13,7 @@ public class OctopusMapTest
             "19991",
             "19191",
             "19991",
-            "11111"
+            "11111",
         });
 
         var expected1 = string.Join('\n',
