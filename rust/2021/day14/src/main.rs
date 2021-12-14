@@ -41,31 +41,29 @@ fn main() {
 fn process(polymer: &str, instructions: &InstructionMap, steps: usize) -> HashMap<char, usize> {
     let mut iter = polymer.chars();
     let mut ch1 = iter.next().unwrap();
-    let mut counts = HashMap::new();
 
+    let mut frequencies: HashMap<Pair, usize> = HashMap::new();
     for ch2 in iter {
-        let pair = Pair(ch1, ch2);
+        *frequencies.entry(Pair(ch1, ch2)).or_insert(0) += 1;
         ch1 = ch2;
-        update_counts(&mut counts, pair, instructions, steps);
     }
+
+    for _ in 1..=steps {
+        let mut next = HashMap::new();
+        for (pair, count) in frequencies {
+            let (p1, p2) = *instructions.get(&pair).unwrap();
+            *next.entry(p1).or_insert(0) += count;
+            *next.entry(p2).or_insert(0) += count;
+        }
+        frequencies = next;
+    }
+
+    let mut counts = HashMap::new();
     *counts.entry(ch1).or_insert(0) += 1;
-
-    counts
-}
-
-fn update_counts(
-    counts: &mut HashMap<char, usize>,
-    pair: Pair,
-    instructions: &InstructionMap,
-    steps: usize,
-) {
-    if steps == 0 {
-        *counts.entry(pair.0).or_insert(0) += 1;
-    } else {
-        let (p1, p2) = instructions.get(&pair).unwrap();
-        update_counts(counts, *p1, instructions, steps - 1);
-        update_counts(counts, *p2, instructions, steps - 1);
+    for (pair, count) in frequencies {
+        *counts.entry(pair.0).or_insert(0) += count;
     }
+    counts
 }
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
