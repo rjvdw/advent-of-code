@@ -1,11 +1,15 @@
 use std::collections::HashMap;
 use std::fs::File;
-use std::io;
 use std::io::{BufRead, BufReader};
+use std::process::exit;
+use std::{fmt, io};
 
+use itertools::{Itertools, MinMaxResult};
 use rdcl_aoc_helpers::args::get_args;
 use rdcl_aoc_helpers::error::{ParseError, WithOrExit};
 use rdcl_aoc_helpers::parse_error;
+
+type InstructionMap = HashMap<Pair, (Pair, Pair)>;
 
 /// https://adventofcode.com/2021/day/14
 fn main() {
@@ -16,18 +20,64 @@ fn main() {
     let steps = args[2].parse::<usize>().or_exit_with(1);
 
     let (polymer, instructions) = parse(lines).or_exit_with(1);
+    if polymer.len() < 2 {
+        eprintln!("The initial polymer is too short to do anything with.");
+        exit(1);
+    }
 
-    let processed = process(&polymer, &instructions, steps);
-    let (min, max) = analyze(&processed);
-    println!(
-        "The most common element occurs {} times and the least common element occurs {} times. The final answer is {}.",
-        max,
-        min,
-        max - min
-    );
+    let counts = process(&polymer, &instructions, steps);
+
+    match counts.values().copied().minmax() {
+        MinMaxResult::MinMax(min, max) => println!(
+            "The most common element occurs {} times and the least common element occurs {} times. The final answer is {}.",
+            max,
+            min,
+            max - min
+        ),
+        _ => eprintln!("Unable to determine the min and max."),
+    }
 }
 
-fn parse<I>(mut lines: I) -> Result<(String, Vec<(String, char)>), ParseError>
+fn process(polymer: &str, instructions: &InstructionMap, steps: usize) -> HashMap<char, usize> {
+    let mut iter = polymer.chars();
+    let mut ch1 = iter.next().unwrap();
+    let mut counts = HashMap::new();
+
+    for ch2 in iter {
+        let pair = Pair(ch1, ch2);
+        ch1 = ch2;
+        update_counts(&mut counts, pair, instructions, steps);
+    }
+    *counts.entry(ch1).or_insert(0) += 1;
+
+    counts
+}
+
+fn update_counts(
+    counts: &mut HashMap<char, usize>,
+    pair: Pair,
+    instructions: &InstructionMap,
+    steps: usize,
+) {
+    if steps == 0 {
+        *counts.entry(pair.0).or_insert(0) += 1;
+    } else {
+        let (p1, p2) = instructions.get(&pair).unwrap();
+        update_counts(counts, *p1, instructions, steps - 1);
+        update_counts(counts, *p2, instructions, steps - 1);
+    }
+}
+
+#[derive(Copy, Clone, Eq, PartialEq, Hash)]
+struct Pair(char, char);
+
+impl fmt::Debug for Pair {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "Pair({}, {})", self.0, self.1)
+    }
+}
+
+fn parse<I>(mut lines: I) -> Result<(String, InstructionMap), ParseError>
 where
     I: Iterator<Item = io::Result<String>>,
 {
@@ -44,61 +94,16 @@ where
     };
 
     // rest of the lines contain the instructions
-    let mut instructions = vec![];
+    let mut instructions = HashMap::new();
     for line in lines {
-        let line = line?;
-        let (pattern, insert) = match line.find(" -> ") {
-            Some(p) => (line[..p].to_string(), line.chars().nth(p + 4).unwrap()),
-            None => return Err(parse_error!("Invalid input line: {}", line)),
-        };
-        instructions.push((pattern, insert));
+        let chars = line?.chars().collect::<Vec<char>>();
+        let from = Pair(chars[0], chars[1]);
+        let to1 = Pair(chars[0], chars[6]);
+        let to2 = Pair(chars[6], chars[1]);
+        instructions.insert(from, (to1, to2));
     }
 
     Ok((polymer, instructions))
-}
-
-fn process(polymer: &str, instructions: &[(String, char)], steps: usize) -> String {
-    let mut polymer = polymer.to_string();
-
-    for _ in 1..steps + 1 {
-        let mut insertions: Vec<(usize, char)> = vec![];
-        for (pattern, insert) in instructions {
-            let mut offset = 0;
-            while let Some(p) = polymer[offset..].find(pattern) {
-                insertions.push((offset + p + 1, *insert));
-                offset = offset + p + 1;
-            }
-        }
-
-        insertions.sort_unstable_by_key(|&(i, _)| i);
-        for (offset, (i, ch)) in insertions.into_iter().enumerate() {
-            polymer.insert(i + offset, ch);
-        }
-    }
-
-    polymer
-}
-
-fn analyze(str: &str) -> (usize, usize) {
-    let mut counts: HashMap<char, usize> = HashMap::new();
-
-    for ch in str.chars() {
-        *counts.entry(ch).or_insert(0) += 1;
-    }
-
-    let mut min = usize::MAX;
-    let mut max = usize::MIN;
-
-    for &count in counts.values() {
-        if count < min {
-            min = count;
-        }
-        if count > max {
-            max = count;
-        }
-    }
-
-    (min, max)
 }
 
 #[cfg(test)]
@@ -106,38 +111,50 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_process() {
+    fn test_process_1() {
         let (polymer, instructions) = get_test_data();
+        let counts = process(&polymer, &instructions, 1);
 
-        let polymer = process(&polymer, &instructions, 1);
-        assert_eq!(&polymer, "NCNBCHB");
-
-        let polymer = process(&polymer, &instructions, 1);
-        assert_eq!(&polymer, "NBCCNBBBCBHCB");
-
-        let polymer = process(&polymer, &instructions, 1);
-        assert_eq!(&polymer, "NBBBCNCCNBBNBNBBCHBHHBCHB");
-
-        let polymer = process(&polymer, &instructions, 1);
-        assert_eq!(
-            &polymer,
-            "NBBNBNBBCCNBCNCCNBBNBBNBBBNBBNBBCBHCBHHNHCBBCBHCB"
-        );
+        assert_eq!(counts.get(&'B'), Some(&2usize));
+        assert_eq!(counts.get(&'C'), Some(&2usize));
+        assert_eq!(counts.get(&'H'), Some(&1usize));
+        assert_eq!(counts.get(&'N'), Some(&2usize));
     }
 
     #[test]
-    fn test_analyze() {
-        assert_eq!(analyze("NNCB"), (1, 2));
-        assert_eq!(analyze("NCNBCHB"), (1, 2));
-        assert_eq!(analyze("NBCCNBBBCBHCB"), (1, 6));
-        assert_eq!(analyze("NBBBCNCCNBBNBNBBCHBHHBCHB"), (4, 11));
-        assert_eq!(
-            analyze("NBBNBNBBCCNBCNCCNBBNBBNBBBNBBNBBCBHCBHHNHCBBCBHCB"),
-            (5, 23)
-        );
+    fn test_process_2() {
+        let (polymer, instructions) = get_test_data();
+        let counts = process(&polymer, &instructions, 2);
+
+        assert_eq!(counts.get(&'B'), Some(&6usize));
+        assert_eq!(counts.get(&'C'), Some(&4usize));
+        assert_eq!(counts.get(&'H'), Some(&1usize));
+        assert_eq!(counts.get(&'N'), Some(&2usize));
     }
 
-    fn get_test_data() -> (String, Vec<(String, char)>) {
+    #[test]
+    fn test_process_3() {
+        let (polymer, instructions) = get_test_data();
+        let counts = process(&polymer, &instructions, 3);
+
+        assert_eq!(counts.get(&'B'), Some(&11usize));
+        assert_eq!(counts.get(&'C'), Some(&5usize));
+        assert_eq!(counts.get(&'H'), Some(&4usize));
+        assert_eq!(counts.get(&'N'), Some(&5usize));
+    }
+
+    #[test]
+    fn test_process_4() {
+        let (polymer, instructions) = get_test_data();
+        let counts = process(&polymer, &instructions, 4);
+
+        assert_eq!(counts.get(&'B'), Some(&23usize));
+        assert_eq!(counts.get(&'C'), Some(&10usize));
+        assert_eq!(counts.get(&'H'), Some(&5usize));
+        assert_eq!(counts.get(&'N'), Some(&11usize));
+    }
+
+    fn get_test_data() -> (String, InstructionMap) {
         let lines = vec![
             Ok("NNCB".to_string()),
             Ok("".to_string()),

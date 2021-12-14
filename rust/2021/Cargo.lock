@@ -104,6 +104,7 @@ dependencies = [
 name = "day14"
 version = "0.1.0"
 dependencies = [
+ "itertools",
  "rdcl_aoc_helpers",
 ]
 
