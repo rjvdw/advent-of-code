@@ -10,5 +10,5 @@ name = "aoc-2015-12"
 path = "src/main.rs"
 
 [dependencies]
-rdcl_aoc_helpers = "0.9.0"
+rdcl_aoc_helpers = "0.9.1"
 json = "0.12.4"

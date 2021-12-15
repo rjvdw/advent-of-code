@@ -22,7 +22,7 @@ name = "aoc-2019-13-auto-play"
 path = "src/auto-play.rs"
 
 [dependencies]
-rdcl_aoc_helpers = "0.9.0"
+rdcl_aoc_helpers = "0.9.1"
 grid = "0.6.0"
 termion = "1.5.5"
 shared = { path = "../shared" }

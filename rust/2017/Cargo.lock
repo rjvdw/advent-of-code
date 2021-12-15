@@ -238,9 +238,9 @@ checksum = "b8f8bdf33df195859076e54ab11ee78a1b208382d3a26ec40d142ffc1ecc49ef"
 
 [[package]]
 name = "rdcl_aoc_helpers"
-version = "0.9.0"
+version = "0.9.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c3b936a89fbbde379b66111ce9cf1f4ce81840b7a2736675ef67d67136b9fe85"
+checksum = "8c0e28eb38f0228a8bfdb980d7863ca4ea0739be3c373fdfb04740e548f97feb"
 dependencies = [
  "grid",
  "itertools",
