@@ -3,10 +3,10 @@ name = "day20"
 version = "0.1.0"
 authors = ["Ruud van der Weide <rj@rdcl.dev>"]
 edition = "2021"
-default-run = "aoc-2021-20"
+default-run = "aoc-2018-20"
 
 [[bin]]
-name = "aoc-2021-20"
+name = "aoc-2018-20"
 path = "src/main.rs"
 
 [dependencies]
