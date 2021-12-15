@@ -1,5 +1,6 @@
 //! Searching algorithms.
-use std::collections::{HashMap, HashSet};
+use std::cmp::Ordering;
+use std::collections::{BinaryHeap, HashMap};
 use std::hash::Hash;
 use std::ops::Add;
 
@@ -20,24 +21,19 @@ pub trait Navigable {
     where
         Self::Point: Hash + PartialEq + Eq + Clone,
     {
-        let mut open_set: HashSet<Self::Point> = HashSet::new();
-        open_set.insert(start.clone());
+        let mut open_set: BinaryHeap<SortablePoint<Self::Point>> = BinaryHeap::new();
+        open_set.push(SortablePoint {
+            point: start.clone(),
+            f_score: self.distance_score(start, end),
+        });
 
         let mut came_from: HashMap<Self::Point, Self::Point> = HashMap::new();
 
         let mut g_score: HashMap<Self::Point, u64> = HashMap::new();
         g_score.insert(start.clone(), 0);
 
-        let mut f_score: HashMap<Self::Point, u64> = HashMap::new();
-        f_score.insert(start.clone(), self.distance_score(start, end));
-
-        while !open_set.is_empty() {
-            let current = &open_set
-                .iter()
-                .min_by_key(|node| f_score.get(node).unwrap_or(&u64::MAX))
-                .cloned()
-                .unwrap();
-
+        while let Some(current) = open_set.pop() {
+            let current = &current.point;
             if current == end {
                 let mut point = current;
                 let mut path = vec![point.clone()];
@@ -49,7 +45,6 @@ pub trait Navigable {
                 return Some(path);
             }
 
-            open_set.remove(current);
             let current_distance = *g_score.get(current).unwrap_or(&u64::MAX);
 
             for (d, neighbour) in &self.get_neighbours(current) {
@@ -59,11 +54,10 @@ pub trait Navigable {
                 if distance < neighbour_distance {
                     came_from.insert(neighbour.clone(), current.clone());
                     g_score.insert(neighbour.clone(), distance);
-                    f_score.insert(
-                        neighbour.clone(),
-                        distance.add(self.distance_score(neighbour, end)),
-                    );
-                    open_set.insert(neighbour.clone());
+                    open_set.push(SortablePoint {
+                        point: neighbour.clone(),
+                        f_score: distance.add(self.distance_score(neighbour, end)),
+                    });
                 }
             }
         }
@@ -72,8 +66,37 @@ pub trait Navigable {
     }
 }
 
+/// In the A* implementation, a priority queue (i.e. BinaryHeap) is used. This wrapper around the
+/// points allows sorting on the f_score. Note that a descending sort is used.
+struct SortablePoint<P> {
+    point: P,
+    f_score: u64,
+}
+
+impl<P> Eq for SortablePoint<P> {}
+
+impl<P> PartialEq<Self> for SortablePoint<P> {
+    fn eq(&self, other: &Self) -> bool {
+        other.f_score.eq(&self.f_score)
+    }
+}
+
+impl<P> PartialOrd<Self> for SortablePoint<P> {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        other.f_score.partial_cmp(&self.f_score)
+    }
+}
+
+impl<P> Ord for SortablePoint<P> {
+    fn cmp(&self, other: &Self) -> Ordering {
+        other.f_score.cmp(&self.f_score)
+    }
+}
+
 #[cfg(test)]
 mod tests {
+    use std::collections::HashSet;
+
     use crate::math::taxi_cab_2d;
 
     use super::*;
