@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace Day16;
 
 public class Packet
@@ -81,14 +83,14 @@ public class Packet
     private static (int, Packet) ParseLiteral(string bits, int position, int version, int typeId)
     {
         var i = position;
-        var value = "";
+        var value = new StringBuilder();
         while (i < bits.Length)
         {
             var chunk = bits[i..(i + 5)];
             i += 5;
-            value += chunk[1..];
+            value.Append(chunk[1..]);
             if (chunk.StartsWith("0"))
-                return (i, new Packet(version, typeId, Convert.ToInt64(value, 2)));
+                return (i, new Packet(version, typeId, Convert.ToInt64(value.ToString(), 2)));
         }
 
         throw new InvalidOperationException("Invalid literal packet");
