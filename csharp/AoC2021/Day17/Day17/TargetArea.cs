@@ -7,8 +7,6 @@ public class TargetArea
     private readonly long _yMin;
     private readonly long _yMax;
 
-    public override string ToString() => $"target area: x={_xMin}..{_xMax}, y={_yMin}..{_yMax}";
-
     public long FindMaxHeight()
     {
         var (d, y) = GetYBound();

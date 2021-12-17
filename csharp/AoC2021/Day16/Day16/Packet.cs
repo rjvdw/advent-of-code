@@ -6,40 +6,37 @@ public class Packet
 {
     private readonly int _version;
     private readonly int _typeId;
-    private readonly long? _literalValue;
+    private readonly long _literalValue;
     private readonly List<Packet> _subPackets;
 
     public long SumVersions() => _version + _subPackets.Sum(packet => packet.SumVersions());
 
     public long Eval()
     {
-        if (_literalValue.HasValue)
-            return _literalValue.Value;
-
-        if (_typeId < 4)
+        switch (_typeId)
         {
-            var subs = _subPackets.Select(packet => packet.Eval());
+            case 4:
+                return _literalValue;
+            case < 4:
+                var subs = _subPackets.Select(packet => packet.Eval());
+                return _typeId switch
+                {
+                    0 => subs.Sum(),
+                    1 => subs.Aggregate(1L, (a, b) => a * b),
+                    2 => subs.Min(),
+                    _ => subs.Max(),
+                };
+            case > 4:
+                var a = _subPackets[0].Eval();
+                var b = _subPackets[1].Eval();
 
-            return _typeId switch
-            {
-                0 => subs.Sum(),
-                1 => subs.Aggregate(1L, (a, b) => a * b),
-                2 => subs.Min(),
-                3 => subs.Max(),
-                _ => throw new InvalidOperationException($"Invalid type id: {_typeId}"),
-            };
+                return _typeId switch
+                {
+                    5 => a > b ? 1 : 0,
+                    6 => a < b ? 1 : 0,
+                    _ => a == b ? 1 : 0,
+                };
         }
-
-        var a = _subPackets[0].Eval();
-        var b = _subPackets[1].Eval();
-
-        return _typeId switch
-        {
-            5 => a > b ? 1 : 0,
-            6 => a < b ? 1 : 0,
-            7 => a == b ? 1 : 0,
-            _ => throw new InvalidOperationException($"Invalid type id: {_typeId}"),
-        };
     }
 
     private Packet(int version, int typeId, long literalValue)
@@ -54,7 +51,7 @@ public class Packet
     {
         _version = version;
         _typeId = typeId;
-        _literalValue = null;
+        _literalValue = 0;
         _subPackets = subPackets;
     }
 
@@ -84,7 +81,7 @@ public class Packet
     {
         var i = position;
         var value = new StringBuilder();
-        while (i < bits.Length)
+        while (true)
         {
             var chunk = bits[i..(i + 5)];
             i += 5;
@@ -92,8 +89,6 @@ public class Packet
             if (chunk.StartsWith("0"))
                 return (i, new Packet(version, typeId, Convert.ToInt64(value.ToString(), 2)));
         }
-
-        throw new InvalidOperationException("Invalid literal packet");
     }
 
     private static (int, Packet) ParseOperator(string bits, int position, int version, int typeId)
