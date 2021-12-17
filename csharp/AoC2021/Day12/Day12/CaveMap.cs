@@ -44,31 +44,6 @@ public class CaveMap
         return count;
     }
 
-    public override string ToString()
-    {
-        var sb = new StringBuilder();
-        sb.Append("CaveMap {\n");
-
-        sb.Append("  nodes: { ");
-        sb.Append(string.Join(", ", _nodes));
-        sb.Append(" }\n");
-
-        sb.Append("  edges: {\n");
-        foreach (var (from, to) in _edges)
-        {
-            sb.Append("    ");
-            sb.Append(from);
-            sb.Append(": { ");
-            sb.Append(string.Join(", ", to));
-            sb.Append(" },\n");
-        }
-
-        sb.Append("  }");
-
-        sb.Append('}');
-        return sb.ToString();
-    }
-
     public static CaveMap Parse(IEnumerable<string> lines)
     {
         var nodes = new HashSet<string>();
@@ -77,9 +52,6 @@ public class CaveMap
         foreach (var line in lines)
         {
             var p = line.IndexOf('-');
-            if (p == -1)
-                throw new ArgumentException("Invalid input provided.", nameof(lines));
-
             var n1 = line[..p];
             var n2 = line[(p + 1)..];
 

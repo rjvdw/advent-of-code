@@ -2,8 +2,6 @@
 
 public static class Solution
 {
-    private const int MaxSteps = 10000;
-
     public static int RunSimulation(OctopusMap map, int steps)
     {
         var total = 0;
@@ -29,13 +27,6 @@ public static class Solution
             if (condition(flashes))
                 return counter;
             current = next;
-
-            if (counter > MaxSteps)
-            {
-                Console.Error.WriteLine(
-                    $"The simulation has been running for {counter} steps. This does not seem good.");
-                Environment.Exit(1);
-            }
         }
     }
 }

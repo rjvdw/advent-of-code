@@ -15,16 +15,10 @@ public struct Point
 
     public override int GetHashCode() => HashCode.Combine(X, Y);
 
-    public override string ToString() => $"{X},{Y}";
-
     public static Point Parse(string s)
     {
         var p = s.IndexOf(',');
         if (p == -1) throw new ArgumentException("Invalid input.", nameof(s));
         return new Point(int.Parse(s[..p]), int.Parse(s[(p + 1)..]));
     }
-
-    public static bool operator ==(Point left, Point right) => left.Equals(right);
-
-    public static bool operator !=(Point left, Point right) => !(left == right);
 }
