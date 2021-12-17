@@ -12,6 +12,8 @@ public struct Point
     }
 
     public override bool Equals(object? obj) => obj is Point p && p.X == X && p.Y == Y;
+    public static bool operator ==(Point left, Point right) => left.Equals(right);
+    public static bool operator !=(Point left, Point right) => !(left == right);
 
     public override int GetHashCode() => HashCode.Combine(X, Y);
 

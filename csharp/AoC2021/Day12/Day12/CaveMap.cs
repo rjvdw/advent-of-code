@@ -4,12 +4,10 @@ namespace Day12;
 
 public class CaveMap
 {
-    private readonly HashSet<string> _nodes;
     private readonly Dictionary<string, HashSet<string>> _edges;
 
-    private CaveMap(HashSet<string> nodes, Dictionary<string, HashSet<string>> edges)
+    private CaveMap(Dictionary<string, HashSet<string>> edges)
     {
-        _nodes = nodes;
         _edges = edges;
     }
 
@@ -46,7 +44,6 @@ public class CaveMap
 
     public static CaveMap Parse(IEnumerable<string> lines)
     {
-        var nodes = new HashSet<string>();
         var edges = new Dictionary<string, HashSet<string>>();
 
         foreach (var line in lines)
@@ -54,9 +51,6 @@ public class CaveMap
             var p = line.IndexOf('-');
             var n1 = line[..p];
             var n2 = line[(p + 1)..];
-
-            nodes.Add(n1);
-            nodes.Add(n2);
 
             if (n1 != "end" && n2 != "start")
             {
@@ -73,6 +67,6 @@ public class CaveMap
             }
         }
 
-        return new CaveMap(nodes, edges);
+        return new CaveMap(edges);
     }
 }

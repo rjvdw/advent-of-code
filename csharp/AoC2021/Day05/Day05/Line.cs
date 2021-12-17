@@ -21,7 +21,7 @@ public readonly struct Line
     {
         var point = P1;
         yield return point;
-        while (!point.Equals(P2))
+        while (point != P2)
         {
             if (point.X < P2.X) point.X += 1;
             else if (point.X > P2.X) point.X -= 1;
