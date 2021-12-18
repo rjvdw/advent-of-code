@@ -17,6 +17,7 @@ public class SnailNumber
 
         while (sn.Reduce())
         {
+            // noop
         }
 
         return sn;
@@ -202,10 +203,7 @@ public class SnailNumber
             return false;
         }
 
-        {
-            var (left, right) = _pair!.Value;
-            return left.Split() || right.Split();
-        }
+        return _pair!.Value.Left.Split() || _pair!.Value.Right.Split();
     }
 
     /// <summary>
@@ -215,13 +213,9 @@ public class SnailNumber
     /// <exception cref="InvalidOperationException">Thrown when the snail number is in an invalid state.</exception>
     public override string ToString()
     {
-        if (_value.HasValue && _pair.HasValue)
-            throw new InvalidOperationException("Invalid snail number (both a value and a pair).");
         if (_value.HasValue)
             return _value.Value.ToString();
-        if (_pair.HasValue)
-            return $"[{_pair.Value.Left},{_pair.Value.Right}]";
-        throw new InvalidOperationException("Incomplete snail number (no value or pair).");
+        return $"[{_pair!.Value.Left},{_pair!.Value.Right}]";
     }
 
     /// <summary>
