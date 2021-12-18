@@ -1,3 +1,4 @@
+use std::cmp::Ordering;
 use std::fmt;
 use std::ops::Add;
 use std::str::FromStr;
@@ -5,10 +6,10 @@ use std::str::FromStr;
 use rdcl_aoc_helpers::error::ParseError;
 use rdcl_aoc_helpers::parse_error;
 
-#[derive(Clone)]
-pub enum SnailNumber {
-    Regular(u8),
-    Pair(Box<SnailNumber>, Box<SnailNumber>),
+#[derive(Clone, Default)]
+pub struct SnailNumber {
+    value: Option<u8>,
+    pair: Option<(Box<SnailNumber>, Box<SnailNumber>)>,
 }
 
 impl SnailNumber {
@@ -23,13 +24,8 @@ impl SnailNumber {
     /// During reduction, at most one action applies, after which the process returns to the top of
     /// the list of actions. For example, if split produces a pair that meets the explode criteria,
     /// that pair explodes before other splits occur.
-    pub fn reduce(&mut self) -> bool {
-        let (exploded, _, _) = self.explode(0);
-        if exploded {
-            true
-        } else {
-            self.split()
-        }
+    fn reduce(&mut self) -> bool {
+        self.explode(0).0 || self.split()
     }
 
     /// To explode a pair, the pair's left value is added to the first regular number to the left of
@@ -37,100 +33,108 @@ impl SnailNumber {
     /// to the right of the exploding pair (if any). Exploding pairs will always consist of two
     /// regular numbers. Then, the entire exploding pair is replaced with the regular number 0.
     fn explode(&mut self, depth: usize) -> (bool, Option<u8>, Option<u8>) {
-        match self {
-            SnailNumber::Regular(_) => (false, None, None),
-            SnailNumber::Pair(a, b) if depth < 3 => {
-                let (exploded, left, right) = a.explode(depth + 1);
-                if exploded {
-                    return if let Some(vb) = right {
-                        match **b {
-                            SnailNumber::Regular(v) => *b = Box::new(SnailNumber::Regular(v + vb)),
-                            _ => b.add_to_left(vb),
-                        }
-                        (true, left, None)
-                    } else {
-                        (true, left, right)
-                    };
-                }
-
-                let (exploded, left, right) = b.explode(depth + 1);
-                if exploded {
-                    return if let Some(va) = left {
-                        match **a {
-                            SnailNumber::Regular(v) => *a = Box::new(SnailNumber::Regular(v + va)),
-                            _ => a.add_to_right(va),
-                        }
-                        (true, None, right)
-                    } else {
-                        (true, left, right)
-                    };
-                }
-
-                (false, None, None)
+        if let Some((_, _)) = &self.pair {
+            match depth.cmp(&3) {
+                Ordering::Less => self.explode_recurse(depth),
+                Ordering::Equal => self.explode_base(),
+                Ordering::Greater => panic!("Recursion went to deep: {}", depth),
             }
-            SnailNumber::Pair(a, b) if depth == 3 => {
-                if let Some((va, vb)) = a.explode_pair().unwrap() {
-                    *a = Box::new(SnailNumber::Regular(0));
-                    match **b {
-                        SnailNumber::Regular(v) => *b = Box::new(SnailNumber::Regular(v + vb)),
-                        _ => b.add_to_left(vb),
-                    }
-                    (true, Some(va), None)
-                } else if let Some((va, vb)) = b.explode_pair().unwrap() {
-                    *b = Box::new(SnailNumber::Regular(0));
-                    match **a {
-                        SnailNumber::Regular(v) => *a = Box::new(SnailNumber::Regular(v + va)),
-                        _ => a.add_to_right(va),
-                    }
-                    (true, None, Some(vb))
+        } else {
+            (false, None, None)
+        }
+    }
+
+    fn explode_recurse(&mut self, depth: usize) -> (bool, Option<u8>, Option<u8>) {
+        let (left, right) = &mut self.pair.as_mut().unwrap();
+
+        if let (true, value_left, value_right) = left.explode(depth + 1) {
+            if let Some(vr) = value_right {
+                if let Some(r) = &mut right.value {
+                    *r += vr;
                 } else {
-                    (false, None, None)
+                    right.add_to_left(vr);
                 }
+
+                return (true, value_left, None);
             }
-            _ => panic!("Recursion went too deep."),
+
+            (true, value_left, value_right)
+        } else if let (true, value_left, value_right) = right.explode(depth + 1) {
+            if let Some(vl) = value_left {
+                if let Some(l) = &mut left.value {
+                    *l += vl;
+                } else {
+                    left.add_to_right(vl);
+                }
+
+                return (true, None, value_right);
+            }
+
+            (true, value_left, value_right)
+        } else {
+            (false, None, None)
+        }
+    }
+
+    fn explode_base(&mut self) -> (bool, Option<u8>, Option<u8>) {
+        let (left, right) = &mut self.pair.as_mut().unwrap();
+
+        if let Some((left_value, right_value)) = left.explode_pair() {
+            if let Some(rv) = &mut right.value {
+                *rv += right_value;
+            } else {
+                right.add_to_left(right_value);
+            }
+            *left = Box::new(SnailNumber {
+                value: Some(0),
+                pair: None,
+            });
+            (true, Some(left_value), None)
+        } else if let Some((left_value, right_value)) = right.explode_pair() {
+            if let Some(lv) = &mut left.value {
+                *lv += left_value;
+            } else {
+                left.add_to_right(left_value);
+            }
+            *right = Box::new(SnailNumber {
+                value: Some(0),
+                pair: None,
+            });
+            (true, None, Some(right_value))
+        } else {
+            (false, None, None)
         }
     }
 
     /// Splits up a `SnailNumber::Pair` into a `(u8, u8)`.
-    fn explode_pair(&self) -> Result<Option<(u8, u8)>, ()> {
-        match self {
-            SnailNumber::Regular(_) => Ok(None),
-            SnailNumber::Pair(a, b) => {
-                if let SnailNumber::Regular(va) = **a {
-                    if let SnailNumber::Regular(vb) = **b {
-                        return Ok(Some((va, vb)));
-                    }
+    fn explode_pair(&self) -> Option<(u8, u8)> {
+        if let Some((left, right)) = &self.pair {
+            if let Some(left_value) = left.value {
+                if let Some(right_value) = right.value {
+                    return Some((left_value, right_value));
                 }
-                Err(())
             }
+            panic!("The nesting is going to deep ({:?}).", self);
+        } else {
+            None
         }
     }
 
     /// Finds the left-most `SnailNumber::Regular`, and adds `v` to its value.
-    fn add_to_left(&mut self, v: u8) {
-        match self {
-            SnailNumber::Regular(_) => panic!("Something went wrong."),
-            SnailNumber::Pair(a, _) => {
-                if let SnailNumber::Regular(va) = **a {
-                    *a = Box::new(SnailNumber::Regular(v + va));
-                } else {
-                    a.add_to_left(v);
-                }
-            }
+    fn add_to_left(&mut self, value: u8) {
+        if let Some(v) = &mut self.value {
+            *v += value;
+        } else {
+            self.pair.as_mut().unwrap().0.add_to_left(value);
         }
     }
 
     /// Finds the right-most `SnailNumber::Regular`, and adds `v` to its value.
-    fn add_to_right(&mut self, v: u8) {
-        match self {
-            SnailNumber::Regular(_) => panic!("Something went wrong."),
-            SnailNumber::Pair(_, b) => {
-                if let SnailNumber::Regular(vb) = **b {
-                    *b = Box::new(SnailNumber::Regular(v + vb));
-                } else {
-                    b.add_to_right(v);
-                }
-            }
+    fn add_to_right(&mut self, value: u8) {
+        if let Some(v) = &mut self.value {
+            *v += value;
+        } else {
+            self.pair.as_mut().unwrap().1.add_to_right(value);
         }
     }
 
@@ -139,42 +143,36 @@ impl SnailNumber {
     /// should be the regular number divided by two and rounded up. For example, 10 becomes \[5,5\],
     /// 11 becomes \[5,6\], 12 becomes \[6,6\], and so on.
     fn split(&mut self) -> bool {
-        match self {
-            SnailNumber::Regular(_) => false,
-            SnailNumber::Pair(a, b) => {
-                if let SnailNumber::Regular(v) = **a {
-                    if v > 9 {
-                        let ra = SnailNumber::Regular(v / 2);
-                        let rb = SnailNumber::Regular((v + 1) / 2);
-                        *a = Box::new(SnailNumber::Pair(Box::new(ra), Box::new(rb)));
-                        return true;
-                    }
-                }
-                if a.split() {
-                    return true;
-                }
-                if let SnailNumber::Regular(v) = **b {
-                    if v > 9 {
-                        let ra = SnailNumber::Regular(v / 2);
-                        let rb = SnailNumber::Regular((v + 1) / 2);
-                        *b = Box::new(SnailNumber::Pair(Box::new(ra), Box::new(rb)));
-                        return true;
-                    }
-                }
-                if b.split() {
-                    return true;
-                }
+        if let Some(v) = self.value {
+            if v > 9 {
+                let left = SnailNumber {
+                    value: Some(v / 2),
+                    pair: None,
+                };
+                let right = SnailNumber {
+                    value: Some((v + 1) / 2),
+                    pair: None,
+                };
+                self.pair = Some((Box::new(left), Box::new(right)));
+                self.value = None;
+
+                true
+            } else {
                 false
             }
+        } else {
+            let (left, right) = &mut self.pair.as_mut().unwrap();
+            left.split() || right.split()
         }
     }
 
     /// The magnitude of a pair is 3 times the magnitude of its left element plus 2 times the
     /// magnitude of its right element. The magnitude of a regular number is just that number.
     pub fn magnitude(&self) -> u64 {
-        match self {
-            SnailNumber::Regular(v) => *v as u64,
-            SnailNumber::Pair(a, b) => 3 * a.magnitude() + 2 * b.magnitude(),
+        if let Some((a, b)) = &self.pair {
+            3 * a.magnitude() + 2 * b.magnitude()
+        } else {
+            self.value.unwrap() as u64
         }
     }
 }
@@ -191,7 +189,10 @@ impl Add for SnailNumber {
     /// Once no reduce actions apply, the snailfish number that remains is the actual result of the
     /// addition operation.
     fn add(self, rhs: Self) -> Self::Output {
-        let mut sum = SnailNumber::Pair(Box::new(self), Box::new(rhs));
+        let mut sum = SnailNumber {
+            value: None,
+            pair: Some((Box::new(self), Box::new(rhs))),
+        };
         while sum.reduce() {}
         sum
     }
@@ -199,16 +200,11 @@ impl Add for SnailNumber {
 
 impl fmt::Debug for SnailNumber {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            SnailNumber::Regular(nr) => write!(f, "{}", nr),
-            SnailNumber::Pair(a, b) => write!(f, "[{:?},{:?}]", a, b),
+        if let Some((a, b)) = &self.pair {
+            write!(f, "[{:?},{:?}]", a, b)
+        } else {
+            write!(f, "{}", self.value.unwrap())
         }
-    }
-}
-
-impl Default for SnailNumber {
-    fn default() -> Self {
-        SnailNumber::Regular(0)
     }
 }
 
@@ -217,65 +213,103 @@ impl FromStr for SnailNumber {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         if !s.starts_with('[') {
-            return Ok(SnailNumber::Regular(s.parse()?));
+            return Ok(SnailNumber {
+                value: Some(s.parse()?),
+                pair: None,
+            });
         }
-        let mut pair = (SnailNumber::default(), SnailNumber::default());
-        let mut parsing = Parsing::Left;
-        let mut stack = vec![];
+
+        let mut state = ParsingState {
+            pair: (Default::default(), Default::default()),
+            parsing: ParsingBranch::Left,
+            stack: vec![],
+        };
+
         for (pos, ch) in s.chars().into_iter().enumerate() {
             match ch {
-                '[' => {
-                    stack.push((parsing, pair));
-                    pair = (SnailNumber::default(), SnailNumber::default());
-                    parsing = Parsing::Left;
-                }
-                ']' => {
-                    if matches!(parsing, Parsing::Left) {
-                        return Err(parse_error!("Illegal character {} @ {}: {}", ch, pos, s));
-                    }
-
-                    if let Some((parsing_prev, mut pair_prev)) = stack.pop() {
-                        let number = SnailNumber::Pair(Box::new(pair.0), Box::new(pair.1));
-                        match parsing_prev {
-                            Parsing::Left => {
-                                pair_prev.0 = number;
-                                parsing = Parsing::Right;
-                            }
-                            Parsing::Right => pair_prev.1 = number,
-                        }
-                        pair = pair_prev;
-                    } else {
-                        return Err(parse_error!("Illegal character {} @ {}: {}", ch, pos, s));
-                    }
-                }
+                '[' => state.push(),
+                ']' => state.pop(s, pos, ch)?,
                 ',' => {
-                    if matches!(parsing, Parsing::Left) {
+                    if let ParsingBranch::Left = state.parsing {
                         return Err(parse_error!("Illegal character {} @ {}: {}", ch, pos, s));
                     }
                 }
-                _ => {
-                    let number = SnailNumber::Regular((ch as u8) - b'0');
-                    match parsing {
-                        Parsing::Left => {
-                            pair.0 = number;
-                            parsing = Parsing::Right
-                        }
-                        Parsing::Right => pair.1 = number,
-                    }
-                }
+                _ => state.parse_number(ch),
             }
         }
 
-        if stack.is_empty() {
-            Ok(pair.0)
-        } else {
+        if !state.is_done() {
             Err(parse_error!("Incomplete input string: {}", s))
+        } else {
+            Ok(state.pair.0)
         }
     }
 }
 
-#[derive(Debug, Copy, Clone)]
-enum Parsing {
+struct ParsingState {
+    pair: (SnailNumber, SnailNumber),
+    parsing: ParsingBranch,
+    stack: Vec<(ParsingBranch, (SnailNumber, SnailNumber))>,
+}
+
+impl ParsingState {
+    fn push(&mut self) {
+        let mut next_parsing = ParsingBranch::Left;
+        let mut next_pair = (SnailNumber::default(), SnailNumber::default());
+        std::mem::swap(&mut next_parsing, &mut self.parsing);
+        std::mem::swap(&mut next_pair, &mut self.pair);
+        self.stack.push((next_parsing, next_pair));
+    }
+
+    fn pop(&mut self, s: &str, i: usize, c: char) -> Result<(), ParseError> {
+        if let ParsingBranch::Left = self.parsing {
+            return Err(parse_error!("Illegal character {} @ {}: {}", c, i, s));
+        }
+
+        if let Some((parsing, mut pair)) = self.stack.pop() {
+            std::mem::swap(&mut pair, &mut self.pair);
+            let number = SnailNumber {
+                value: None,
+                pair: Some((Box::new(pair.0), Box::new(pair.1))),
+            };
+            match parsing {
+                ParsingBranch::Left => {
+                    self.pair.0 = number;
+                    self.parsing = ParsingBranch::Right;
+                }
+                ParsingBranch::Right => {
+                    self.pair.1 = number;
+                }
+            }
+
+            Ok(())
+        } else {
+            Err(parse_error!("Illegal character {} @ {}: {}", c, i, s))
+        }
+    }
+
+    fn parse_number(&mut self, c: char) {
+        let number = SnailNumber {
+            value: Some(c as u8 - b'0'),
+            pair: None,
+        };
+        match self.parsing {
+            ParsingBranch::Left => {
+                self.pair.0 = number;
+                self.parsing = ParsingBranch::Right;
+            }
+            ParsingBranch::Right => {
+                self.pair.1 = number;
+            }
+        }
+    }
+
+    fn is_done(&self) -> bool {
+        self.stack.is_empty()
+    }
+}
+
+enum ParsingBranch {
     Left,
     Right,
 }
