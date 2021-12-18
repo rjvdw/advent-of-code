@@ -70,75 +70,78 @@ public class SnailNumber
         if (!_pair.HasValue)
             return (false, null, null);
 
-        var (left, right) = _pair.Value;
-
-        switch (depth)
+        return depth switch
         {
-            case > 3:
-                throw new InvalidOperationException($"Recursion went to deep ({depth}).");
-            case < 3:
+            > 3 => throw new InvalidOperationException($"Recursion went to deep ({depth})."),
+            < 3 => ExplodeRecurse(depth),
+            3 => ExplodeBase()
+        };
+    }
+
+    private (bool Exploded, long? Left, long? Right) ExplodeRecurse(int depth)
+    {
+        var (left, right) = _pair!.Value;
+        var (exploded, vLeft, vRight) = left.Explode(depth + 1);
+        if (exploded)
+        {
+            if (vRight.HasValue)
             {
-                var (exploded, vLeft, vRight) = left.Explode(depth + 1);
-                if (exploded)
-                {
-                    if (vRight.HasValue)
-                    {
-                        if (right._value.HasValue)
-                            right._value += vRight;
-                        else
-                            right.AddToLeft(vRight.Value);
+                if (right._value.HasValue)
+                    right._value += vRight;
+                else
+                    right.AddToLeft(vRight.Value);
 
-                        return (true, vLeft, null);
-                    }
-
-                    return (true, vLeft, vRight);
-                }
-
-                (exploded, vLeft, vRight) = right.Explode(depth + 1);
-                if (exploded)
-                {
-                    if (vLeft.HasValue)
-                    {
-                        if (left._value.HasValue)
-                            left._value += vLeft;
-                        else
-                            left.AddToRight(vLeft.Value);
-
-                        return (true, null, vRight);
-                    }
-
-                    return (true, vLeft, vRight);
-                }
-
-                return (false, null, null);
+                return (true, vLeft, null);
             }
-            case 3:
-            {
-                var explodedPair = left.ExplodePair();
-                if (explodedPair.HasValue)
-                {
-                    if (right._value.HasValue)
-                        right._value += explodedPair.Value.Right;
-                    else
-                        right.AddToLeft(explodedPair.Value.Right);
-                    _pair = (new SnailNumber { _value = 0 }, right);
-                    return (true, explodedPair.Value.Left, null);
-                }
 
-                explodedPair = right.ExplodePair();
-                if (explodedPair.HasValue)
-                {
-                    if (left._value.HasValue)
-                        left._value += explodedPair.Value.Left;
-                    else
-                        left.AddToRight(explodedPair.Value.Left);
-                    _pair = (left, new SnailNumber { _value = 0 });
-                    return (true, null, explodedPair.Value.Right);
-                }
-
-                return (false, null, null);
-            }
+            return (true, vLeft, vRight);
         }
+
+        (exploded, vLeft, vRight) = right.Explode(depth + 1);
+        if (exploded)
+        {
+            if (vLeft.HasValue)
+            {
+                if (left._value.HasValue)
+                    left._value += vLeft;
+                else
+                    left.AddToRight(vLeft.Value);
+
+                return (true, null, vRight);
+            }
+
+            return (true, vLeft, vRight);
+        }
+
+        return (false, null, null);
+    }
+
+    private (bool Exploded, long? Left, long? Right) ExplodeBase()
+    {
+        var (left, right) = _pair!.Value;
+        var explodedPair = left.ExplodePair();
+        if (explodedPair.HasValue)
+        {
+            if (right._value.HasValue)
+                right._value += explodedPair.Value.Right;
+            else
+                right.AddToLeft(explodedPair.Value.Right);
+            _pair = (new SnailNumber { _value = 0 }, right);
+            return (true, explodedPair.Value.Left, null);
+        }
+
+        explodedPair = right.ExplodePair();
+        if (explodedPair.HasValue)
+        {
+            if (left._value.HasValue)
+                left._value += explodedPair.Value.Left;
+            else
+                left.AddToRight(explodedPair.Value.Left);
+            _pair = (left, new SnailNumber { _value = 0 });
+            return (true, null, explodedPair.Value.Right);
+        }
+
+        return (false, null, null);
     }
 
     /// <summary>
