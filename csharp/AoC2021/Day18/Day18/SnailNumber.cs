@@ -211,12 +211,9 @@ public class SnailNumber
     /// </summary>
     /// <returns>The string representation of a snail number.</returns>
     /// <exception cref="InvalidOperationException">Thrown when the snail number is in an invalid state.</exception>
-    public override string ToString()
-    {
-        if (_value.HasValue)
-            return _value.Value.ToString();
-        return $"[{_pair!.Value.Left},{_pair!.Value.Right}]";
-    }
+    public override string ToString() => _value.HasValue
+        ? _value.Value.ToString()
+        : $"[{_pair!.Value.Left},{_pair!.Value.Right}]";
 
     /// <summary>
     /// Parse a single snail number.
@@ -229,82 +226,97 @@ public class SnailNumber
         if (!s.StartsWith('['))
             return new SnailNumber { _value = long.Parse(s) };
 
-        (SnailNumber Left, SnailNumber Right) pair = (new SnailNumber(), null!);
-        var parsing = Parsing.Left;
-        var stack = new Stack<(Parsing, (SnailNumber, SnailNumber))>();
+        var state = new ParsingState();
 
         for (var i = 0; i < s.Length; i += 1)
         {
             switch (s[i])
             {
                 case '[':
-                {
-                    stack.Push((parsing, pair));
-                    pair = (new SnailNumber(), new SnailNumber());
-                    parsing = Parsing.Left;
+                    state.Push();
                     break;
-                }
                 case ']':
-                {
-                    if (parsing == Parsing.Left)
-                        throw new InvalidOperationException($"Illegal character {{s[i]}} @ {i}: {s}");
-
-                    if (stack.TryPop(out (Parsing, (SnailNumber Left, SnailNumber Right)) popped))
-                    {
-                        var (parsingPrev, pairPrev) = popped;
-                        var number = new SnailNumber { _pair = (pair.Left, pair.Right) };
-                        switch (parsingPrev)
-                        {
-                            case Parsing.Left:
-                                pairPrev.Left = number;
-                                parsing = Parsing.Right;
-                                break;
-                            case Parsing.Right:
-                                pairPrev.Right = number;
-                                break;
-                        }
-
-                        pair = pairPrev;
-                    }
-                    else
-                        throw new InvalidOperationException($"Illegal character {{s[i]}} @ {i}: {s}");
-
+                    state.Pop(s, i);
                     break;
-                }
                 case ',':
-                {
-                    if (parsing == Parsing.Left)
-                        throw new InvalidOperationException($"Illegal character {{s[i]}} @ {i}: {s}");
+                    if (state.Parsing == ParsingBranch.Left)
+                        throw new InvalidOperationException($"Illegal character {s[i]} @ {i}: {s}");
                     break;
-                }
                 default:
-                {
-                    var number = new SnailNumber { _value = s[i] - '0' };
-                    switch (parsing)
-                    {
-                        case Parsing.Left:
-                            pair.Left = number;
-                            parsing = Parsing.Right;
-                            break;
-                        case Parsing.Right:
-                            pair.Right = number;
-                            break;
-                    }
-
+                    state.ParseNumber(s[i]);
                     break;
-                }
             }
         }
 
-        if (stack.Count != 0)
+        if (!state.IsDone())
             throw new InvalidOperationException($"Incomplete input string: {s}");
-        return pair.Left;
+        return state.Pair.Left;
+    }
+
+    private struct ParsingState
+    {
+        public (SnailNumber Left, SnailNumber Right) Pair = (new SnailNumber(), null!);
+        public ParsingBranch Parsing = ParsingBranch.Left;
+        private readonly Stack<(ParsingBranch, (SnailNumber Left, SnailNumber Right))> _stack = new();
+
+        public void Push()
+        {
+            _stack.Push((Parsing, Pair));
+            Pair = (new SnailNumber(), new SnailNumber());
+            Parsing = ParsingBranch.Left;
+        }
+
+        public void Pop(string s, int i)
+        {
+            if (Parsing == ParsingBranch.Left)
+                throw new InvalidOperationException($"Illegal character {s[i]} @ {i}: {s}");
+
+            if (TryPop(out var popped))
+            {
+                var (parsingPrev, pairPrev) = popped;
+                var number = new SnailNumber { _pair = (Pair.Left, Pair.Right) };
+                switch (parsingPrev)
+                {
+                    case ParsingBranch.Left:
+                        pairPrev.Left = number;
+                        Parsing = ParsingBranch.Right;
+                        break;
+                    case ParsingBranch.Right:
+                        pairPrev.Right = number;
+                        break;
+                }
+
+                Pair = pairPrev;
+            }
+            else
+                throw new InvalidOperationException($"Illegal character {s[i]} @ {i}: {s}");
+        }
+
+        private bool TryPop(out (ParsingBranch parsing, (SnailNumber Left, SnailNumber Right)) p) =>
+            _stack.TryPop(out p);
+
+        public void ParseNumber(char c)
+        {
+            var number = new SnailNumber { _value = c - '0' };
+            switch (Parsing)
+            {
+                case ParsingBranch.Left:
+                    Pair.Left = number;
+                    Parsing = ParsingBranch.Right;
+                    break;
+                case ParsingBranch.Right:
+                    Pair.Right = number;
+                    break;
+            }
+        }
+
+        public bool IsDone() => _stack.Count == 0;
     }
 
     /// <summary>
     /// Keep track of whether the left part or the right part of a pair is being parsed.
     /// </summary>
-    private enum Parsing
+    private enum ParsingBranch
     {
         Left,
         Right,
