@@ -1,11 +1,15 @@
 use std::collections::HashSet;
 use std::fmt;
 
+use crate::overlap::count_overlap;
 use rdcl_aoc_helpers::error::ParseError;
 use rdcl_aoc_helpers::input::MultilineFromStr;
 use rdcl_aoc_helpers::parse_error;
 
 use crate::point::{Point, ORIENTATIONS};
+
+const THRESHOLD: usize = 12;
+const D_THRESHOLD: usize = THRESHOLD * (THRESHOLD - 1) / 2;
 
 #[derive(Clone, Default, Debug)]
 pub struct Scanner {
@@ -13,16 +17,23 @@ pub struct Scanner {
     pub orientation: u8,
     pub position: Point,
     pub beacons: HashSet<Point>,
+    distances: Vec<i64>,
 }
 
 impl Scanner {
     pub fn adjust(&self, other: &Scanner) -> Option<Scanner> {
+        if count_overlap(&self.distances, &other.distances) < D_THRESHOLD {
+            // there is no way these scanners can have overlap, because the distances are too
+            // different
+            return None;
+        }
+
         for &s_beacon in &self.beacons {
             for &o_beacon in &other.beacons {
                 for orientation in 0..ORIENTATIONS {
                     let offset = s_beacon - o_beacon.rotate(orientation);
                     let scanner = other.transform(offset, orientation);
-                    if self.count_overlap(&scanner) >= 12 {
+                    if self.count_overlap(&scanner) >= THRESHOLD {
                         return Some(scanner);
                     }
                 }
@@ -43,6 +54,7 @@ impl Scanner {
                 .map(|p| p.rotate(orientation))
                 .map(|p| p + offset)
                 .collect(),
+            distances: self.distances.clone(),
         }
     }
 
@@ -83,7 +95,12 @@ impl MultilineFromStr for Scanner {
                 Err(parse_error!("Invalid input line: '{}'", line))
             }
         } else {
-            self.beacons.insert(line.parse()?);
+            let beacon = line.parse::<Point>()?;
+            for bo in &self.beacons {
+                self.distances.push(beacon.distance_to(bo));
+            }
+            self.distances.sort_unstable();
+            self.beacons.insert(beacon);
             Ok(())
         }
     }
@@ -98,8 +115,20 @@ pub mod tests {
     #[test]
     fn test_adjust() {
         let scanners = test_scanners();
+
+        // verify the correct number of distances are computed for the first scanner
+        let n = scanners[0].beacons.len();
+        assert_eq!(scanners[0].distances.len(), n * (n - 1) / 2);
+
+        // verify the correct number of distances are computed for the second scanner
+        let n = scanners[1].beacons.len();
+        assert_eq!(scanners[1].distances.len(), n * (n - 1) / 2);
+
+        // verify the second scanner can be adjusted to the first scanner
         let corrected = scanners[0].adjust(&scanners[1]);
         assert!(corrected.is_some());
+
+        // verify the the second scanner ends up in the expected position
         let corrected = corrected.unwrap();
         assert_eq!(corrected.orientation, 20);
         assert_eq!(corrected.position, Point::new(68, -1246, -43));

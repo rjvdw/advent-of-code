@@ -9,6 +9,7 @@ use rdcl_aoc_helpers::input::WithReadMultiLines;
 use crate::point::Point;
 use crate::scanner::Scanner;
 
+mod overlap;
 mod point;
 mod scanner;
 
