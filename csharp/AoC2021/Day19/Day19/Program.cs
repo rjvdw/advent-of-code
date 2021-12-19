@@ -9,6 +9,7 @@ if (args.Length != 1)
 }
 
 var scanners = Scanner.Parse(File.ReadLines(args[0])).ToList();
-
-foreach (var scanner in scanners)
-    Console.WriteLine(scanner);
+var corrected = Solution.CorrectScanners(scanners).ToList();
+var beacons = Solution.FindBeacons(corrected);
+Console.WriteLine($"There are {beacons.Count} beacons.");
+Console.WriteLine($"The greatest distance between two scanners is {Solution.MaxDistance(corrected)}.");

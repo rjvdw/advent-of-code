@@ -1,6 +1,6 @@
 namespace Day19;
 
-public record Point(long X, long Y, long Z)
+public record Point(long X, long Y, long Z) : IComparable<Point>
 {
     public const ushort Orientations = 24;
 
@@ -55,5 +55,15 @@ public record Point(long X, long Y, long Z)
         }
 
         throw new FormatException($"Invalid line: {s}.");
+    }
+
+    public int CompareTo(Point? other)
+    {
+        var r = X.CompareTo(other?.X);
+        if (r == 0)
+            r = Y.CompareTo(other?.Y);
+        if (r == 0)
+            r = Z.CompareTo(other?.Z);
+        return r;
     }
 }

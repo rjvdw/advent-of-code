@@ -8,7 +8,7 @@ public class Scanner
     private const int Threshold = 12;
     private const int DistanceThreshold = Threshold * (Threshold - 1) / 2;
 
-    private readonly int _idx;
+    public int Idx { get; }
     public ushort Orientation { get; }
     public Point Position { get;  }
     private readonly HashSet<Point> _beacons;
@@ -44,7 +44,7 @@ public class Scanner
 
     private Scanner Transform(Point offset, ushort orientation) =>
         new(
-            _idx,
+            Idx,
             orientation,
             offset,
             _beacons
@@ -85,7 +85,7 @@ public class Scanner
 
     private Scanner(int idx, ushort orientation, Point position, HashSet<Point> beacons, List<long> distances)
     {
-        _idx = idx;
+        Idx = idx;
         Orientation = orientation;
         Position = position;
         _beacons = beacons;
