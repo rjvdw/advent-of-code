@@ -13,18 +13,15 @@ defaults:
     working-directory: fsharp/AoC2021
 
 jobs:
-  builds:
-    runs-on: windows-latest
+  build:
+    runs-on: ubuntu-latest
     steps:
       - name: Set up .NET 6
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '6.x'
       - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      - name: Build and test
-        shell: powershell
-        run: |
-          dotnet build
-          dotnet test --collect:"XPlat Code Coverage"
+      - name: build
+        run: dotnet build
+      - name: test
+        run: dotnet test
