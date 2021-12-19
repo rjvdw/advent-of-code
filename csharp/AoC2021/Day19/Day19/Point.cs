@@ -2,6 +2,8 @@ namespace Day19;
 
 public record Point(long X, long Y, long Z)
 {
+    public const ushort Orientations = 24;
+
     public Point Rotate(ushort orientation) => orientation switch
     {
         0 => this,

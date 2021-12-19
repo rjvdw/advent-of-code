@@ -1,5 +1,3 @@
-using System.Text;
-
 namespace Day19;
 
 public class Scanner
@@ -7,18 +5,87 @@ public class Scanner
     private const string ScannerHeaderPrefix = "--- scanner ";
     private const string ScannerHeaderSuffix = " ---";
 
-    public readonly int Idx;
-    public readonly ushort Orientation;
-    public readonly Point Position;
-    public readonly HashSet<Point> Beacons;
+    private const int Threshold = 12;
+    private const int DistanceThreshold = Threshold * (Threshold - 1) / 2;
+
+    private readonly int _idx;
+    private readonly ushort _orientation;
+    private readonly Point _position;
+    private readonly HashSet<Point> _beacons;
     private readonly List<long> _distances;
+
+    public Scanner? Adjust(Scanner other)
+    {
+        if (CountDistanceOverlap(other) < DistanceThreshold)
+        {
+            // there is no way these scanners can have overlap, because the distances are too different
+            return null;
+        }
+
+        foreach (var sBeacon in _beacons)
+        {
+            foreach (var oBeacon in other._beacons)
+            {
+                for (ushort orientation = 0; orientation < Point.Orientations; orientation += 1)
+                {
+                    var offset = sBeacon - oBeacon.Rotate(orientation);
+                    var scanner = other.Transform(offset, orientation);
+                    if (CountOverlap(scanner) >= Threshold)
+                        return scanner;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private Scanner Transform(Point offset, ushort orientation) =>
+        new(
+            _idx,
+            orientation,
+            offset,
+            _beacons
+                .Select(p => p.Rotate(orientation))
+                .Select(p => p + offset)
+                .ToHashSet(),
+            _distances
+        );
+
+    private int CountOverlap(Scanner other) => _beacons.Intersect(other._beacons).Count();
+
+    private int CountDistanceOverlap(Scanner other)
+    {
+        var count = 0;
+        var i = 0;
+        var j = 0;
+
+        while (i < _distances.Count && j < other._distances.Count)
+        {
+            if (_distances[i] < other._distances[j])
+            {
+                i += 1;
+            }
+            else if (_distances[i] == other._distances[j])
+            {
+                count += 1;
+                i += 1;
+                j += 1;
+            }
+            else
+            {
+                j += 1;
+            }
+        }
+
+        return count;
+    }
 
     private Scanner(int idx, ushort orientation, Point position, HashSet<Point> beacons, List<long> distances)
     {
-        Idx = idx;
-        Orientation = orientation;
-        Position = position;
-        Beacons = beacons;
+        _idx = idx;
+        _orientation = orientation;
+        _position = position;
+        _beacons = beacons;
         _distances = distances;
     }
 
