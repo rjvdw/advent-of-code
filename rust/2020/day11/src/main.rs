@@ -14,7 +14,6 @@ mod seat_layout;
 #[cfg(test)]
 mod test_helpers;
 
-/// https://adventofcode.com/2020/day/11
 fn main() {
     let args = get_args(&["<input file>", "<view distance>", "<seat threshold>"], 1);
 

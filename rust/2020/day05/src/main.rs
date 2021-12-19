@@ -10,7 +10,6 @@ use boarding_pass::BoardingPass;
 
 mod boarding_pass;
 
-/// https://adventofcode.com/2020/day/5
 fn main() {
     let args = get_args(&["<input file>"], 1);
 

@@ -13,7 +13,6 @@ use crate::toggleable::Toggleable;
 mod tile;
 mod toggleable;
 
-/// https://adventofcode.com/2020/day/24
 fn main() {
     let args = get_args(&["<input file>", "<nr days>"], 1);
 

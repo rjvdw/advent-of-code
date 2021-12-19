@@ -5,7 +5,6 @@ use rdcl_aoc_helpers::error::WithOrExit;
 
 const SEEN_SIZE: usize = 100_000_000;
 
-/// https://adventofcode.com/2020/day/15
 fn main() {
     let args = get_args_repeating(&["<index>", "...<inputs>"], 1);
 

@@ -11,7 +11,6 @@ use map_row::MapRow;
 
 mod map_row;
 
-/// https://adventofcode.com/2020/day/3
 fn main() {
     let args = get_args_repeating(&["<input file>", "<x>,<y> ... <xn>,<yn>"], 1);
 

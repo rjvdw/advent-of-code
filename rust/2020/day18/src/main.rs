@@ -11,7 +11,6 @@ mod calc;
 mod operator;
 mod parse_mode;
 
-/// https://adventofcode.com/2020/day/18
 fn main() {
     let args = get_args(&["<input file>"], 1);
 

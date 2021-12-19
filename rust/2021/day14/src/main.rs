@@ -11,7 +11,6 @@ use rdcl_aoc_helpers::parse_error;
 
 type InstructionMap = HashMap<Pair, (Pair, Pair)>;
 
-/// https://adventofcode.com/2021/day/14
 fn main() {
     let args = get_args(&["<input file>", "<steps>"], 1);
 

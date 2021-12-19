@@ -12,7 +12,6 @@ mod instruction;
 mod v1;
 mod v2;
 
-/// https://adventofcode.com/2020/day/14
 fn main() {
     let args = get_args(&["<input file>"], 1);
 

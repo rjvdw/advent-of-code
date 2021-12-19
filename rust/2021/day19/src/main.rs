@@ -13,7 +13,6 @@ mod overlap;
 mod point;
 mod scanner;
 
-/// https://adventofcode.com/2021/day/19
 fn main() {
     let args = get_args(&["<input file>"], 1);
 

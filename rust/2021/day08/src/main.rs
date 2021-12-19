@@ -9,7 +9,6 @@ use crate::display::{count_segments, Display};
 
 mod display;
 
-/// https://adventofcode.com/2021/day/8
 fn main() {
     let args = get_args(&["<input file>"], 1);
 

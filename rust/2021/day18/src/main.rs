@@ -9,7 +9,6 @@ use crate::snail_number::SnailNumber;
 
 mod snail_number;
 
-/// https://adventofcode.com/2021/day/18
 fn main() {
     let args = get_args(&["<input file>"], 1);
 

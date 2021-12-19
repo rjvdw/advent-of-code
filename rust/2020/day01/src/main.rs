@@ -6,7 +6,6 @@ use rdcl_aoc_helpers::args::get_args;
 use rdcl_aoc_helpers::error::WithOrExit;
 use rdcl_aoc_helpers::input::WithReadLines;
 
-/// https://adventofcode.com/2020/day/1
 fn main() {
     let args = get_args(&["<input file>", "<count>", "<sum>"], 1);
 

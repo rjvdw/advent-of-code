@@ -15,7 +15,6 @@ lazy_static! {
     static ref CACHE: Mutex<HashMap<u32, u32>> = Mutex::new(HashMap::new());
 }
 
-/// https://adventofcode.com/2021/day/7
 fn main() {
     let args = get_args(&["<input file>"], 1);
 

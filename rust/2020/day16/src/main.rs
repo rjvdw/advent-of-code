@@ -11,7 +11,6 @@ use crate::puzzle_input::PuzzleInput;
 
 mod puzzle_input;
 
-/// https://adventofcode.com/2020/day/16
 fn main() {
     let args = get_args(&["<input file>"], 1);
 

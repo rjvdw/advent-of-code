@@ -1,6 +1,5 @@
 ﻿namespace Day01;
 
-// https://adventofcode.com/2020/day/1
 public static class Program
 {
     public static void Main(string[] args)

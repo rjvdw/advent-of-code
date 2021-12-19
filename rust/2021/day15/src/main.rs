@@ -11,7 +11,6 @@ use crate::risk_levels::RiskLevels;
 
 mod risk_levels;
 
-/// https://adventofcode.com/2021/day/15
 fn main() {
     let args = get_args(&["<input file>"], 1);
     let file = File::open(&args[1]).or_exit_with(1);

@@ -12,7 +12,6 @@ use crate::round::Round;
 mod player;
 mod round;
 
-/// https://adventofcode.com/2020/day/22
 fn main() {
     let args = get_args(&["<input file>"], 1);
 

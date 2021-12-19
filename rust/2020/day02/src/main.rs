@@ -9,7 +9,6 @@ use password::Password;
 
 mod password;
 
-/// https://adventofcode.com/2020/day/2
 fn main() {
     let args = get_args(&["<input file>"], 1);
 

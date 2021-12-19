@@ -6,7 +6,6 @@ use rdcl_aoc_helpers::math::solve_crt;
 
 mod input_parser;
 
-/// https://adventofcode.com/2020/day/13
 fn main() {
     let args = get_args(&["<input file>"], 1);
 

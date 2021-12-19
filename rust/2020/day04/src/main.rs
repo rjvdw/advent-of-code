@@ -10,7 +10,6 @@ use input_record::Passport;
 mod input_record;
 mod validators;
 
-/// https://adventofcode.com/2020/day/4
 fn main() {
     let args = get_args(&["<input file>"], 1);
 

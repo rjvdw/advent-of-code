@@ -10,7 +10,6 @@ const INITIAL_NUMBER: u64 = 1;
 const MODULUS: u64 = 20201227;
 const SUBJECT_NUMBER: u64 = 7;
 
-/// https://adventofcode.com/2020/day/25
 fn main() {
     let args = get_args(&["<input file>"], 1);
 

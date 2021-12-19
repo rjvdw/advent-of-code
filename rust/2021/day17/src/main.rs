@@ -10,7 +10,6 @@ use crate::target_area::TargetArea;
 
 mod target_area;
 
-/// https://adventofcode.com/2021/day/17
 fn main() {
     let args = get_args(&["<input file>"], 1);
 

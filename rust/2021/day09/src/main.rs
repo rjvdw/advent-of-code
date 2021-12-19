@@ -10,7 +10,6 @@ use rdcl_aoc_helpers::grid::iterators::WithGridIterator;
 use rdcl_aoc_helpers::grid::neighbours::WithNeighbours;
 use shared::numeric_grid;
 
-/// https://adventofcode.com/2021/day/9
 fn main() {
     let args = get_args(&["<input file>"], 1);
 

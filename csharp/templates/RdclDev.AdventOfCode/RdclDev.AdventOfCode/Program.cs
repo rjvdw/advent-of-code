@@ -1,6 +1,4 @@
-﻿// https://adventofcode.com/.......
-
-using RdclDev.AdventOfCode;
+﻿using RdclDev.AdventOfCode;
 
 if (args.Length != 1)
 {

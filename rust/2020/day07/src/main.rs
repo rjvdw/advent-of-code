@@ -10,7 +10,6 @@ use bag::Bag;
 
 mod bag;
 
-/// https://adventofcode.com/2020/day/7
 fn main() {
     let args = get_args(&["<input file>", "<color>"], 1);
 

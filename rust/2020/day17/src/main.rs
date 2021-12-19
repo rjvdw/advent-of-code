@@ -11,7 +11,6 @@ use crate::parser::read;
 mod cell;
 mod parser;
 
-/// https://adventofcode.com/2020/day/17
 fn main() {
     let args = get_args(&["<input file>", "<steps>"], 1);
 

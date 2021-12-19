@@ -8,7 +8,6 @@ use rdcl_aoc_helpers::error::ParseError;
 use rdcl_aoc_helpers::input::WithReadLines;
 use rdcl_aoc_helpers::parse_error;
 
-/// https://adventofcode.com/2021/day/10
 fn main() {
     let args = get_args(&["<input file>"], 1);
 

@@ -1,6 +1,4 @@
-﻿// https://adventofcode.com/2021/day/15
-
-using Day15;
+﻿using Day15;
 
 if (args.Length != 1)
 {

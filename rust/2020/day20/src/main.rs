@@ -18,7 +18,6 @@ mod tile;
 
 type Grid<T> = Vec<Vec<T>>;
 
-/// https://adventofcode.com/2020/day/20
 fn main() {
     let args = get_args(&["<input file>"], 1);
 

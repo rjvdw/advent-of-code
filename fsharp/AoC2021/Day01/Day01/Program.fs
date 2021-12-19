@@ -1,8 +1,6 @@
 ﻿open System
 open System.IO
 
-// https://adventofcode.com/2021/day/1
-
 let args = Environment.GetCommandLineArgs()
 
 if args.Length <> 3 then

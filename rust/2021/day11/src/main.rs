@@ -12,7 +12,6 @@ use shared::numeric_grid;
 
 const MAX_RUNS: usize = 10000;
 
-/// https://adventofcode.com/2021/day/11
 fn main() {
     let args = get_args_repeating(&["<input file> ?<steps>"], 1);
     let octopuses = numeric_grid::read(&args[1]).or_exit_with(1);

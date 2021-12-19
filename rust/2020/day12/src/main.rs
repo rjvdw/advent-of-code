@@ -12,7 +12,6 @@ use crate::instruction::Instruction;
 mod coordinates;
 mod instruction;
 
-/// https://adventofcode.com/2020/day/12
 fn main() {
     let args = get_args(&["<input file>", "<waypoint x>,<waypoint y>"], 1);
 

@@ -9,7 +9,6 @@ use rdcl_aoc_helpers::part::Part;
 
 const BASE: usize = 10;
 
-/// https://adventofcode.com/2020/day/23
 fn main() {
     let args = get_args(&["<cups>", "<nr moves>", "<nr cups>", "<part1|part2>"], 1);
 

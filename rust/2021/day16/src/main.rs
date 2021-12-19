@@ -10,7 +10,6 @@ use crate::packet::Packet;
 
 mod packet;
 
-/// https://adventofcode.com/2021/day/16
 fn main() {
     let args = get_args(&["<input file>"], 1);
 

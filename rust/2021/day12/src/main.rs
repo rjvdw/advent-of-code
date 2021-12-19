@@ -10,7 +10,6 @@ use crate::cave_map::CaveMap;
 
 mod cave_map;
 
-/// https://adventofcode.com/2021/day/12
 fn main() {
     let args = get_args(&["<input file>", "<max revisits>"], 1);
 

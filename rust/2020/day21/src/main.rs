@@ -10,7 +10,6 @@ use crate::food::Food;
 
 mod food;
 
-/// https://adventofcode.com/2020/day/21
 fn main() {
     let args = get_args(&["<input file>"], 1);
 

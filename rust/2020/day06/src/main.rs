@@ -9,7 +9,6 @@ use group::Group;
 
 mod group;
 
-/// https://adventofcode.com/2020/day/6
 fn main() {
     let args = get_args(&["<input file>"], 1);
 

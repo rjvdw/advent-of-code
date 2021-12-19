@@ -10,7 +10,6 @@ use crate::manual::Manual;
 
 mod manual;
 
-/// https://adventofcode.com/2021/day/13
 fn main() {
     let args = get_args(&["<input file>"], 1);
 

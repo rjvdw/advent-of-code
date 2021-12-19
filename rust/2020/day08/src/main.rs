@@ -13,7 +13,6 @@ mod instruction;
 mod loop_detector;
 mod mutator;
 
-/// https://adventofcode.com/2020/day/8
 fn main() {
     let args = get_args(&["<input file>"], 1);
 
