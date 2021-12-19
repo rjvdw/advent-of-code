@@ -53,6 +53,18 @@ public class PointTest
     }
 
     [Fact]
+    public void TestCompareTo()
+    {
+        Assert.Equal(-1, new Point(1, 2, 3).CompareTo(new Point(2, 3, 4)));
+        Assert.Equal(-1, new Point(1, 2, 3).CompareTo(new Point(1, 3, 4)));
+        Assert.Equal(-1, new Point(1, 2, 3).CompareTo(new Point(1, 2, 4)));
+        Assert.Equal(0, new Point(1, 2, 3).CompareTo(new Point(1, 2, 3)));
+        Assert.Equal(1, new Point(2, 3, 4).CompareTo(new Point(1, 2, 3)));
+        Assert.Equal(1, new Point(1, 3, 4).CompareTo(new Point(1, 2, 3)));
+        Assert.Equal(1, new Point(1, 2, 4).CompareTo(new Point(1, 2, 3)));
+    }
+
+    [Fact]
     public void TestParse()
     {
         Assert.Equal(new Point(1, 2, 3), Point.Parse("1,2,3"));
