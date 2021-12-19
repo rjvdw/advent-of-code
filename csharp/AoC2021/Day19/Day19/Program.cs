@@ -8,6 +8,7 @@ if (args.Length != 1)
     Environment.Exit(1);
 }
 
-var lines = File.ReadLines(args[0]);
+var scanners = Scanner.Parse(File.ReadLines(args[0])).ToList();
 
-Console.WriteLine(Solution.Solve(lines));
+foreach (var scanner in scanners)
+    Console.WriteLine(scanner);
