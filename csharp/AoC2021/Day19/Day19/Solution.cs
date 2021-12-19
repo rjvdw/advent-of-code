@@ -18,9 +18,9 @@ public static class Solution
                 var c = corrected[i].Adjust(scanner);
                 if (c != null)
                 {
-                    handled.Add(scanner.Idx);
-                    corrected.Add(scanner);
-                    yield return scanner;
+                    handled.Add(c.Idx);
+                    corrected.Add(c);
+                    yield return c;
                 }
             }
 

@@ -16,6 +16,14 @@ public class SolutionTest
         Assert.Equal(AllBeacons(), beacons);
     }
 
+    [Fact]
+    public void TestMaxDistance()
+    {
+        var scanners = ScannerTest.GetTestScanners().ToList();
+        var corrected = Solution.CorrectScanners(scanners).ToList();
+        Assert.Equal(3621, Solution.MaxDistance(corrected));
+    }
+
     private static List<Point> AllBeacons()
     {
         var points = new List<Point>
