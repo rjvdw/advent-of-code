@@ -9,10 +9,13 @@ public class Scanner
     private const int DistanceThreshold = Threshold * (Threshold - 1) / 2;
 
     private readonly int _idx;
-    private readonly ushort _orientation;
-    private readonly Point _position;
+    public ushort Orientation { get; }
+    public Point Position { get;  }
     private readonly HashSet<Point> _beacons;
     private readonly List<long> _distances;
+
+    public IEnumerable<Point> Beacons => _beacons;
+    public IEnumerable<long> Distances => _distances;
 
     public Scanner? Adjust(Scanner other)
     {
@@ -83,8 +86,8 @@ public class Scanner
     private Scanner(int idx, ushort orientation, Point position, HashSet<Point> beacons, List<long> distances)
     {
         _idx = idx;
-        _orientation = orientation;
-        _position = position;
+        Orientation = orientation;
+        Position = position;
         _beacons = beacons;
         _distances = distances;
     }
