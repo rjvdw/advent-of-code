@@ -4,8 +4,10 @@ use std::thread;
 
 use crate::bounds::Bounds;
 use crate::image::{Image, DARK_REGION, LIGHT_REGION};
+use crate::mt::divide::{Dividable, MAX_REGION_SIZE};
 use crate::mt::shared_state::SharedState;
 use crate::point::Point;
+use crate::SingleThreadedNext;
 
 pub(crate) trait MultiThreadedNext {
     /// Advances one generation.
@@ -14,6 +16,11 @@ pub(crate) trait MultiThreadedNext {
 
 impl MultiThreadedNext for Image {
     fn next(self) -> Self {
+        if self.bounds.size() <= MAX_REGION_SIZE {
+            // sufficiently small that we don't need to bother with multithreading
+            return SingleThreadedNext::next(self);
+        }
+
         let shared_self = Arc::new(RwLock::new(self));
         let image = shared_self.read().unwrap();
         let shared_state = Arc::new(Mutex::new(SharedState {
@@ -27,7 +34,7 @@ impl MultiThreadedNext for Image {
         };
 
         let mut handles = vec![];
-        for region in image.bounds.stretched(1).divide(12, 500) {
+        for region in image.bounds.stretched(1).divide() {
             let shared_self = Arc::clone(&shared_self);
             let shared_state = Arc::clone(&shared_state);
 
@@ -44,9 +51,11 @@ impl MultiThreadedNext for Image {
                     }
                 }
 
-                let mut state = shared_state.lock().unwrap();
-                state.lit.extend(&lit);
-                state.bounds.join_with(&bounds);
+                if !lit.is_empty() {
+                    let mut state = shared_state.lock().unwrap();
+                    state.lit.extend(&lit);
+                    state.bounds.join_with(&bounds);
+                }
             });
             handles.push(handle);
         }

@@ -50,45 +50,16 @@ impl Bounds {
         )
     }
 
-    /// Divides the region specified by these bounds into (at most) `nr_regions` smaller regions. If
-    /// the region is too small, there may be fewer than `nr_regions`. This function will never
-    /// return _empty_ regions.
-    ///
-    /// Currently only divides the region in horizontal strips. This is suboptimal if the region
-    /// isn't very high, but is very wide. This however is such a specific edge case that I cannot
-    /// be bothered to deal with it...
-    pub(crate) fn divide(&self, mut nr_regions: i64, min_size: i64) -> Vec<Bounds> {
-        assert!(nr_regions > 0, "Invalid number of regions supplied.");
+    pub(crate) fn height(&self) -> usize {
+        (self.bottom_right.row + 1 - self.top_left.row).abs() as usize
+    }
 
-        let top = self.top_left.row;
-        let bottom = self.bottom_right.row;
-        let left = self.top_left.col;
-        let right = self.bottom_right.col;
+    pub(crate) fn width(&self) -> usize {
+        (self.bottom_right.col + 1 - self.top_left.col).abs() as usize
+    }
 
-        let mut regions = vec![];
-        let min_size = min_size / (bottom - top).abs();
-        let mut i = top;
-        while i <= bottom {
-            let mut j = i + (bottom - i).abs() / nr_regions;
-
-            // if the region is too small, adjust
-            if j - i - 1 < min_size {
-                j = i + min_size - 1;
-            }
-
-            // if there are too few points left to form a new region, add them to the current region
-            if (bottom - j).abs() < min_size {
-                j = bottom;
-            }
-
-            regions.push(Bounds {
-                top_left: Point::new(i, left),
-                bottom_right: Point::new(j, right),
-            });
-            nr_regions -= 1;
-            i = j + 1;
-        }
-        regions
+    pub(crate) fn size(&self) -> usize {
+        self.height() * self.width()
     }
 
     pub(crate) fn iter_row_col(&self) -> RowColIterator {
@@ -157,59 +128,6 @@ mod tests {
 
         assert_eq!(bounds1.top_left, Point::new(-2, -3));
         assert_eq!(bounds1.bottom_right, Point::new(3, 5));
-    }
-
-    #[test]
-    fn test_divide_1() {
-        let bounds = Bounds::new(1, 1, 100, 100);
-        let regions = bounds.divide(10, 0);
-        assert_eq!(
-            regions,
-            vec![
-                Bounds::new(1, 1, 10, 100),
-                Bounds::new(11, 1, 20, 100),
-                Bounds::new(21, 1, 30, 100),
-                Bounds::new(31, 1, 40, 100),
-                Bounds::new(41, 1, 50, 100),
-                Bounds::new(51, 1, 60, 100),
-                Bounds::new(61, 1, 70, 100),
-                Bounds::new(71, 1, 80, 100),
-                Bounds::new(81, 1, 90, 100),
-                Bounds::new(91, 1, 100, 100),
-            ]
-        );
-    }
-
-    #[test]
-    fn test_divide_2() {
-        let bounds = Bounds::new(1, 1, 50, 50);
-        let regions = bounds.divide(10, 500);
-        assert_eq!(
-            regions,
-            vec![
-                Bounds::new(1, 1, 10, 50),
-                Bounds::new(11, 1, 20, 50),
-                Bounds::new(21, 1, 30, 50),
-                Bounds::new(31, 1, 40, 50),
-                Bounds::new(41, 1, 50, 50),
-            ]
-        );
-    }
-
-    #[test]
-    fn test_divide_3() {
-        let bounds = Bounds::new(1, 1, 51, 50);
-        let regions = bounds.divide(10, 500);
-        assert_eq!(
-            regions,
-            vec![
-                Bounds::new(1, 1, 10, 50),
-                Bounds::new(11, 1, 20, 50),
-                Bounds::new(21, 1, 30, 50),
-                Bounds::new(31, 1, 40, 50),
-                Bounds::new(41, 1, 51, 50),
-            ]
-        );
     }
 
     #[test]
