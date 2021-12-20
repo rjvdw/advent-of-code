@@ -5,12 +5,12 @@ use itertools::Itertools;
 
 use crate::point::Point;
 
-pub type RowColIterator = itertools::Product<RangeInclusive<i64>, RangeInclusive<i64>>;
+pub(crate) type RowColIterator = itertools::Product<RangeInclusive<i64>, RangeInclusive<i64>>;
 
 #[derive(Copy, Clone, Eq, PartialEq)]
-pub struct Bounds {
-    pub top_left: Point,
-    pub bottom_right: Point,
+pub(crate) struct Bounds {
+    pub(crate) top_left: Point,
+    pub(crate) bottom_right: Point,
 }
 
 impl Bounds {
@@ -21,7 +21,7 @@ impl Bounds {
         }
     }
 
-    pub fn update_with(&mut self, row: i64, col: i64) {
+    pub(crate) fn update_with(&mut self, row: i64, col: i64) {
         if row < self.top_left.row {
             self.top_left.row = row;
         }
@@ -36,12 +36,12 @@ impl Bounds {
         }
     }
 
-    pub fn join_with(&mut self, other: &Bounds) {
+    pub(crate) fn join_with(&mut self, other: &Bounds) {
         self.update_with(other.top_left.row, other.top_left.col);
         self.update_with(other.bottom_right.row, other.bottom_right.col);
     }
 
-    pub fn stretched(&self, by: i64) -> Bounds {
+    pub(crate) fn stretched(&self, by: i64) -> Bounds {
         Bounds::new(
             self.top_left.row - by,
             self.top_left.col - by,
@@ -57,7 +57,7 @@ impl Bounds {
     /// Currently only divides the region in horizontal strips. This is suboptimal if the region
     /// isn't very high, but is very wide. This however is such a specific edge case that I cannot
     /// be bothered to deal with it...
-    pub fn divide(&self, mut nr_regions: i64, min_size: i64) -> Vec<Bounds> {
+    pub(crate) fn divide(&self, mut nr_regions: i64, min_size: i64) -> Vec<Bounds> {
         assert!(nr_regions > 0, "Invalid number of regions supplied.");
 
         let top = self.top_left.row;
@@ -91,13 +91,13 @@ impl Bounds {
         regions
     }
 
-    pub fn iter_row_col(&self) -> RowColIterator {
+    pub(crate) fn iter_row_col(&self) -> RowColIterator {
         let row_range = self.top_left.row..=self.bottom_right.row;
         let col_range = self.top_left.col..=self.bottom_right.col;
         row_range.cartesian_product(col_range)
     }
 
-    pub fn contains(&self, point: &Point) -> bool {
+    pub(crate) fn contains(&self, point: &Point) -> bool {
         point.row >= self.top_left.row
             && point.row <= self.bottom_right.row
             && point.col >= self.top_left.col

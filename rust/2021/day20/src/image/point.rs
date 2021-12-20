@@ -1,13 +1,13 @@
 use std::fmt;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
-pub struct Point {
-    pub row: i64,
-    pub col: i64,
+pub(crate) struct Point {
+    pub(crate) row: i64,
+    pub(crate) col: i64,
 }
 
 impl Point {
-    pub fn new(row: i64, col: i64) -> Point {
+    pub(crate) fn new(row: i64, col: i64) -> Point {
         Point { row, col }
     }
 }
