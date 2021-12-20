@@ -7,15 +7,22 @@ public class ImageTest
     [Fact]
     public void TestNextAndCountLitPixels()
     {
-        var image = GetTestImage();
-        Assert.Equal((10, false), image.CountLitPixels());
-        image = image.Next();
-        Assert.Equal((24, false), image.CountLitPixels());
-        image = image.Next();
-        Assert.Equal((35, false), image.CountLitPixels());
+        var image1 = GetTestImage1();
+        Assert.Equal((10, false), image1.CountLitPixels());
+        image1 = image1.Next();
+        Assert.Equal((24, false), image1.CountLitPixels());
+        image1 = image1.Next();
+        Assert.Equal((35, false), image1.CountLitPixels());
+
+        var image2 = GetTestImage2();
+        Assert.Equal((10, false), image2.CountLitPixels());
+        image2 = image2.Next();
+        Assert.Equal((30, true), image2.CountLitPixels());
+        image2 = image2.Next();
+        Assert.Equal((24, false), image2.CountLitPixels());
     }
 
-    private static Image GetTestImage() => Image.Parse(new[]
+    private static Image GetTestImage1() => Image.Parse(new[]
     {
         string.Join("",
             "..#.#..#####.#.#.#.###.##.....###.##.#..###.####..#####..#....#..#..##..##",
@@ -25,6 +32,24 @@ public class ImageTest
             ".#..#...##.#.##..#...##.#.##..###.#......#.#.......#.#.#.####.###.##...#..",
             "...####.#..#..#.##.#....##..#.####....##...##..#...#......#.#.......#.....",
             "..##..####..#...#.#.#...##..#.#..###..#####........#..####......#..#"),
+        "",
+        "#..#.",
+        "#....",
+        "##..#",
+        "..#..",
+        "..###",
+    });
+
+    private static Image GetTestImage2() => Image.Parse(new[]
+    {
+        string.Join("",
+            "#.#.#..#####.#.#.#.###.##.....###.##.#..###.####..#####..#....#..#..##..##",
+            "#..######.###...####..#..#####..##..#.#####...##.#.#..#.##..#.#......#.###",
+            ".######.###.####...#.##.##..#..#..#####.....#.#....###..#.##......#.....#.",
+            ".#..#..##..#...##.######.####.####.#.#...#.......#..#.#.#...####.##.#.....",
+            ".#..#...##.#.##..#...##.#.##..###.#......#.#.......#.#.#.####.###.##...#..",
+            "...####.#..#..#.##.#....##..#.####....##...##..#...#......#.#.......#.....",
+            "..##..####..#...#.#.#...##..#.#..###..#####........#..####......#..."),
         "",
         "#..#.",
         "#....",
