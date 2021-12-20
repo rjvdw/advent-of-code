@@ -1,18 +1,20 @@
 use std::collections::HashSet;
-use std::{fmt, io};
+use std::sync::{Arc, Mutex, RwLock};
+use std::{fmt, io, thread};
 
 use rdcl_aoc_helpers::error::ParseError;
 use rdcl_aoc_helpers::parse_error;
 
 use crate::bounds::Bounds;
 use crate::point::Point;
+use crate::shared_state::SharedState;
 
 #[allow(clippy::unusual_byte_groupings)]
 const DARK_REGION: u16 = 0b000_000_000;
 #[allow(clippy::unusual_byte_groupings)]
 const LIGHT_REGION: u16 = 0b111_111_111;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Image {
     /// Image enhancement algorithm.
     iea: HashSet<u16>,
@@ -50,7 +52,7 @@ impl Image {
             self.iea.contains(&DARK_REGION)
         };
 
-        for (row, col) in self.bounds.iter_row_col() {
+        for (row, col) in self.bounds.stretched(1).iter_row_col() {
             let iea_index = self.get_iea_index(row, col);
             if self.iea.contains(&iea_index) {
                 lit.insert(Point::new(row, col));
@@ -62,6 +64,63 @@ impl Image {
             iea: self.iea.clone(),
             lit,
             bounds,
+            default_state,
+        }
+    }
+
+    /// Advances one generation (multi-threaded).
+    pub fn next_mt(&self, nr_threads: i64, min_region_size: i64) -> Image {
+        assert!(nr_threads > 0, "Invalid number of threads supplied.");
+        assert!(
+            min_region_size >= 0,
+            "Invalid minimal region size supplied.",
+        );
+
+        let shared_state = Arc::new(Mutex::new(SharedState {
+            lit: HashSet::new(),
+            bounds: Bounds::default(),
+        }));
+        let default_state = if self.default_state {
+            self.iea.contains(&LIGHT_REGION)
+        } else {
+            self.iea.contains(&DARK_REGION)
+        };
+
+        let mut handles = vec![];
+        let shared_self = Arc::new(RwLock::new(self.clone()));
+        for region in self.bounds.stretched(1).divide(nr_threads, min_region_size) {
+            let shared_state = Arc::clone(&shared_state);
+            let shared_self = Arc::clone(&shared_self);
+
+            let mut lit = HashSet::<Point>::new();
+            let mut bounds = Bounds::default();
+
+            let handle = thread::spawn(move || {
+                let image = shared_self.read().unwrap();
+                for (row, col) in region.iter_row_col() {
+                    let iea_index = image.get_iea_index(row, col);
+                    if image.iea.contains(&iea_index) {
+                        lit.insert(Point::new(row, col));
+                        bounds.update_with(row, col);
+                    }
+                }
+
+                let mut state = shared_state.lock().unwrap();
+                state.lit.extend(&lit);
+                state.bounds.join_with(&bounds);
+            });
+            handles.push(handle);
+        }
+
+        for handle in handles {
+            handle.join().unwrap();
+        }
+
+        let state = &*shared_state.lock().unwrap();
+        Image {
+            iea: self.iea.clone(),
+            lit: state.lit.clone(),
+            bounds: state.bounds,
             default_state,
         }
     }
@@ -209,6 +268,16 @@ mod tests {
         let image = image.next();
         assert_eq!(image.count_lit_pixels(), Ok(24));
         let image = image.next();
+        assert_eq!(image.count_lit_pixels(), Ok(35));
+    }
+
+    #[test]
+    fn test_count_lit_pixels_mt() {
+        let image = test_image();
+        assert_eq!(image.count_lit_pixels(), Ok(10));
+        let image = image.next_mt(2, 10);
+        assert_eq!(image.count_lit_pixels(), Ok(24));
+        let image = image.next_mt(2, 10);
         assert_eq!(image.count_lit_pixels(), Ok(35));
     }
 
