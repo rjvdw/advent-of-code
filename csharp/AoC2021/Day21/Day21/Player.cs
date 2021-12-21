@@ -1,6 +1,6 @@
 namespace Day21;
 
-public class Player
+public class Player : IEquatable<Player>
 {
     private int Position { get; }
     public int Score { get; }
@@ -27,7 +27,8 @@ public class Player
         return new Player(int.Parse(line[(i + 1)..]) - 1, 0);
     }
 
-    private bool Equals(Player other) =>
+    public bool Equals(Player? other) =>
+        other is not null &&
         Position == other.Position &&
         Score == other.Score;
 

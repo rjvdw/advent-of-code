@@ -1,6 +1,6 @@
 namespace Day21;
 
-public class Game
+public class Game : IEquatable<Game>
 {
     private readonly Player[] _players;
     private readonly int _turn;
@@ -33,7 +33,8 @@ public class Game
             : (nextGame, null);
     }
 
-    private bool Equals(Game other) =>
+    public bool Equals(Game? other) =>
+        other is not null &&
         _players[0].Equals(other._players[0]) &&
         _players[1].Equals(other._players[1]) &&
         _turn == other._turn &&
