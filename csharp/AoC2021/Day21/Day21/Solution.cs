@@ -20,36 +20,45 @@ public static class Solution
 
         while (true)
         {
-            var result = game.Play(die.Roll(3));
-            if (result.HasValue)
+            var (nextGame, turn) = game.Play(die.Roll(3));
+            game = nextGame;
+            if (turn.HasValue)
             {
-                var (turn, p) = result.Value;
-                return (turn, p[turn ^ 1], die.Rolls);
+                return (turn.Value, game.Players[turn.Value ^ 1], die.Rolls);
             }
         }
     }
 
     public static long PlayPart2(Player[] players, int targetScore)
     {
-        var tally = new[] { 0L, 0L };
-        var games = new Stack<(long, Game Game)>();
-        games.Push((1, new Game(players, targetScore)));
+        var game = new Game(players, targetScore);
+        var cache = new Dictionary<Game, long[]>();
 
-        while (games.TryPop(out var popped))
+        return PlayPart2Recursive(game, cache).Max();
+    }
+
+    private static long[] PlayPart2Recursive(Game game, IDictionary<Game, long[]> tallies)
+    {
+        if (tallies.ContainsKey(game))
+            return tallies[game];
+
+        var tally = new[] { 0L, 0L };
+        foreach (var (roll, frequency) in DiracOutcomes)
         {
-            var (multiplier, game) = popped;
-            foreach (var (roll, frequency) in DiracOutcomes)
+            var (nextGame, winningTurn) = game.Play(roll);
+            if (winningTurn.HasValue)
             {
-                var g = game.Duplicate();
-                var freq = multiplier * frequency;
-                var result = g.Play(roll);
-                if (result.HasValue)
-                    tally[result.Value.Turn] += freq;
-                else
-                    games.Push((freq, g));
+                tally[winningTurn.Value] += frequency;
+            }
+            else
+            {
+                var t = PlayPart2Recursive(nextGame, tallies);
+                tally[0] += frequency * t[0];
+                tally[1] += frequency * t[1];
             }
         }
 
-        return tally.Max();
+        tallies[game] = tally;
+        return tally;
     }
 }

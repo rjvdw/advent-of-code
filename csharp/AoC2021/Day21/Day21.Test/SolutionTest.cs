@@ -30,6 +30,6 @@ public class SolutionTest
         };
 
         Assert.Equal(9632852745, Solution.PlayPart2(players, 14));
-        // Assert.Equal(444356092776315, Solution.PlayPart2(players, 21));
+        Assert.Equal(444356092776315, Solution.PlayPart2(players, 21));
     }
 }

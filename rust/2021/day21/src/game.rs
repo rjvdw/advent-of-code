@@ -1,6 +1,6 @@
 use crate::Player;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub struct Game {
     players: [Player; 2],
     turn: usize,
@@ -22,7 +22,7 @@ impl Game {
         if player.has_won(self.target_score) {
             Some((self.turn, self.players))
         } else {
-            self.turn = self.turn ^ 1;
+            self.turn ^= 1;
             None
         }
     }

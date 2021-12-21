@@ -1,36 +1,38 @@
 namespace Day21;
 
-public class Game
+public record Game
 {
-    private readonly Player[] _players;
-    private int _turn;
+    private readonly Player _player1;
+    private readonly Player _player2;
+    private readonly int _turn;
     private readonly int _targetScore;
+
+    public Player[] Players => new[] { _player1, _player2 };
 
     public Game(IReadOnlyList<Player> players, int targetScore)
     {
-        _players = new[] { players[0], players[1] };
+        _player1 = players[0];
+        _player2 = players[1];
         _turn = 0;
         _targetScore = targetScore;
     }
 
-    private Game(IReadOnlyList<Player> players, int turn, int targetScore)
+    private Game(Player player1, Player player2, int turn, int targetScore)
     {
-        _players = new[] { players[0], players[1] };
+        _player1 = player1;
+        _player2 = player2;
         _turn = turn;
         _targetScore = targetScore;
     }
 
-    public (int Turn, Player[] Players)? Play(int roll)
+    public (Game Game, int? Turn) Play(int roll)
     {
-        var player = _players[_turn].Move(roll);
-        _players[_turn] = player;
+        var nextPlayers = Players;
+        var player = nextPlayers[_turn] = nextPlayers[_turn].Move(roll);
+        var nextGame = new Game(nextPlayers[0], nextPlayers[1], _turn ^ 1, _targetScore);
 
-        if (player.HasWon(_targetScore))
-            return (_turn, new[] { _players[0], _players[1] });
-
-        _turn ^= 1;
-        return null;
+        return player.HasWon(_targetScore)
+            ? (nextGame, _turn)
+            : (nextGame, null);
     }
-
-    public Game Duplicate() => new(_players, _turn, _targetScore);
 }

@@ -1,16 +1,7 @@
 namespace Day21;
 
-public class Player
+public record Player(int Position, int Score)
 {
-    private int Position { get; }
-    public int Score { get; }
-
-    private Player(int position, int score)
-    {
-        Position = position;
-        Score = score;
-    }
-
     public Player Move(int roll)
     {
         var position = (Position + roll) % 10;
