@@ -50,6 +50,6 @@ public static class Solution
             }
         }
 
-        return tally[0] > tally[1] ? tally[0] : tally[1];
+        return tally.Max();
     }
 }
