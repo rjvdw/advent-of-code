@@ -1,5 +1,6 @@
 extern crate rdcl_aoc_helpers;
 
+use std::collections::HashMap;
 use std::fs::File;
 
 use rdcl_aoc_helpers::args::get_args;
@@ -68,25 +69,36 @@ fn play_part_1(players: &[Player], target_score: u64) -> (usize, Player, usize) 
 }
 
 fn play_part_2(players: &[Player], target_score: u64) -> usize {
-    let mut tally = [0usize, 0usize];
-    let mut games = vec![(1, Game::new(players, target_score))];
-
-    while let Some((multiplier, game)) = games.pop() {
-        for (roll, frequency) in DIRAC_OUTCOMES {
-            let mut game = game;
-            let frequency = multiplier * frequency;
-            if let Some((winning_turn, _)) = game.play(roll) {
-                tally[winning_turn] += frequency;
-            } else {
-                games.push((frequency, game));
-            }
-        }
-    }
+    let game = Game::new(players, target_score);
+    let mut cache = HashMap::<Game, [usize; 2]>::new();
+    let tally = play_part_2_recursive(&game, &mut cache);
 
     if tally[0] > tally[1] {
         tally[0]
     } else {
         tally[1]
+    }
+}
+
+fn play_part_2_recursive(game: &Game, tallies: &mut HashMap<Game, [usize; 2]>) -> [usize; 2] {
+    if let Some(tally) = tallies.get(game) {
+        *tally
+    } else {
+        let mut tally = [0, 0];
+
+        for (roll, frequency) in DIRAC_OUTCOMES {
+            let mut game_copy = *game;
+            if let Some((winning_turn, _)) = game_copy.play(roll) {
+                tally[winning_turn] += frequency;
+            } else {
+                let [t1, t2] = play_part_2_recursive(&game_copy, tallies);
+                tally[0] += frequency * t1;
+                tally[1] += frequency * t2;
+            }
+        }
+
+        tallies.insert(*game, tally);
+        tally
     }
 }
 
@@ -107,7 +119,7 @@ mod tests {
     #[test]
     fn test_play_part_2() {
         assert_eq!(play_part_2(&players(), 14), 9632852745);
-        // assert_eq!(play_part_2(&players(), 21), 444356092776315);
+        assert_eq!(play_part_2(&players(), 21), 444356092776315);
     }
 
     fn players() -> Vec<Player> {

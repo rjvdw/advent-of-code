@@ -26,4 +26,14 @@ public class Player
         if (i == -1) throw new FormatException($"Invalid player: {line}.");
         return new Player(int.Parse(line[(i + 1)..]) - 1, 0);
     }
+
+    private bool Equals(Player other) =>
+        Position == other.Position &&
+        Score == other.Score;
+
+    public override bool Equals(object? obj) =>
+        !ReferenceEquals(null, obj) &&
+        (ReferenceEquals(this, obj) || obj.GetType() == GetType() && Equals((Player)obj));
+
+    public override int GetHashCode() => HashCode.Combine(Position, Score);
 }

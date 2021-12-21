@@ -14,9 +14,12 @@ public class GameTest
         };
 
         var game = new Game(players, 20);
-        Assert.Null(game.Play(9)); // p1 -> 10
-        Assert.Null(game.Play(9)); // p2 -> 10
-        var result = game.Play(10); // p1 -> 20
-        Assert.NotNull(result);
+        int? turn;
+        (game, turn) = game.Play(9); // p1 -> 10
+        Assert.Null(turn);
+        (game, turn) = game.Play(9); // p2 -> 10
+        Assert.Null(turn);
+        (_, turn) = game.Play(10); // p1 -> 20
+        Assert.NotNull(turn);
     }
 }

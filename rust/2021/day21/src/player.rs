@@ -3,7 +3,7 @@ use std::str::FromStr;
 use rdcl_aoc_helpers::error::ParseError;
 use rdcl_aoc_helpers::parse_error;
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Eq, PartialEq, Hash)]
 pub struct Player {
     position: u8,
     score: u64,

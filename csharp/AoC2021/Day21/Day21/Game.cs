@@ -3,8 +3,10 @@ namespace Day21;
 public class Game
 {
     private readonly Player[] _players;
-    private int _turn;
+    private readonly int _turn;
     private readonly int _targetScore;
+
+    public Player[] Players => new[] { _players[0], _players[1] };
 
     public Game(IReadOnlyList<Player> players, int targetScore)
     {
@@ -13,24 +15,33 @@ public class Game
         _targetScore = targetScore;
     }
 
-    private Game(IReadOnlyList<Player> players, int turn, int targetScore)
+    private Game(Player[] players, int turn, int targetScore)
     {
-        _players = new[] { players[0], players[1] };
+        _players = players;
         _turn = turn;
         _targetScore = targetScore;
     }
 
-    public (int Turn, Player[] Players)? Play(int roll)
+    public (Game Game, int? Turn) Play(int roll)
     {
-        var player = _players[_turn].Move(roll);
-        _players[_turn] = player;
+        var nextPlayers = new[] { _players[0], _players[1] };
+        var player = nextPlayers[_turn] = _players[_turn].Move(roll);
+        var nextGame = new Game(nextPlayers, _turn ^ 1, _targetScore);
 
-        if (player.HasWon(_targetScore))
-            return (_turn, new[] { _players[0], _players[1] });
-
-        _turn ^= 1;
-        return null;
+        return player.HasWon(_targetScore)
+            ? (nextGame, _turn)
+            : (nextGame, null);
     }
 
-    public Game Duplicate() => new(_players, _turn, _targetScore);
+    private bool Equals(Game other) =>
+        _players[0].Equals(other._players[0]) &&
+        _players[1].Equals(other._players[1]) &&
+        _turn == other._turn &&
+        _targetScore == other._targetScore;
+
+    public override bool Equals(object? obj) =>
+        !ReferenceEquals(null, obj) &&
+        (ReferenceEquals(this, obj) || obj.GetType() == GetType() && Equals((Game)obj));
+
+    public override int GetHashCode() => HashCode.Combine(_players[0], _players[1], _turn, _targetScore);
 }
