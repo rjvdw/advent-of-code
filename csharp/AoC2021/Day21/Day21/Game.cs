@@ -13,6 +13,13 @@ public class Game
         _targetScore = targetScore;
     }
 
+    private Game(IReadOnlyList<Player> players, int turn, int targetScore)
+    {
+        _players = new[] { players[0], players[1] };
+        _turn = turn;
+        _targetScore = targetScore;
+    }
+
     public (int Turn, Player[] Players)? Play(int roll)
     {
         var player = _players[_turn].Move(roll);
@@ -24,4 +31,6 @@ public class Game
         _turn ^= 1;
         return null;
     }
+
+    public Game Duplicate() => new(_players, _turn, _targetScore);
 }

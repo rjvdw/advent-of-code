@@ -1,6 +1,6 @@
 namespace Day21;
 
-public class DeterministicDie : IDie
+public class DeterministicDie
 {
     private readonly int _sides;
     private int _value;
