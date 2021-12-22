@@ -2,8 +2,10 @@ namespace Day22;
 
 public static class Solution
 {
-    public static string Solve(IEnumerable<string> lines)
+    public static (long InitializationSequenceCount, long TotalCount) Solve(IEnumerable<Cuboid> cuboids)
     {
-        return $"Hello, World! [{string.Join(", ", lines)}]";
+        Console.WriteLine($"Hello, World! [{string.Join(", ", cuboids)}]");
+
+        return (0, 0);
     }
 }
