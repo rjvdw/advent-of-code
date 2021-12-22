@@ -3,20 +3,11 @@ name = "day20"
 version = "0.1.0"
 authors = ["Ruud van der Weide <rj@rdcl.dev>"]
 edition = "2021"
-default-run = "aoc-2021-20-mt"
-
-[lib]
-name = "image"
-path = "src/image/lib.rs"
+default-run = "aoc-2021-20"
 
 [[bin]]
-name = "aoc-2021-20-mt"
-path = "src/main_mt.rs"
-
-[[bin]]
-name = "aoc-2021-20-st"
-path = "src/main_st.rs"
+name = "aoc-2021-20"
+path = "src/main.rs"
 
 [dependencies]
 rdcl_aoc_helpers = "0.9.1"
-itertools = "0.10.3"

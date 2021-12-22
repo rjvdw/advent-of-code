@@ -1,3 +1,5 @@
+extern crate rdcl_aoc_helpers;
+
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 
@@ -5,18 +7,10 @@ use rdcl_aoc_helpers::args::get_args;
 use rdcl_aoc_helpers::error::WithOrExit;
 
 use crate::image::Image;
-use crate::mt::next::MultiThreadedNext;
-use crate::st::next::SingleThreadedNext;
 
-mod bounds;
 mod image;
-mod mt;
-mod point;
-#[cfg(test)]
-mod shared_test;
-mod st;
 
-pub fn main(multi_threaded: bool) {
+fn main() {
     let args = get_args(&["<input file>", "<steps>"], 1);
 
     let file = File::open(&args[1]).or_exit_with(1);
@@ -25,16 +19,8 @@ pub fn main(multi_threaded: bool) {
 
     let steps = args[2].parse::<usize>().or_exit_with(1);
 
-    if multi_threaded {
-        println!("Running the solution on multiple threads.");
-        for _ in 0..steps {
-            image = MultiThreadedNext::next(image);
-        }
-    } else {
-        println!("Running the solution on a single thread.");
-        for _ in 0..steps {
-            image = SingleThreadedNext::next(image);
-        }
+    for _ in 0..steps {
+        image = image.next();
     }
 
     match image.count_lit_pixels() {
