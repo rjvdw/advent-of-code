@@ -2,21 +2,22 @@ namespace Day22;
 
 public record Range(long From, long To)
 {
+    public bool IsDisjoint(Range other) => To < other.From || From > other.To;
+
     public bool FitsWithin(Range other) => From >= other.From && To <= other.To;
 
     public long Size() => To - From + 1;
 
     /// <summary>
     /// Creates a partition, so that every cube in the partition is either completely disjoint from <code>other</code>,
-    /// or is completely contained within <code>other</code>. If this range is already completely disjoint from
-    /// <code>other</code> to begin with, this method will return <code>null</code>.
+    /// or is completely contained within <code>other</code>.
     /// </summary>
     /// <param name="other">The other range to use for the partitioning.</param>
     /// <returns>A partition of this range.</returns>
-    public List<Range>? Partition(Range other)
+    public List<Range> Partition(Range other)
     {
         if (To < other.From || From > other.To)
-            return null;
+            return new List<Range> { this };
 
         var partitions = new List<Range> { new(Math.Max(From, other.From), Math.Min(To, other.To)) };
 

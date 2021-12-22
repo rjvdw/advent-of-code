@@ -27,11 +27,10 @@ public static class Solution
 
             foreach (var region in onRegions)
             {
-                var subRegions = region.Subtract(cuboid);
-                if (subRegions is null)
+                if (region.IsDisjoint(cuboid))
                     nextOnRegions.Add(region);
                 else
-                    nextOnRegions.AddRange(subRegions);
+                    nextOnRegions.AddRange(region.Subtract(cuboid));
             }
 
             if (cuboid.IsOn)

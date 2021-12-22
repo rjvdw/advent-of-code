@@ -43,7 +43,8 @@ public class RangeTest
         };
         Assert.Equal(expected1, range.Partition(new Range(5, 15)));
 
-        Assert.Null(range.Partition(new Range(15, 25)));
+        var expected2 = new List<Range> { range };
+        Assert.Equal(expected2, range.Partition(new Range(15, 25)));
 
         var expected3 = new List<Range>
         {
