@@ -6,62 +6,77 @@ public class Image
     private const ushort LightRegion = 0b111_111_111;
 
     private readonly bool[] _iea;
-    private readonly HashSet<(long Row, long Col)> _lit;
-    private readonly Bounds _bounds;
-    private bool _defaultLit;
-
-    private Image(bool[] iea)
-    {
-        _iea = iea;
-        _lit = new HashSet<(long Row, long Col)>();
-        _bounds = new Bounds((long.MaxValue, long.MaxValue), (long.MinValue, long.MinValue));
-        _defaultLit = false;
-    }
-
-    public (long NrLit, bool IsInfinite) CountLitPixels() => (_lit.Count, _defaultLit);
+    private readonly bool[][] _lit;
+    private readonly int _height;
+    private readonly int _width;
+    private readonly bool _areOutOfBoundsPixelsLit;
 
     public Image Next()
     {
-        var next = new Image(_iea)
-        {
-            _defaultLit = _defaultLit
-                ? _iea[LightRegion]
-                : _iea[DarkRegion],
-        };
+        var newHeight = _height + 2;
+        var newWidth = _width + 2;
 
-        foreach (var (row, col) in _bounds.Stretched(1).IterRowCol())
-        {
-            var idx = ComputeIeaIndex(row, col);
-            if (_iea[idx])
-            {
-                next._lit.Add((row, col));
-                next._bounds.UpdateWith(row, col);
-            }
-        }
+        var lit = Enumerable.Range(0, newHeight)
+            .Select(row =>
+                Enumerable.Range(0, newWidth)
+                    .Select(col => GetIeaIndex(row, col))
+                    .Select(idx => _iea[idx])
+                    .ToArray()
+            ).ToArray();
 
-        return next;
+        var areOutOfBoundsPixelsLit = _areOutOfBoundsPixelsLit
+            ? _iea[LightRegion]
+            : _iea[DarkRegion];
+
+        return new Image(
+            _iea,
+            lit,
+            newHeight,
+            newWidth,
+            areOutOfBoundsPixelsLit
+        );
     }
 
-    private ushort ComputeIeaIndex(long row, long col)
-    {
-        ushort idx = 0;
-        ushort mask = 0b100_000_000;
+    public (int Count, bool IsInfinite) CountLitPixels() =>
+        (_lit.Select(x => x.Count(v => v)).Sum(), _areOutOfBoundsPixelsLit);
 
-        for (var y = row - 1; y <= row + 1; y += 1)
+    private int GetIeaIndex(int row, int col)
+    {
+        var index = 0;
+        var mask = 0b100_000_000;
+
+        for (var y = row; y <= row + 2; y += 1)
         {
-            for (var x = col - 1; x <= col + 1; x += 1)
+            for (var x = col; x <= col + 2; x += 1)
             {
-                if (IsLit(y, x))
-                    idx |= mask;
+                var isOnEdge = y < 2 || x < 2;
+                var isLit = isOnEdge
+                    ? _areOutOfBoundsPixelsLit
+                    : IsLit(y - 2, x - 2);
+
+                if (isLit)
+                    index |= mask;
+
                 mask >>= 1;
             }
         }
 
-        return idx;
+        return index;
     }
 
-    private bool IsLit(long row, long col) =>
-        _defaultLit && !_bounds.Contains(row, col) || _lit.Contains((row, col));
+    private bool IsLit(int row, int col) =>
+        row < _height && col < _width
+            ? _lit[row][col]
+            : _areOutOfBoundsPixelsLit;
+
+    private Image(bool[] iea, bool[][] lit, int height, int width, bool areOutOfBoundsPixelsLit)
+    {
+        _iea = iea;
+        _lit = lit;
+        _height = height;
+        _width = width;
+        _areOutOfBoundsPixelsLit = areOutOfBoundsPixelsLit;
+    }
 
     public static Image Parse(IEnumerable<string> lines)
     {
@@ -70,57 +85,31 @@ public class Image
         // first line contains the image enhancement algorithm
         if (!iter.MoveNext())
             throw new FormatException("Invalid input");
-        var image = new Image(ParseIea(iter.Current));
+        var iea = ParseLine(iter.Current);
 
         // second line must be empty
         if (!iter.MoveNext() || !string.IsNullOrEmpty(iter.Current))
             throw new FormatException("Invalid input");
 
         // rest of the lines describe the pixels
-        var row = 0;
+        var lit = new List<bool[]>();
+        var height = 0;
+        var width = 0;
         while (iter.MoveNext())
         {
-            ParsePixels(iter.Current, row, image);
-            row += 1;
+            height += 1;
+            width = iter.Current.Length;
+            lit.Add(ParseLine(iter.Current));
         }
 
-        return image;
+        return new Image(
+            iea,
+            lit.ToArray(),
+            height,
+            width,
+            false
+        );
     }
 
-    private static bool[] ParseIea(string line)
-    {
-        var iea = Enumerable.Repeat<bool>(false, 512).ToArray();
-        for (ushort idx = 0; idx < line.Length; idx += 1)
-        {
-            switch (line[idx])
-            {
-                case '#':
-                    iea[idx] = true;
-                    break;
-                case '.':
-                    break;
-                default:
-                    throw new FormatException($"Invalid character {line[idx]} @ {idx} : {line}");
-            }
-        }
-        return iea;
-    }
-
-    private static void ParsePixels(string line, long row, Image image)
-    {
-        for (var col = 0; col < line.Length; col += 1)
-        {
-            switch (line[col])
-            {
-                case '#':
-                    image._lit.Add((row, col));
-                    image._bounds.UpdateWith(row, col);
-                    break;
-                case '.':
-                    break;
-                default:
-                    throw new FormatException($"Invalid character {line[col]} @ {col} : {line}");
-            }
-        }
-    }
+    private static bool[] ParseLine(string line) => line.Select(ch => ch == '#').ToArray();
 }
