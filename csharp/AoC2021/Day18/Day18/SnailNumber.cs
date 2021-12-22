@@ -145,7 +145,7 @@ public class SnailNumber
     }
 
     /// <summary>
-    /// Finds the left most regular value, and adds the <code>value</code>.
+    /// Finds the left most regular value, and adds the <paramref name="value"/>.
     /// </summary>
     /// <param name="value">The value to add.</param>
     private void AddToLeft(long value)
@@ -157,7 +157,7 @@ public class SnailNumber
     }
 
     /// <summary>
-    /// Finds the right most regular value, and adds the <code>value</code>.
+    /// Finds the right most regular value, and adds the <paramref name="value"/>.
     /// </summary>
     /// <param name="value">The value to add.</param>
     private void AddToRight(long value)

@@ -15,15 +15,25 @@ public record Cuboid(bool IsOn, Range XRange, Range YRange, Range ZRange)
     public long Size() => XRange.Size() * YRange.Size() * ZRange.Size();
 
     /// <summary>
-    /// Return a selection of cuboids that together contain all cubes that are in this cuboid, but not in the second.
+    /// Return a selection of cuboids that together contain all cubes that are in <paramref name="one"/>, but not in
+    /// <paramref name="other"/>.
     /// </summary>
-    /// <param name="other">The cuboid to compare with.</param>
-    /// <returns>Cuboids containing the cubes that are not in the other cuboids.</returns>
-    public IEnumerable<Cuboid> Subtract(Cuboid other) =>
-        XRange.Partition(other.XRange)
-            .SelectMany(x => YRange.Partition(other.YRange).Select(y => (x, y)))
-            .SelectMany(ranges => ZRange.Partition(other.ZRange).Select(z => (ranges.x, ranges.y, z)))
-            .Select(ranges => new Cuboid(IsOn, ranges.x, ranges.y, ranges.z))
+    /// <param name="one">The cuboid from which cubes are subtracted.</param>
+    /// <param name="other">The cuboid that will be subtracted.</param>
+    /// <returns>Cuboids containing the cubes that are in <paramref name="one"/>, but not <paramref name="other"/>.</returns>
+    public static IEnumerable<Cuboid> operator -(Cuboid one, Cuboid other) =>
+        one.XRange.Partition(other.XRange)
+            .SelectMany(x => one
+                .YRange
+                .Partition(other.YRange)
+                .Select(y => (x, y))
+            )
+            .SelectMany(ranges => one
+                .ZRange
+                .Partition(other.ZRange)
+                .Select(z => (ranges.x, ranges.y, z))
+            )
+            .Select(ranges => new Cuboid(one.IsOn, ranges.x, ranges.y, ranges.z))
             .Where(cuboid => !cuboid.FitsWithin(other));
 
     public static Cuboid Parse(string s)

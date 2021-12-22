@@ -30,7 +30,7 @@ public static class Solution
                 if (region.IsDisjoint(cuboid))
                     nextOnRegions.Add(region);
                 else
-                    nextOnRegions.AddRange(region.Subtract(cuboid));
+                    nextOnRegions.AddRange(region - cuboid);
             }
 
             if (cuboid.IsOn)

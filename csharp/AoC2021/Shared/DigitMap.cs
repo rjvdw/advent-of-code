@@ -22,7 +22,7 @@ public abstract record DigitMap(List<byte> _values, int Rows, int Cols)
     public int Count => Rows * Cols;
 
     /// <summary>
-    /// Get the value at the specified <code>Row</code> and <code>Col</code>.
+    /// Get the value at the specified <paramref name="index"/>.
     /// </summary>
     /// <param name="index">The <code>Row</code> and <code>Col</code> from where to read the value.</param>
     public byte this[(int Row, int Col) index] => _values[GetIndex(index.Row, index.Col)];
@@ -93,7 +93,7 @@ public abstract record DigitMap(List<byte> _values, int Rows, int Cols)
     }
 
     /// <summary>
-    /// Helper method to parse lines into a <code>DigitMap</code>.
+    /// Helper method to parse lines into a <see cref="DigitMap"/>.
     /// </summary>
     /// <param name="lines">The lines to parse.</param>
     /// <returns>The values, row count, and column count that were determined from the input lines.</returns>

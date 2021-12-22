@@ -9,8 +9,8 @@ public record Range(long From, long To)
     public long Size() => To - From + 1;
 
     /// <summary>
-    /// Creates a partition, so that every cube in the partition is either completely disjoint from <code>other</code>,
-    /// or is completely contained within <code>other</code>.
+    /// Creates a partition, so that every cube in the partition is either completely disjoint from
+    /// <paramref name="other"/> or is completely contained within <paramref name="other"/>.
     /// </summary>
     /// <param name="other">The other range to use for the partitioning.</param>
     /// <returns>A partition of this range.</returns>
