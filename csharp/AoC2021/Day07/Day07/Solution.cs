@@ -2,6 +2,24 @@
 
 public static class Solution
 {
+    public static void Solve(IEnumerable<string> input)
+    {
+        var points = input
+            .SelectMany(line => line.Split(','))
+            .Select(uint.Parse)
+            .ToList();
+
+        var (optimalPoint1, fuelCost1) = FindOptimalPoint(points, ComputeFuelCostNaive)!.Value;
+        Console.WriteLine("Using the naive fuel computation, " +
+                          $"the optimal point is {optimalPoint1}, " +
+                          $"with a cost of {fuelCost1}.");
+
+        var (optimalPoint2, fuelCost2) = FindOptimalPoint(points, ComputeFuelCostCorrect)!.Value;
+        Console.WriteLine("Using the correct fuel computation, " +
+                          $"the optimal point is {optimalPoint2}, " +
+                          $"with a cost of {fuelCost2}.");
+    }
+
     public static (uint, uint)? FindOptimalPoint(List<uint> points,
         Func<IEnumerable<uint>, uint, uint> computeFuelCost)
     {

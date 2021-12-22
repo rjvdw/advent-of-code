@@ -2,8 +2,8 @@ namespace RdclDev.AdventOfCode;
 
 public static class Solution
 {
-    public static string Solve(IEnumerable<string> lines)
+    public static void Solve(IEnumerable<string> input)
     {
-        return $"Hello, World! [{string.Join(", ", lines)}]";
+        Console.WriteLine($"Hello, World! [{string.Join(", ", input)}]");
     }
 }

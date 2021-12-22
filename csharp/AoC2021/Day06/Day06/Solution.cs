@@ -5,6 +5,16 @@ public static class Solution
     private const ulong GestationPeriod = 9;
     private const ulong ReproductionRate = 7;
 
+    public static void Solve(IEnumerable<string> input, ulong days)
+    {
+        var values = input
+            .SelectMany(line => line.Split(','))
+            .Select(ulong.Parse)
+            .ToList();
+
+        Console.WriteLine($"After {days} days, there are {Solve(values, days)} lantern fish.");
+    }
+
     public static ulong Solve(IEnumerable<ulong> values, ulong n)
     {
         var cache = new Dictionary<ulong, ulong>();

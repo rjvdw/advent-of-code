@@ -2,6 +2,15 @@ namespace Day19;
 
 public static class Solution
 {
+    public static void Solve(IEnumerable<string> input)
+    {
+        var scanners = Scanner.Parse(input).ToList();
+        var corrected = CorrectScanners(scanners).ToList();
+        var beacons = FindBeacons(corrected);
+        Console.WriteLine($"There are {beacons.Count} beacons.");
+        Console.WriteLine($"The greatest distance between two scanners is {MaxDistance(corrected)}.");
+    }
+
     public static IEnumerable<Scanner> CorrectScanners(List<Scanner> scanners)
     {
         var i = 0;

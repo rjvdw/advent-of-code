@@ -6,7 +6,4 @@ if (args.Length != 1)
     Environment.Exit(1);
 }
 
-var lines = File.ReadLines(args[0]).Select(SnailNumber.Parse).ToList();
-
-Console.WriteLine($"The magnitude of the sum of the inputs is {Solution.DoHomeWork1(lines)}.");
-Console.WriteLine($"The largest magnitude from any two numbers is {Solution.DoHomeWork2(lines)}.");
+Solution.Solve(File.ReadLines(args[0]));

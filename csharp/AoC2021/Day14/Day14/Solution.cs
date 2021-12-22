@@ -4,6 +4,24 @@ using InstructionMap = Dictionary<Pair, (Pair, Pair)>;
 
 public static class Solution
 {
+    public static void Solve(IEnumerable<string> input, int steps)
+    {
+        var (polymer, instructions) = Parse(input);
+
+        var counts = Process(polymer, instructions, steps);
+        var min = long.MaxValue;
+        var max = long.MinValue;
+        foreach (var count in counts.Values)
+        {
+            if (count < min) min = count;
+            if (count > max) max = count;
+        }
+
+        Console.WriteLine($"The most common element occurs {max} times and the least common element occurs {min} times. " +
+                          $"The final answer is {max - min}.");
+
+    }
+
     public static Dictionary<char, long> Process(string polymer, InstructionMap instructions, int steps)
     {
         var ch1 = polymer[0];

@@ -2,6 +2,12 @@ namespace Day01;
 
 public static class Solution
 {
+    public static void Solve(IEnumerable<string> input, int windowSize)
+    {
+        var numbers = input.Select(int.Parse).ToList();
+        Console.WriteLine(CountIncreases(numbers, windowSize));
+    }
+
     public static int CountIncreases(List<int> numbers, int windowSize)
     {
         var count = 0;

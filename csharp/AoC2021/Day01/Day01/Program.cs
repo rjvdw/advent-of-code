@@ -6,10 +6,4 @@ if (args.Length != 2)
     Environment.Exit(1);
 }
 
-var numbers = File
-    .ReadAllLines(args[0])
-    .Select(int.Parse)
-    .ToList();
-var windowSize = int.Parse(args[1]);
-
-Console.WriteLine(Solution.CountIncreases(numbers, windowSize));
+Solution.Solve(File.ReadLines(args[0]), int.Parse(args[1]));

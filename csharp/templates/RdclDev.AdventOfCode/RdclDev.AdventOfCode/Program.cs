@@ -6,6 +6,4 @@ if (args.Length != 1)
     Environment.Exit(1);
 }
 
-var lines = File.ReadLines(args[0]);
-
-Console.WriteLine(Solution.Solve(lines));
+Solution.Solve(File.ReadLines(args[0]));

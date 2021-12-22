@@ -2,6 +2,20 @@
 
 public static class Solution
 {
+    public static void Solve(IEnumerable<string> input, int steps)
+    {
+        var map = OctopusMap.Parse(input);
+        var nrFlashes = RunSimulation(map, steps);
+        Console.WriteLine($"After {steps} steps, there have been {nrFlashes} flashes.");
+    }
+
+    public static void Solve(IEnumerable<string> input)
+    {
+        var map = OctopusMap.Parse(input);
+        var steps = RunSimulationUntil(map, flashes => flashes == map.Count);
+        Console.WriteLine($"After {steps} steps, all octopuses flash at the same time.");
+    }
+
     public static int RunSimulation(OctopusMap map, int steps)
     {
         var total = 0;
