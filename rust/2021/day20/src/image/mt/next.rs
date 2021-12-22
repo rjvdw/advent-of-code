@@ -28,9 +28,9 @@ impl MultiThreadedNext for Image {
             bounds: Bounds::default(),
         }));
         let default_state = if image.default_state {
-            image.iea.contains(&LIGHT_REGION)
+            image.iea[LIGHT_REGION]
         } else {
-            image.iea.contains(&DARK_REGION)
+            image.iea[DARK_REGION]
         };
 
         let mut handles = vec![];
@@ -45,7 +45,7 @@ impl MultiThreadedNext for Image {
                 let image = shared_self.read().unwrap();
                 for (row, col) in region.iter_row_col() {
                     let iea_index = image.get_iea_index(row, col);
-                    if image.iea.contains(&iea_index) {
+                    if image.iea[iea_index] {
                         lit.insert(Point::new(row, col));
                         bounds.update_with(row, col);
                     }
@@ -66,7 +66,7 @@ impl MultiThreadedNext for Image {
 
         let state = &*shared_state.lock().unwrap();
         Image {
-            iea: image.iea.clone(),
+            iea: image.iea,
             lit: state.lit.clone(),
             bounds: state.bounds,
             default_state,

@@ -8,14 +8,14 @@ use crate::bounds::Bounds;
 use crate::point::Point;
 
 #[allow(clippy::unusual_byte_groupings)]
-pub(crate) const DARK_REGION: u16 = 0b000_000_000;
+pub(crate) const DARK_REGION: usize = 0b000_000_000;
 #[allow(clippy::unusual_byte_groupings)]
-pub(crate) const LIGHT_REGION: u16 = 0b111_111_111;
+pub(crate) const LIGHT_REGION: usize = 0b111_111_111;
 
 #[derive(Debug, Clone)]
 pub(crate) struct Image {
     /// Image enhancement algorithm.
-    pub(crate) iea: HashSet<u16>,
+    pub(crate) iea: [bool; 512],
 
     /// The pixels which are currently lit.
     pub(crate) lit: HashSet<Point>,
@@ -40,7 +40,7 @@ impl Image {
         }
     }
 
-    pub(crate) fn get_iea_index(&self, row: i64, col: i64) -> u16 {
+    pub(crate) fn get_iea_index(&self, row: i64, col: i64) -> usize {
         let mut iea_index = 0;
         #[allow(clippy::unusual_byte_groupings)]
         let mut mask = 0b100_000_000;
@@ -89,12 +89,12 @@ impl Image {
         })
     }
 
-    fn parse_iea(s: &str) -> Result<HashSet<u16>, ParseError> {
-        let mut iea = HashSet::new();
+    fn parse_iea(s: &str) -> Result<[bool; 512], ParseError> {
+        let mut iea = [false; 512];
         for (idx, ch) in s.chars().enumerate() {
             match ch {
                 '#' => {
-                    iea.insert(idx as u16);
+                    iea[idx] = true;
                 }
                 '.' => {}
                 _ => {
@@ -141,7 +141,7 @@ impl Image {
 impl fmt::Display for Image {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         for i in 0..512 {
-            if self.iea.contains(&i) {
+            if self.iea[i] {
                 write!(f, "#")?;
             } else {
                 write!(f, ".")?;

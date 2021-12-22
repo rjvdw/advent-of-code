@@ -5,12 +5,12 @@ public class Image
     private const ushort DarkRegion = 0b000_000_000;
     private const ushort LightRegion = 0b111_111_111;
 
-    private readonly HashSet<ushort> _iea;
+    private readonly bool[] _iea;
     private readonly HashSet<(long Row, long Col)> _lit;
     private readonly Bounds _bounds;
     private bool _defaultLit;
 
-    private Image(HashSet<ushort> iea)
+    private Image(bool[] iea)
     {
         _iea = iea;
         _lit = new HashSet<(long Row, long Col)>();
@@ -25,14 +25,14 @@ public class Image
         var next = new Image(_iea)
         {
             _defaultLit = _defaultLit
-                ? _iea.Contains(LightRegion)
-                : _iea.Contains(DarkRegion),
+                ? _iea[LightRegion]
+                : _iea[DarkRegion],
         };
 
         foreach (var (row, col) in _bounds.Stretched(1).IterRowCol())
         {
             var idx = ComputeIeaIndex(row, col);
-            if (_iea.Contains(idx))
+            if (_iea[idx])
             {
                 next._lit.Add((row, col));
                 next._bounds.UpdateWith(row, col);
@@ -87,15 +87,15 @@ public class Image
         return image;
     }
 
-    private static HashSet<ushort> ParseIea(string line)
+    private static bool[] ParseIea(string line)
     {
-        var iea = new HashSet<ushort>();
+        var iea = Enumerable.Repeat<bool>(false, 512).ToArray();
         for (ushort idx = 0; idx < line.Length; idx += 1)
         {
             switch (line[idx])
             {
                 case '#':
-                    iea.Add(idx);
+                    iea[idx] = true;
                     break;
                 case '.':
                     break;

@@ -14,14 +14,14 @@ impl SingleThreadedNext for Image {
         let mut lit = HashSet::new();
         let mut bounds = Bounds::default();
         let default_state = if self.default_state {
-            self.iea.contains(&LIGHT_REGION)
+            self.iea[LIGHT_REGION]
         } else {
-            self.iea.contains(&DARK_REGION)
+            self.iea[DARK_REGION]
         };
 
         for (row, col) in self.bounds.stretched(1).iter_row_col() {
             let iea_index = self.get_iea_index(row, col);
-            if self.iea.contains(&iea_index) {
+            if self.iea[iea_index] {
                 lit.insert(Point::new(row, col));
                 bounds.update_with(row, col);
             }
