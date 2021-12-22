@@ -6,8 +6,4 @@ if (args.Length != 2)
     Environment.Exit(1);
 }
 
-var map = CaveMap.Parse(File.ReadLines(args[0]));
-var maxRevisits = int.Parse(args[1]);
-
-Console.WriteLine($"There are {map.CountPaths(maxRevisits)} paths " +
-                  $"that don't revisit a small cave more than {maxRevisits} times.");
+Solution.Solve(File.ReadLines(args[0]), int.Parse(args[1]));

@@ -74,7 +74,7 @@ public class SnailNumber
         {
             > 3 => throw new InvalidOperationException($"Recursion went to deep ({depth})."),
             < 3 => ExplodeRecurse(depth),
-            3 => ExplodeBase()
+            3 => ExplodeBase(),
         };
     }
 

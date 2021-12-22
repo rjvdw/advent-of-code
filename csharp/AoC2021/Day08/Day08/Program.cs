@@ -6,7 +6,4 @@ if (args.Length != 1)
     Environment.Exit(1);
 }
 
-var displays = File.ReadLines(args[0]).Select(Display.Parse).ToList();
-
-Console.WriteLine($"There are {Solution.CountEasyDigits(displays)} easy digits in the output.");
-Console.WriteLine($"The sum of all the displays is {Solution.DecodeDisplays(displays)}.");
+Solution.Solve(File.ReadLines(args[0]));

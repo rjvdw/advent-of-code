@@ -1,7 +1,18 @@
-﻿namespace Day08;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Day08;
 
 public static class Solution
 {
+    [ExcludeFromCodeCoverage]
+    public static void Solve(IEnumerable<string> input)
+    {
+        var displays = input.Select(Display.Parse).ToList();
+
+        Console.WriteLine($"There are {CountEasyDigits(displays)} easy digits in the output.");
+        Console.WriteLine($"The sum of all the displays is {DecodeDisplays(displays)}.");
+    }
+
     public static int CountEasyDigits(IEnumerable<Display> displays) =>
         displays
             .Select(display => display.Output)

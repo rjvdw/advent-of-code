@@ -6,18 +6,4 @@ if (args.Length != 2)
     Environment.Exit(1);
 }
 
-var lines = File.ReadLines(args[0]);
-var (polymer, instructions) = Solution.Parse(lines);
-var steps = int.Parse(args[1]);
-
-var counts = Solution.Process(polymer, instructions, steps);
-var min = long.MaxValue;
-var max = long.MinValue;
-foreach (var count in counts.Values)
-{
-    if (count < min) min = count;
-    if (count > max) max = count;
-}
-
-Console.WriteLine($"The most common element occurs {max} times and the least common element occurs {min} times. " +
-                  $"The final answer is {max - min}.");
+Solution.Solve(File.ReadLines(args[0]), int.Parse(args[1]));

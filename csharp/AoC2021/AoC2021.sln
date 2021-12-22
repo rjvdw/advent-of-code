@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "All", "All\All.csproj", "{84B220FB-C48A-49E3-AC5D-18874EECBEA1}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "Shared\Shared.csproj", "{45B003BF-33EB-48FD-88B9-0BDEA050A90B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Day01", "Day01", "{BDFCA23C-C879-48E5-87BC-F732B7CBA3F4}"
@@ -146,6 +148,10 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{84B220FB-C48A-49E3-AC5D-18874EECBEA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84B220FB-C48A-49E3-AC5D-18874EECBEA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84B220FB-C48A-49E3-AC5D-18874EECBEA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84B220FB-C48A-49E3-AC5D-18874EECBEA1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{45B003BF-33EB-48FD-88B9-0BDEA050A90B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{45B003BF-33EB-48FD-88B9-0BDEA050A90B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{45B003BF-33EB-48FD-88B9-0BDEA050A90B}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -1,7 +1,32 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Day03;
 
 public static class Solution
 {
+    [ExcludeFromCodeCoverage]
+    public static void Solve(IEnumerable<string> input)
+    {
+        var len = 0;
+        var values = input
+            .Select(line =>
+            {
+                len = line.Length;
+                return Convert.ToUInt16(line, 2);
+            })
+            .ToList();
+
+        var (gamma, epsilon) = ComputeGammaAndEpsilonRate(values, len);
+        Console.WriteLine($"The gamma rate is {gamma}, and the epsilon rate is {epsilon}, " +
+                          $"so the final answer is {gamma * epsilon}");
+
+        var rating = ComputeLifeSupportRating(values, len);
+        if (rating == null)
+            Console.Error.WriteLine("No life support rating could be determined.");
+        else
+            Console.WriteLine($"The life support rating is {rating}.");
+    }
+
     public static (ushort, ushort) ComputeGammaAndEpsilonRate(List<ushort> values, int len)
     {
         var mask = (ushort)0b1;

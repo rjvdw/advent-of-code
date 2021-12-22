@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Day21;
 
 public static class Solution
@@ -12,6 +14,26 @@ public static class Solution
         (8, 3L), // 233 323 332
         (9, 1L), // 333
     };
+
+    [ExcludeFromCodeCoverage]
+    public static void Solve(IEnumerable<string> input, string part, int targetScore)
+    {
+        var players = input
+            .Take(2) // For simplicity, assume only two players.
+            .Select(Player.Parse)
+            .ToArray();
+
+        if (part == "part1")
+        {
+            var (winningTurn, loser, rolls) = PlayPart1(players, targetScore);
+            Console.WriteLine($"Player #{2 - winningTurn} loses after {rolls} rolls, " +
+                              $"making the final answer {loser.Score * rolls}.");
+        }
+        else
+        {
+            Console.WriteLine($"The winning player wins in {PlayPart2(players, targetScore)} universes.");
+        }
+    }
 
     public static (int WinningTurn, Player LosingPlayer, int Rolls) PlayPart1(Player[] players, int targetScore)
     {

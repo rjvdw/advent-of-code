@@ -6,7 +6,4 @@ if (args.Length != 1)
     Environment.Exit(1);
 }
 
-var packet = Packet.Parse(File.ReadLines(args[0]));
-
-Console.WriteLine($"The sum of the versions is {packet.SumVersions()}.");
-Console.WriteLine($"The transmission evaluates to {packet.Eval()}.");
+Solution.Solve(File.ReadLines(args[0]));

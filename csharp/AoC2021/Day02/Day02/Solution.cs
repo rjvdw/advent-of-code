@@ -1,7 +1,25 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Day02;
 
 public static class Solution
 {
+    [ExcludeFromCodeCoverage]
+    public static void Solve(IEnumerable<string> input)
+    {
+        var instructions = input
+            .Select(Instruction.Parse)
+            .ToList();
+
+        var (depth1, position1) = FollowInstructions(instructions);
+        Console.WriteLine($"Not considering aim, the submarine ends at position {position1} and depth {depth1}, " +
+                          $"for a final answer of {position1 * depth1}.");
+
+        var (depth2, position2) = FollowInstructionsWithAim(instructions);
+        Console.WriteLine($"Considering aim, the submarine ends at position {position2} and depth {depth2}, " +
+                          $"for a final answer of {position2 * depth2}.");
+    }
+
     public static (int, int) FollowInstructions(List<Instruction> instructions)
     {
         var depth = 0;

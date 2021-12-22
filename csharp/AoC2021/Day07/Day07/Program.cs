@@ -6,18 +6,4 @@ if (args.Length != 1)
     Environment.Exit(1);
 }
 
-var points = File
-    .ReadAllLines(args[0])
-    .SelectMany(line => line.Split(','))
-    .Select(uint.Parse)
-    .ToList();
-
-var (optimalPoint1, fuelCost1) = Solution.FindOptimalPoint(points, Solution.ComputeFuelCostNaive)!.Value;
-Console.WriteLine("Using the naive fuel computation, " +
-                  $"the optimal point is {optimalPoint1}, " +
-                  $"with a cost of {fuelCost1}.");
-
-var (optimalPoint2, fuelCost2) = Solution.FindOptimalPoint(points, Solution.ComputeFuelCostCorrect)!.Value;
-Console.WriteLine("Using the correct fuel computation, " +
-                  $"the optimal point is {optimalPoint2}, " +
-                  $"with a cost of {fuelCost2}.");
+Solution.Solve(File.ReadLines(args[0]));
