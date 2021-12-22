@@ -71,5 +71,7 @@ public class CuboidTest
     public void TestParse3()
     {
         Assert.Throws<FormatException>(() => Cuboid.Parse("invalid"));
+        Assert.Throws<FormatException>(() => Cuboid.Parse("on x=1..2,invalid"));
+        Assert.Throws<FormatException>(() => Cuboid.Parse("on x=1..2,y=3..4,invalid"));
     }
 }
