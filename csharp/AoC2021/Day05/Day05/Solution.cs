@@ -1,7 +1,10 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Day05;
 
 public static class Solution
 {
+    [ExcludeFromCodeCoverage]
     public static void Solve(IEnumerable<string> input)
     {
         var lines = input.Select(Line.Parse).ToList();

@@ -1,7 +1,10 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Day17;
 
 public static class Solution
 {
+    [ExcludeFromCodeCoverage]
     public static void Solve(IEnumerable<string> input)
     {
         var targetArea = TargetArea.Parse(input);

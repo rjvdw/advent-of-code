@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Day21;
 
 public static class Solution
@@ -13,6 +15,7 @@ public static class Solution
         (9, 1L), // 333
     };
 
+    [ExcludeFromCodeCoverage]
     public static void Solve(IEnumerable<string> input, string part, int targetScore)
     {
         var players = input

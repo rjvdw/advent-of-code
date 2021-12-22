@@ -1,9 +1,12 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Day14;
 
 using InstructionMap = Dictionary<Pair, (Pair, Pair)>;
 
 public static class Solution
 {
+    [ExcludeFromCodeCoverage]
     public static void Solve(IEnumerable<string> input, int steps)
     {
         var (polymer, instructions) = Parse(input);

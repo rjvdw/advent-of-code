@@ -1,7 +1,10 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Day13;
 
 public static class Solution
 {
+    [ExcludeFromCodeCoverage]
     public static void Solve(IEnumerable<string> input)
     {
         var manual = Manual.Parse(input);

@@ -1,7 +1,10 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Day02;
 
 public static class Solution
 {
+    [ExcludeFromCodeCoverage]
     public static void Solve(IEnumerable<string> input)
     {
         var instructions = input
@@ -33,6 +36,7 @@ public static class Solution
                     depth -= instruction.Distance;
                     break;
                 case Direction.Down:
+                default:
                     depth += instruction.Distance;
                     break;
             }
@@ -59,6 +63,7 @@ public static class Solution
                     aim -= instruction.Distance;
                     break;
                 case Direction.Down:
+                default:
                     aim += instruction.Distance;
                     break;
             }

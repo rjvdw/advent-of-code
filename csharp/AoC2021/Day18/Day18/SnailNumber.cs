@@ -74,7 +74,7 @@ public class SnailNumber
         {
             > 3 => throw new InvalidOperationException($"Recursion went to deep ({depth})."),
             < 3 => ExplodeRecurse(depth),
-            3 => ExplodeBase()
+            3 => ExplodeBase(),
         };
     }
 
@@ -285,6 +285,7 @@ public class SnailNumber
                         Parsing = ParsingBranch.Right;
                         break;
                     case ParsingBranch.Right:
+                    default:
                         pairPrev.Right = number;
                         break;
                 }
@@ -308,6 +309,7 @@ public class SnailNumber
                     Parsing = ParsingBranch.Right;
                     break;
                 case ParsingBranch.Right:
+                default:
                     Pair.Right = number;
                     break;
             }

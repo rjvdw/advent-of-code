@@ -1,7 +1,10 @@
-﻿namespace Day09;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Day09;
 
 public static class Solution
 {
+    [ExcludeFromCodeCoverage]
     public static void Solve(IEnumerable<string> input)
     {
         var heightMap = HeightMap.Parse(input);

@@ -1,7 +1,10 @@
-﻿namespace Day11;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Day11;
 
 public static class Solution
 {
+    [ExcludeFromCodeCoverage]
     public static void Solve(IEnumerable<string> input, int steps)
     {
         var map = OctopusMap.Parse(input);
@@ -9,6 +12,7 @@ public static class Solution
         Console.WriteLine($"After {steps} steps, there have been {nrFlashes} flashes.");
     }
 
+    [ExcludeFromCodeCoverage]
     public static void Solve(IEnumerable<string> input)
     {
         var map = OctopusMap.Parse(input);

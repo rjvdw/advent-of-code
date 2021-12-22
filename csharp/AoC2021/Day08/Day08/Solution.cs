@@ -1,7 +1,10 @@
-﻿namespace Day08;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Day08;
 
 public static class Solution
 {
+    [ExcludeFromCodeCoverage]
     public static void Solve(IEnumerable<string> input)
     {
         var displays = input.Select(Display.Parse).ToList();

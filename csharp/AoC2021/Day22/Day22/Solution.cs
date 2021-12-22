@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Day22;
 
 public static class Solution
@@ -9,6 +11,7 @@ public static class Solution
         new Range(-50, 50)
     );
 
+    [ExcludeFromCodeCoverage]
     public static void Solve(IEnumerable<string> input)
     {
         var cubes = input.Select(Cuboid.Parse);

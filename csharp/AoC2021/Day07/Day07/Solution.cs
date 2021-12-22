@@ -1,7 +1,10 @@
-﻿namespace Day07;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Day07;
 
 public static class Solution
 {
+    [ExcludeFromCodeCoverage]
     public static void Solve(IEnumerable<string> input)
     {
         var points = input
