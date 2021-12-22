@@ -17,8 +17,8 @@ fn main() {
     let cuboids = File::open(&args[1]).read_lines(1).collect::<Vec<Cuboid>>();
 
     let (init, total) = execute_reboot_sequence(&cuboids);
-    println!("After the initialization sequence, {} cubes are on.", init,);
-    println!("After the full reboot sequence, {} cubes are on.", total,);
+    println!("After the initialization sequence, {} cubes are on.", init);
+    println!("After the full reboot sequence, {} cubes are on.", total);
 }
 
 fn execute_reboot_sequence(cuboids: &[Cuboid]) -> (usize, usize) {
@@ -42,12 +42,10 @@ fn execute_reboot_sequence(cuboids: &[Cuboid]) -> (usize, usize) {
 
         let mut next_on_regions = vec![];
         for region in &on_regions {
-            if let Some(sub_regions) = region.subtract(cuboid) {
-                for s in sub_regions {
-                    next_on_regions.push(s);
-                }
-            } else {
+            if region.is_disjoint(cuboid) {
                 next_on_regions.push(*region);
+            } else {
+                next_on_regions.append(&mut (region - cuboid));
             }
         }
 

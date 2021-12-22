@@ -16,12 +16,11 @@ impl Range {
     }
 
     /// Creates a partition of `self` such that for every element in the partition the element is
-    /// either completely disjoint from `other`, or completely overlaps. If `self` and `other` are
-    /// completely disjoint to begin with, this method returns `None`.
-    pub fn partition(&self, other: &Range) -> Option<Vec<Range>> {
+    /// either completely disjoint from `other`, or completely overlaps.
+    pub fn partition(&self, other: &Range) -> Vec<Range> {
         if self.to < other.from || self.from > other.to {
             // completely disjoint
-            None
+            vec![*self]
         } else {
             let mut partitions = vec![
                 // the part of `self` that overlaps with `other`
@@ -41,8 +40,12 @@ impl Range {
                 partitions.push(Range::new(other.to + 1, self.to));
             }
 
-            Some(partitions)
+            partitions
         }
+    }
+
+    pub fn is_disjoint(&self, other: &Range) -> bool {
+        self.to < other.from || self.from > other.to
     }
 
     pub fn fits_within(&self, other: &Range) -> bool {
@@ -88,19 +91,22 @@ mod tests {
     fn test_partition() {
         assert_eq!(
             Range::new(0, 10).partition(&Range::new(5, 15)),
-            Some(vec![Range::new(5, 10), Range::new(0, 4)]),
+            vec![Range::new(5, 10), Range::new(0, 4)],
         );
 
-        assert_eq!(Range::new(0, 10).partition(&Range::new(15, 25)), None);
+        assert_eq!(
+            Range::new(0, 10).partition(&Range::new(15, 25)),
+            vec![Range::new(0, 10)],
+        );
 
         assert_eq!(
             Range::new(0, 10).partition(&Range::new(2, 7)),
-            Some(vec![Range::new(2, 7), Range::new(0, 1), Range::new(8, 10)]),
+            vec![Range::new(2, 7), Range::new(0, 1), Range::new(8, 10)],
         );
 
         assert_eq!(
             Range::new(2, 7).partition(&Range::new(0, 10)),
-            Some(vec![Range::new(2, 7)]),
+            vec![Range::new(2, 7)],
         );
     }
 

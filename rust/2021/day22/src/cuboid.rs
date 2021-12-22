@@ -1,4 +1,5 @@
 use std::fmt;
+use std::ops::Sub;
 use std::str::FromStr;
 
 use rdcl_aoc_helpers::error::ParseError;
@@ -15,33 +16,10 @@ pub struct Cuboid {
 }
 
 impl Cuboid {
-    /// If the cuboid has overlap with the other cuboid, return a selection of cuboids that together
-    /// contain all points that are in the first cuboid, but not in the second.
-    pub fn subtract(&self, other: &Cuboid) -> Option<Vec<Cuboid>> {
-        let mut subs = vec![];
-
-        let partition_x = self.x_range.partition(&other.x_range)?;
-        let partition_y = self.y_range.partition(&other.y_range)?;
-        let partition_z = self.z_range.partition(&other.z_range)?;
-
-        for x_range in &partition_x {
-            for y_range in &partition_y {
-                for z_range in &partition_z {
-                    let sub = Cuboid {
-                        is_on: self.is_on,
-                        x_range: *x_range,
-                        y_range: *y_range,
-                        z_range: *z_range,
-                    };
-
-                    if !sub.fits_within(other) {
-                        subs.push(sub);
-                    }
-                }
-            }
-        }
-
-        Some(subs)
+    pub fn is_disjoint(&self, other: &Cuboid) -> bool {
+        self.x_range.is_disjoint(&other.x_range)
+            || self.y_range.is_disjoint(&other.y_range)
+            || self.z_range.is_disjoint(&other.z_range)
     }
 
     pub fn fits_within(&self, other: &Cuboid) -> bool {
@@ -52,6 +30,40 @@ impl Cuboid {
 
     pub fn size(&self) -> usize {
         self.x_range.size() * self.y_range.size() * self.z_range.size()
+    }
+}
+
+impl<'a> Sub<&'a Cuboid> for &'a Cuboid {
+    type Output = Vec<Cuboid>;
+
+    /// Return a selection of cuboids that together contain all points that are in the first cuboid,
+    /// but not in the second.
+    fn sub(self, other: &Cuboid) -> Self::Output {
+        self.x_range
+            .partition(&other.x_range)
+            .iter()
+            .flat_map(|x_range| {
+                self.y_range
+                    .partition(&other.y_range)
+                    .iter()
+                    .map(|y_range| (*x_range, *y_range))
+                    .collect::<Vec<(Range, Range)>>()
+            })
+            .flat_map(|(x_range, y_range)| {
+                self.z_range
+                    .partition(&other.z_range)
+                    .iter()
+                    .map(|z_range| (x_range, y_range, *z_range))
+                    .collect::<Vec<(Range, Range, Range)>>()
+            })
+            .map(|(x_range, y_range, z_range)| Cuboid {
+                is_on: self.is_on,
+                x_range,
+                y_range,
+                z_range,
+            })
+            .filter(|cuboid| !cuboid.fits_within(other))
+            .collect()
     }
 }
 
