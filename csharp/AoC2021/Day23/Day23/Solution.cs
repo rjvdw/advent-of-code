@@ -36,9 +36,7 @@ public static class Solution
                 continue;
 
             if (CheckMoveToBurrow(candidate, candidates, costs, ref cheapest))
-            {
                 continue;
-            }
 
             CheckMoveToHallway(candidate, candidates, costs, ref cheapest);
         }
@@ -49,7 +47,7 @@ public static class Solution
     private static bool CheckMoveToBurrow(
         Candidate candidate,
         PriorityQueue<Candidate, int> candidates,
-        Dictionary<Candidate, int> costs,
+        IDictionary<Candidate, int> costs,
         ref int? cheapest
     )
     {
@@ -71,7 +69,30 @@ public static class Solution
                 if (cheapest is not null && cost >= cheapest)
                     return true;
 
-                //
+                var nextAmphipods = new List<(Node, Amphipod)>(candidate.Amphipods)
+                    { [amphipod.Index] = (moveToBurrow, amphipod) };
+                var nextExhausted = new List<bool>(candidate.Exhausted)
+                    { [amphipod.Index] = true };
+                var nextCandidate = new Candidate(nextAmphipods, nextExhausted, candidate.BurrowDepth).Normalized();
+
+                if (nextCandidate.IsDone())
+                {
+                    if (cheapest == null || cheapest > costSoFar)
+                        cheapest = costSoFar;
+                }
+                else if (costs.ContainsKey(nextCandidate))
+                {
+                    if (costSoFar < costs[nextCandidate])
+                    {
+                        candidates.Enqueue(nextCandidate, 0);
+                        costs[nextCandidate] = costSoFar;
+                    }
+                }
+                else
+                {
+                    candidates.Enqueue(nextCandidate, 0);
+                    costs[nextCandidate] = costSoFar;
+                }
             }
         }
 
@@ -81,11 +102,51 @@ public static class Solution
     private static void CheckMoveToHallway(
         Candidate candidate,
         PriorityQueue<Candidate, int> candidates,
-        Dictionary<Candidate, int> costs,
+        IDictionary<Candidate, int> costs,
         ref int? cheapest
     )
     {
-        //
+        var costSoFar = costs[candidate];
+
+        foreach (var (node, amphipod) in candidate.Amphipods)
+        {
+            if (candidate.Exhausted[amphipod.Index])
+                continue;
+
+            if (candidate.ExitIsBlocked(node))
+                continue;
+
+            foreach (var neighbour in candidate.FindMovesToHallway(node, amphipod))
+            {
+                var cost = costSoFar + amphipod.ComputeEnergy(node.DistanceTo(neighbour));
+
+                if (cost >= cheapest)
+                    continue;
+
+                var nextAmphipods = new List<(Node, Amphipod)>(candidate.Amphipods)
+                    { [amphipod.Index] = (neighbour, amphipod) };
+                var nextCandidate =
+                    new Candidate(nextAmphipods, candidate.Exhausted, candidate.BurrowDepth).Normalized();
+
+                if (nextCandidate.IsDone())
+                {
+                    cheapest = cost;
+                }
+                else if (costs.ContainsKey(nextCandidate))
+                {
+                    if (costSoFar < costs[nextCandidate])
+                    {
+                        candidates.Enqueue(nextCandidate, 0);
+                        costs[nextCandidate] = costSoFar;
+                    }
+                }
+                else
+                {
+                    candidates.Enqueue(nextCandidate, 0);
+                    costs[nextCandidate] = costSoFar;
+                }
+            }
+        }
     }
 
     public static (List<(Node, Amphipod)> Amphipods, int BurrowDepth) Parse(IEnumerable<string> input)
