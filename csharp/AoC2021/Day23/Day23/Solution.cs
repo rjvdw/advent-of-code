@@ -25,7 +25,7 @@ public static class Solution
             Enumerable.Repeat(false, amphipods.Count).ToList(),
             burrowDepth
         ).Normalized();
-        candidates.Enqueue(initialCandidate, 0);
+        candidates.Enqueue(initialCandidate, amphipods.Count);
         costs[initialCandidate] = 0;
 
         int? cheapest = null;
@@ -78,19 +78,22 @@ public static class Solution
                 if (nextCandidate.IsDone())
                 {
                     if (cheapest == null || cheapest > costSoFar)
+                    {
+                        Console.WriteLine($"Cheapest so far: {costSoFar}");
                         cheapest = costSoFar;
+                    }
                 }
                 else if (costs.ContainsKey(nextCandidate))
                 {
                     if (costSoFar < costs[nextCandidate])
                     {
-                        candidates.Enqueue(nextCandidate, 0);
+                        candidates.Enqueue(nextCandidate, nextCandidate.Exhausted.Count(v => !v));
                         costs[nextCandidate] = costSoFar;
                     }
                 }
                 else
                 {
-                    candidates.Enqueue(nextCandidate, 0);
+                    candidates.Enqueue(nextCandidate, nextCandidate.Exhausted.Count(v => !v));
                     costs[nextCandidate] = costSoFar;
                 }
             }
@@ -130,19 +133,20 @@ public static class Solution
 
                 if (nextCandidate.IsDone())
                 {
+                    Console.WriteLine($"Cheapest so far: {costSoFar}");
                     cheapest = cost;
                 }
                 else if (costs.ContainsKey(nextCandidate))
                 {
                     if (costSoFar < costs[nextCandidate])
                     {
-                        candidates.Enqueue(nextCandidate, 0);
+                        candidates.Enqueue(nextCandidate, nextCandidate.Exhausted.Count(v => !v));
                         costs[nextCandidate] = costSoFar;
                     }
                 }
                 else
                 {
-                    candidates.Enqueue(nextCandidate, 0);
+                    candidates.Enqueue(nextCandidate, nextCandidate.Exhausted.Count(v => !v));
                     costs[nextCandidate] = costSoFar;
                 }
             }

@@ -2,7 +2,7 @@ namespace Day23;
 
 public record Candidate(List<(Node Node, Amphipod Amphipod)> Amphipods, List<bool> Exhausted, int BurrowDepth)
 {
-    private static int[] _hallwayX = { 1, 2, 4, 6, 8, 10, 11 };
+    private static readonly int[] _hallwayX = { 1, 2, 4, 6, 8, 10, 11 };
 
     public Candidate Normalized()
     {
