@@ -1,3 +1,5 @@
+use std::cmp::Ordering;
+
 use rdcl_aoc_helpers::math::taxi_cab_2d;
 
 #[derive(Debug, Copy, Clone, Hash, Eq, PartialEq)]
@@ -23,6 +25,18 @@ impl Node {
             taxi_cab_2d((self.x, self.y), (hw.x, hw.y))
                 + taxi_cab_2d((hw.x, hw.y), (other.x, other.y))
         }
+    }
+}
+
+impl PartialOrd<Self> for Node {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for Node {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.y.cmp(&other.y).then(self.x.cmp(&other.x))
     }
 }
 

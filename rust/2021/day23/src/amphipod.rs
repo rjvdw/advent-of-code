@@ -25,13 +25,23 @@ impl Amphipod {
     }
 
     /// Returns the x coordinate of the side room this amphipod needs to move to.
-    pub fn get_home(&self) -> usize {
+    pub fn home(&self) -> usize {
         self.color.home()
     }
 
     /// Checks whether an amphipod is in their desired side room.
     pub fn is_home(&self) -> bool {
         self.color.home() == self.location.x
+    }
+
+    /// Returns a new amphipod with an updated location. If the location is a side room, the
+    /// amphipod becomes exhausted.
+    pub fn with_location(&self, location: Node) -> Amphipod {
+        Amphipod {
+            color: self.color,
+            exhausted: location.is_side_room(),
+            location,
+        }
     }
 }
 
@@ -43,10 +53,7 @@ impl PartialOrd<Self> for Amphipod {
 
 impl Ord for Amphipod {
     fn cmp(&self, other: &Self) -> Ordering {
-        self.location
-            .y
-            .cmp(&other.location.y)
-            .then(self.location.x.cmp(&other.location.x))
+        self.location.cmp(&other.location)
     }
 }
 

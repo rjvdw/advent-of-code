@@ -9,12 +9,12 @@ use rdcl_aoc_helpers::args::get_args;
 use rdcl_aoc_helpers::error::{ParseError, WithOrExit};
 
 use crate::amphipod::Amphipod;
+use crate::burrow::Burrow;
 use crate::node::Node;
-use crate::state::State;
 
 mod amphipod;
+mod burrow;
 mod node;
-mod state;
 
 fn main() {
     let args = get_args(&["<input file>"], 1);
@@ -33,7 +33,7 @@ fn find_cheapest_path(amphipods: &[Amphipod], side_room_depth: usize) -> Option<
     let mut queue = BinaryHeap::new();
     let mut costs = HashMap::new();
 
-    let mut initial_state = State {
+    let mut initial_state = Burrow {
         amphipods: amphipods.to_vec(),
         side_room_depth,
     };
@@ -43,18 +43,31 @@ fn find_cheapest_path(amphipods: &[Amphipod], side_room_depth: usize) -> Option<
 
     let mut cheapest = None;
 
-    while let Some(state) = queue.pop() {
+    while let Some(burrow) = queue.pop() {
+        let cost_so_far = *costs.get(&burrow).unwrap();
         if let Some(cheapest_so_far) = &cheapest {
-            if costs.get(&state).unwrap() >= cheapest_so_far {
+            if cost_so_far >= *cheapest_so_far {
                 continue;
             }
         }
 
-        if let Some((next_state, cost)) = state.find_move_to_side_room() {
-            process_next_state(next_state, cost, &mut queue, &mut costs, &mut cheapest);
+        if let Some((next_state, cost)) = burrow.find_move_to_side_room() {
+            process_next_state(
+                next_state,
+                cost_so_far + cost,
+                &mut queue,
+                &mut costs,
+                &mut cheapest,
+            );
         } else {
-            for (next_state, cost) in state.find_moves_to_hallway() {
-                process_next_state(next_state, cost, &mut queue, &mut costs, &mut cheapest);
+            for (next_state, cost) in burrow.find_moves_to_hallway() {
+                process_next_state(
+                    next_state,
+                    cost_so_far + cost,
+                    &mut queue,
+                    &mut costs,
+                    &mut cheapest,
+                );
             }
         }
     }
@@ -68,10 +81,10 @@ fn find_cheapest_path(amphipods: &[Amphipod], side_room_depth: usize) -> Option<
 /// * If we have already seen this state, check if we found a cheaper path to this state
 /// * Add the state to the queue if needed
 fn process_next_state(
-    mut next_state: State,
+    mut next_state: Burrow,
     cost: usize,
-    queue: &mut BinaryHeap<State>,
-    costs: &mut HashMap<State, usize>,
+    queue: &mut BinaryHeap<Burrow>,
+    costs: &mut HashMap<Burrow, usize>,
     cheapest: &mut Option<usize>,
 ) {
     next_state.normalize();
