@@ -1,59 +1,90 @@
+use std::cmp::Ordering;
+
+use crate::node::Node;
+
 #[derive(Debug, Copy, Clone, Hash, Eq, PartialEq)]
-pub struct Amphipod(Color, usize);
+pub struct Amphipod {
+    pub color: AmphipodColor,
+    pub exhausted: bool,
+    pub location: Node,
+}
 
 impl Amphipod {
-    /// Constructs a new amphipod
-    pub fn new(color: char, discriminator: usize) -> Amphipod {
-        match color {
-            'A' => Amphipod(Color::Amber, discriminator),
-            'B' => Amphipod(Color::Bronze, discriminator),
-            'C' => Amphipod(Color::Copper, discriminator),
-            _ => Amphipod(Color::Desert, discriminator),
+    /// Constructs a new Amphipod.
+    pub fn new(ch: char, location: Node) -> Amphipod {
+        Amphipod {
+            color: AmphipodColor::from_char(ch),
+            exhausted: false,
+            location,
         }
     }
 
-    /// Checks whether two amphipods have the same type.
-    pub fn has_same_type(&self, other: &Amphipod) -> bool {
-        self.0 == other.0
+    /// Computes the cost for an amphipod to walk to a new location.
+    pub fn compute_cost(&self, to: &Node) -> usize {
+        self.color.cost() * self.location.distance_to(to)
     }
 
-    /// The amount of energy it takes for this amphipod to move a number of steps.
-    pub fn compute_energy(&self, steps: usize) -> usize {
-        steps
-            * match self.0 {
-                Color::Amber => 1,
-                Color::Bronze => 10,
-                Color::Copper => 100,
-                Color::Desert => 1000,
-            }
+    /// Returns the x coordinate of the side room this amphipod needs to move to.
+    pub fn get_home(&self) -> usize {
+        self.color.home()
     }
 
-    pub fn get_target_side_room(&self) -> usize {
-        match self.0 {
-            Color::Amber => 3,
-            Color::Bronze => 5,
-            Color::Copper => 7,
-            Color::Desert => 9,
-        }
+    /// Checks whether an amphipod is in their desired side room.
+    pub fn is_home(&self) -> bool {
+        self.color.home() == self.location.x
     }
+}
 
-    /// The unique index of this amphipod.
-    pub fn index(&self) -> usize {
-        self.1
+impl PartialOrd<Self> for Amphipod {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
     }
+}
 
-    /// Returns a new amphipod with an updated index.
-    pub fn with_index(&self, idx: usize) -> Amphipod {
-        Amphipod(self.0, idx)
+impl Ord for Amphipod {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.location
+            .y
+            .cmp(&other.location.y)
+            .then(self.location.x.cmp(&other.location.x))
     }
 }
 
 #[derive(Debug, Copy, Clone, Hash, Eq, PartialEq)]
-enum Color {
+pub enum AmphipodColor {
     Amber,
     Bronze,
     Copper,
     Desert,
+}
+
+impl AmphipodColor {
+    fn from_char(ch: char) -> AmphipodColor {
+        match ch {
+            'A' => AmphipodColor::Amber,
+            'B' => AmphipodColor::Bronze,
+            'C' => AmphipodColor::Copper,
+            _ => AmphipodColor::Desert,
+        }
+    }
+
+    pub fn cost(&self) -> usize {
+        match self {
+            AmphipodColor::Amber => 1,
+            AmphipodColor::Bronze => 10,
+            AmphipodColor::Copper => 100,
+            AmphipodColor::Desert => 1000,
+        }
+    }
+
+    pub fn home(&self) -> usize {
+        match self {
+            AmphipodColor::Amber => 3,
+            AmphipodColor::Bronze => 5,
+            AmphipodColor::Copper => 7,
+            AmphipodColor::Desert => 9,
+        }
+    }
 }
 
 #[cfg(test)]
@@ -61,47 +92,20 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_new() {
-        assert_eq!(Amphipod::new('A', 10), Amphipod(Color::Amber, 10));
-        assert_eq!(Amphipod::new('B', 3), Amphipod(Color::Bronze, 3));
-        assert_eq!(Amphipod::new('C', 12), Amphipod(Color::Copper, 12));
-        assert_eq!(Amphipod::new('D', 1), Amphipod(Color::Desert, 1));
-    }
+    fn test_cost() {
+        let a = Amphipod::new('A', Node { y: 3, x: 3 });
+        let b = Amphipod::new('B', Node { y: 3, x: 3 });
+        let c = Amphipod::new('C', Node { y: 3, x: 3 });
+        let d = Amphipod::new('D', Node { y: 3, x: 3 });
 
-    #[test]
-    fn test_same_type() {
-        assert!(Amphipod::new('A', 0).has_same_type(&Amphipod::new('A', 1)));
-        assert!(!Amphipod::new('A', 0).has_same_type(&Amphipod::new('B', 1)));
-    }
+        assert_eq!(a.compute_cost(&Node { y: 1, x: 4 }), 3);
+        assert_eq!(b.compute_cost(&Node { y: 1, x: 4 }), 30);
+        assert_eq!(c.compute_cost(&Node { y: 1, x: 4 }), 300);
+        assert_eq!(d.compute_cost(&Node { y: 1, x: 4 }), 3000);
 
-    #[test]
-    fn test_compute_energy() {
-        let a = Amphipod::new('A', 0);
-        let b = Amphipod::new('B', 0);
-        let c = Amphipod::new('C', 0);
-        let d = Amphipod::new('D', 0);
-
-        assert_eq!(a.compute_energy(10), 10);
-        assert_eq!(b.compute_energy(10), 100);
-        assert_eq!(c.compute_energy(10), 1000);
-        assert_eq!(d.compute_energy(10), 10000);
-    }
-
-    #[test]
-    fn test_get_target_side_room() {
-        let a = Amphipod::new('A', 0);
-        let b = Amphipod::new('B', 0);
-        let c = Amphipod::new('C', 0);
-        let d = Amphipod::new('D', 0);
-
-        assert_eq!(a.get_target_side_room(), 3);
-        assert_eq!(b.get_target_side_room(), 5);
-        assert_eq!(c.get_target_side_room(), 7);
-        assert_eq!(d.get_target_side_room(), 9);
-    }
-
-    #[test]
-    fn test_index() {
-        assert_eq!(Amphipod::new('A', 10).index(), 10);
+        assert_eq!(a.compute_cost(&Node { y: 2, x: 5 }), 5);
+        assert_eq!(b.compute_cost(&Node { y: 2, x: 5 }), 50);
+        assert_eq!(c.compute_cost(&Node { y: 2, x: 5 }), 500);
+        assert_eq!(d.compute_cost(&Node { y: 2, x: 5 }), 5000);
     }
 }
