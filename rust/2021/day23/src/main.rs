@@ -9,13 +9,11 @@ use rdcl_aoc_helpers::args::get_args;
 use rdcl_aoc_helpers::error::{ParseError, WithOrExit};
 
 use crate::amphipod::Amphipod;
-use crate::amphipod_locations::SearchAmphipodLocations;
-use crate::candidate::Candidate;
+use crate::burrow::Burrow;
 use crate::node::Node;
 
 mod amphipod;
-mod amphipod_locations;
-mod candidate;
+mod burrow;
 mod node;
 
 fn main() {
@@ -31,152 +29,88 @@ fn main() {
     }
 }
 
-fn find_cheapest_path(amphipods: &[(Node, Amphipod)], side_room_depth: usize) -> Option<usize> {
-    // keep track of the candidates that we still need to explore
-    let mut candidates = BinaryHeap::<Candidate>::new();
-    let mut costs = HashMap::<Candidate, usize>::new();
+fn find_cheapest_path(amphipods: &[Amphipod], side_room_depth: usize) -> Option<usize> {
+    let mut queue = BinaryHeap::new();
+    let mut costs = HashMap::new();
 
-    // the starting situation
-    let mut initial_candidate = Candidate {
+    let mut initial_state = Burrow {
         amphipods: amphipods.to_vec(),
-        exhausted: vec![false; amphipods.len()],
         side_room_depth,
     };
-    initial_candidate.normalize();
-    candidates.push(initial_candidate.clone());
-    costs.insert(initial_candidate, 0);
+    initial_state.normalize();
+    queue.push(initial_state.clone());
+    costs.insert(initial_state, 0);
 
-    // keep track of the cheapest solution we found so far
     let mut cheapest = None;
-
-    // as long as there still candidates...
-    while let Some(candidate) = candidates.pop() {
+    while let Some(burrow) = queue.pop() {
+        let cost_so_far = *costs.get(&burrow).unwrap();
         if let Some(cheapest_so_far) = &cheapest {
-            if costs.get(&candidate).unwrap() >= cheapest_so_far {
-                // this candidate cannot be cheaper than the best we found so far
+            if cost_so_far >= *cheapest_so_far {
+                // a cheaper solution has been found in the mean time
                 continue;
             }
         }
 
-        if check_move_to_side_room(&candidate, &mut candidates, &mut costs, &mut cheapest) {
-            continue;
+        if let Some((next_state, cost)) = burrow.find_move_to_side_room() {
+            process_next_state(
+                next_state,
+                cost_so_far + cost,
+                &mut queue,
+                &mut costs,
+                &mut cheapest,
+            );
+        } else {
+            for (next_state, cost) in burrow.find_moves_to_hallway() {
+                process_next_state(
+                    next_state,
+                    cost_so_far + cost,
+                    &mut queue,
+                    &mut costs,
+                    &mut cheapest,
+                );
+            }
         }
-
-        check_move_to_hallway(&candidate, &mut candidates, &mut costs, &mut cheapest);
     }
-
     cheapest
 }
 
-/// if any of the amphipods can move directly to their side room, then that's the only logical step
-/// to take this iteration
-fn check_move_to_side_room(
-    candidate: &Candidate,
-    candidates: &mut BinaryHeap<Candidate>,
-    costs: &mut HashMap<Candidate, usize>,
-    cheapest: &mut Option<usize>,
-) -> bool {
-    let cost_so_far = *costs.get(candidate).unwrap();
-
-    for (node, amphipod) in &candidate.amphipods {
-        // this amphipod is exhausted and can no longer move
-        if candidate.exhausted[amphipod.index()] {
-            continue;
-        }
-
-        // the path out is blocked, so no point in checking this node
-        if candidate.exit_is_blocked(node) {
-            continue;
-        }
-
-        if let Some(target) = candidate.find_move_to_side_room(node, amphipod) {
-            let cost_so_far = cost_so_far + amphipod.compute_energy(node.distance_to(&target));
-
-            if let Some(cheapest_so_far) = cheapest {
-                if cost_so_far >= *cheapest_so_far {
-                    // the candidate cannot possible lead to a cheaper solution than the one we already have
-                    return true;
-                }
-            }
-
-            let mut next_candidate = candidate.clone();
-            next_candidate.amphipods[amphipod.index()].0 = target;
-            next_candidate.exhausted[amphipod.index()] = true;
-
-            check_candidate(next_candidate, cost_so_far, candidates, costs, cheapest);
-
-            return true;
-        }
-    }
-    false
-}
-
-/// if no amphipods can move directly to their side room , start moving amphipods to the hallway
-fn check_move_to_hallway(
-    candidate: &Candidate,
-    candidates: &mut BinaryHeap<Candidate>,
-    costs: &mut HashMap<Candidate, usize>,
+/// Processes the next state:
+/// * Normalize
+/// * If all amphopids are home, update cheapest
+/// * If we have already seen this state, check if we found a cheaper path to this state
+/// * Add the state to the queue if needed
+fn process_next_state(
+    mut next_state: Burrow,
+    cost: usize,
+    queue: &mut BinaryHeap<Burrow>,
+    costs: &mut HashMap<Burrow, usize>,
     cheapest: &mut Option<usize>,
 ) {
-    let cost_so_far = *costs.get(candidate).unwrap();
-
-    for (node, amphipod) in &candidate.amphipods {
-        // this amphipod is exhausted and can no longer move
-        if candidate.exhausted[amphipod.index()] {
-            continue;
-        }
-
-        // the path out is blocked, so no point in checking this node
-        if candidate.exit_is_blocked(node) {
-            continue;
-        }
-
-        for neighbour in candidate.find_moves_to_hallway(node, amphipod) {
-            let cost_so_far = cost_so_far + amphipod.compute_energy(node.distance_to(&neighbour));
-
-            if let Some(cheapest_so_far) = cheapest {
-                if cost_so_far >= *cheapest_so_far {
-                    // this neighbour cannot be cheaper than the best we found so far
-                    continue;
-                }
-            }
-
-            let mut next_candidate = candidate.clone();
-            next_candidate.amphipods[amphipod.index()].0 = neighbour;
-
-            check_candidate(next_candidate, cost_so_far, candidates, costs, cheapest);
+    if let Some(v) = cheapest {
+        if cost >= *v {
+            // this state is more expensive than the cheapest state we found
+            return;
         }
     }
-}
 
-fn check_candidate(
-    mut next_candidate: Candidate,
-    cost_so_far: usize,
-    candidates: &mut BinaryHeap<Candidate>,
-    costs: &mut HashMap<Candidate, usize>,
-    cheapest: &mut Option<usize>,
-) {
-    next_candidate.normalize();
-
-    if next_candidate.is_done() {
-        *cheapest = match cheapest {
-            None => Some(cost_so_far),
-            Some(v) if *v > cost_so_far => Some(cost_so_far),
-            _ => *cheapest,
-        };
-    } else if let Some(existing_cost) = costs.get_mut(&next_candidate) {
-        if cost_so_far < *existing_cost {
-            candidates.push(next_candidate);
-            *existing_cost = cost_so_far;
-        }
+    if next_state.finished() {
+        *cheapest = Some(cost);
     } else {
-        // if we did not already encounter this state, push it to candidates
-        candidates.push(next_candidate.clone());
-        costs.insert(next_candidate, cost_so_far);
+        next_state.normalize();
+        if let Some(existing) = costs.get_mut(&next_state) {
+            if cost < *existing {
+                queue.push(next_state);
+                *existing = cost;
+            }
+        } else {
+            queue.push(next_state.clone());
+            costs.insert(next_state, cost);
+        }
     }
 }
 
-fn parse_input<I>(input: I) -> Result<(Vec<(Node, Amphipod)>, usize), ParseError>
+/// Checks where the amphipods currently are, given the puzzle input.
+fn parse_input<I>(input: I) -> Result<(Vec<Amphipod>, usize), ParseError>
 where
     I: Iterator<Item = io::Result<String>>,
 {
@@ -192,7 +126,7 @@ where
                         min_depth = y;
                     }
                     max_depth = y;
-                    amphipods.push((Node { x, y }, Amphipod::new(ch, amphipods.len())));
+                    amphipods.push(Amphipod::new(ch, Node { y, x }));
                 }
             }
         }
@@ -211,25 +145,28 @@ mod tests {
         assert_eq!(
             amphipods,
             vec![
-                (Node { y: 2, x: 3 }, Amphipod::new('B', 0)),
-                (Node { y: 2, x: 5 }, Amphipod::new('C', 1)),
-                (Node { y: 2, x: 7 }, Amphipod::new('B', 2)),
-                (Node { y: 2, x: 9 }, Amphipod::new('D', 3)),
-                (Node { y: 3, x: 3 }, Amphipod::new('A', 4)),
-                (Node { y: 3, x: 5 }, Amphipod::new('D', 5)),
-                (Node { y: 3, x: 7 }, Amphipod::new('C', 6)),
-                (Node { y: 3, x: 9 }, Amphipod::new('A', 7)),
+                Amphipod::new('B', Node { y: 2, x: 3 }),
+                Amphipod::new('C', Node { y: 2, x: 5 }),
+                Amphipod::new('B', Node { y: 2, x: 7 }),
+                Amphipod::new('D', Node { y: 2, x: 9 }),
+                Amphipod::new('A', Node { y: 3, x: 3 }),
+                Amphipod::new('D', Node { y: 3, x: 5 }),
+                Amphipod::new('C', Node { y: 3, x: 7 }),
+                Amphipod::new('A', Node { y: 3, x: 9 }),
             ]
         );
     }
 
     #[test]
     fn test_find_cheapest_path() {
+        let (amphipods, side_room_depth) = small_input();
+        assert_eq!(find_cheapest_path(&amphipods, side_room_depth), Some(12521));
+
         let (amphipods, side_room_depth) = large_input();
         assert_eq!(find_cheapest_path(&amphipods, side_room_depth), Some(44169));
     }
 
-    fn small_input() -> (Vec<(Node, Amphipod)>, usize) {
+    fn small_input() -> (Vec<Amphipod>, usize) {
         let input = vec![
             Ok("#############".to_string()),
             Ok("#...........#".to_string()),
@@ -241,7 +178,7 @@ mod tests {
         parse_input(input.into_iter()).unwrap()
     }
 
-    fn large_input() -> (Vec<(Node, Amphipod)>, usize) {
+    fn large_input() -> (Vec<Amphipod>, usize) {
         let input = vec![
             Ok("#############".to_string()),
             Ok("#...........#".to_string()),
