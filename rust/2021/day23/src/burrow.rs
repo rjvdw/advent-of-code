@@ -21,6 +21,24 @@ impl Burrow {
         self.amphipods.iter().all(|amphipod| amphipod.is_home())
     }
 
+    /// If every amphipod could magically walk from their current location to their home, how
+    /// much energy would this take? There is no way for this state to reach a finished state in a
+    /// cost lower than this.
+    pub fn minimum_remaining_cost(&self) -> usize {
+        let mut total = 0;
+        for amphipod in &self.amphipods {
+            if amphipod.is_home() {
+                continue;
+            }
+
+            total += amphipod.compute_cost(&Node {
+                y: 2, // amphipod might have to move deeper, but this is just a heuristic
+                x: amphipod.home(),
+            });
+        }
+        total
+    }
+
     /// Try to find an amphipod that can move directly home.
     pub fn find_move_to_side_room(&self) -> Option<(Burrow, usize)> {
         for (idx, amphipod) in self.amphipods.iter().enumerate() {
@@ -202,6 +220,11 @@ mod tests {
     fn test_finished() {
         assert!(finished_burrow().finished());
         assert!(!unfinished_burrow().finished());
+    }
+
+    #[test]
+    fn test_minimum_remaining_cost() {
+        assert_eq!(unfinished_burrow().minimum_remaining_cost(), 9302);
     }
 
     #[test]

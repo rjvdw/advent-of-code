@@ -87,7 +87,7 @@ fn process_next_state(
     cheapest: &mut Option<usize>,
 ) {
     if let Some(v) = cheapest {
-        if cost >= *v {
+        if cost + next_state.minimum_remaining_cost() >= *v {
             // this state is more expensive than the cheapest state we found
             return;
         }
