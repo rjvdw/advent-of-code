@@ -24,17 +24,14 @@ impl Burrow {
     /// Try to find an amphipod that can move directly home.
     pub fn find_move_to_side_room(&self) -> Option<(Burrow, usize)> {
         for (idx, amphipod) in self.amphipods.iter().enumerate() {
-            if amphipod.exhausted || amphipod.is_home() {
+            if amphipod.exhausted || amphipod.is_home() || !self.can_leave_side_room(amphipod) {
                 continue;
             }
 
             if let Some(node) = self.find_place_in_side_room(amphipod) {
                 if self.path_through_hallway_is_free(amphipod, &node) {
                     // this amphipod has a route home
-                    let cost = amphipod.compute_cost(&node);
-                    let mut next_state = self.clone();
-                    next_state.amphipods[idx] = amphipod.with_location(node);
-                    return Some((next_state, cost));
+                    return Some(self.with_updated_amphipod(idx, amphipod, node));
                 }
             }
         }
@@ -60,13 +57,18 @@ impl Burrow {
                 .filter(|node| !self.creates_deadlock(amphipod, node));
 
             for neighbour in neighbours {
-                let cost = amphipod.compute_cost(&neighbour);
-                let mut next_state = self.clone();
-                next_state.amphipods[idx] = amphipod.with_location(neighbour);
-                moves.push((next_state, cost));
+                moves.push(self.with_updated_amphipod(idx, amphipod, neighbour));
             }
         }
         moves
+    }
+
+    /// Creates an updated state where the specified amphipod has been moved to their new location.
+    fn with_updated_amphipod(&self, idx: usize, amphipod: &Amphipod, to: Node) -> (Burrow, usize) {
+        let cost = amphipod.compute_cost(&to);
+        let mut next_state = self.clone();
+        next_state.amphipods[idx] = amphipod.with_location(to);
+        (next_state, cost)
     }
 
     /// Checks if an amphipod can leave the side room they are in.

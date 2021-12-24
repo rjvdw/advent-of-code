@@ -42,11 +42,11 @@ fn find_cheapest_path(amphipods: &[Amphipod], side_room_depth: usize) -> Option<
     costs.insert(initial_state, 0);
 
     let mut cheapest = None;
-
     while let Some(burrow) = queue.pop() {
         let cost_so_far = *costs.get(&burrow).unwrap();
         if let Some(cheapest_so_far) = &cheapest {
             if cost_so_far >= *cheapest_so_far {
+                // a cheaper solution has been found in the mean time
                 continue;
             }
         }
@@ -71,7 +71,6 @@ fn find_cheapest_path(amphipods: &[Amphipod], side_room_depth: usize) -> Option<
             }
         }
     }
-
     cheapest
 }
 
@@ -88,24 +87,25 @@ fn process_next_state(
     cheapest: &mut Option<usize>,
 ) {
     if let Some(v) = cheapest {
-        if *v <= cost {
+        if cost >= *v {
             // this state is more expensive than the cheapest state we found
             return;
         }
     }
 
-    next_state.normalize();
-
     if next_state.finished() {
         *cheapest = Some(cost);
-    } else if let Some(existing) = costs.get_mut(&next_state) {
-        if cost < *existing {
-            queue.push(next_state);
-            *existing = cost;
-        }
     } else {
-        queue.push(next_state.clone());
-        costs.insert(next_state, cost);
+        next_state.normalize();
+        if let Some(existing) = costs.get_mut(&next_state) {
+            if cost < *existing {
+                queue.push(next_state);
+                *existing = cost;
+            }
+        } else {
+            queue.push(next_state.clone());
+            costs.insert(next_state, cost);
+        }
     }
 }
 
