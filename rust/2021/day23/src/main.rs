@@ -133,3 +133,62 @@ where
     }
     Ok((amphipods, max_depth - min_depth + 1))
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_parse_input() {
+        let (amphipods, side_room_depth) = small_input();
+        assert_eq!(side_room_depth, 2);
+        assert_eq!(
+            amphipods,
+            vec![
+                Amphipod::new('B', Node { y: 2, x: 3 }),
+                Amphipod::new('C', Node { y: 2, x: 5 }),
+                Amphipod::new('B', Node { y: 2, x: 7 }),
+                Amphipod::new('D', Node { y: 2, x: 9 }),
+                Amphipod::new('A', Node { y: 3, x: 3 }),
+                Amphipod::new('D', Node { y: 3, x: 5 }),
+                Amphipod::new('C', Node { y: 3, x: 7 }),
+                Amphipod::new('A', Node { y: 3, x: 9 }),
+            ]
+        );
+    }
+
+    #[test]
+    fn test_find_cheapest_path() {
+        let (amphipods, side_room_depth) = small_input();
+        assert_eq!(find_cheapest_path(&amphipods, side_room_depth), Some(12521));
+
+        let (amphipods, side_room_depth) = large_input();
+        assert_eq!(find_cheapest_path(&amphipods, side_room_depth), Some(44169));
+    }
+
+    fn small_input() -> (Vec<Amphipod>, usize) {
+        let input = vec![
+            Ok("#############".to_string()),
+            Ok("#...........#".to_string()),
+            Ok("###B#C#B#D###".to_string()),
+            Ok("  #A#D#C#A#".to_string()),
+            Ok("  #########".to_string()),
+        ];
+
+        parse_input(input.into_iter()).unwrap()
+    }
+
+    fn large_input() -> (Vec<Amphipod>, usize) {
+        let input = vec![
+            Ok("#############".to_string()),
+            Ok("#...........#".to_string()),
+            Ok("###B#C#B#D###".to_string()),
+            Ok("  #D#C#B#A#".to_string()),
+            Ok("  #D#B#A#C#".to_string()),
+            Ok("  #A#D#C#A#".to_string()),
+            Ok("  #########".to_string()),
+        ];
+
+        parse_input(input.into_iter()).unwrap()
+    }
+}

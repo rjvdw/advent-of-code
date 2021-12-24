@@ -71,6 +71,26 @@ impl Burrow {
         (next_state, cost)
     }
 
+    /// Returns true if this node is already taken up by another amphipod.
+    fn is_occupied(&self, node: &Node) -> bool {
+        self.amphipods
+            .binary_search_by_key(node, |amphipod| amphipod.location)
+            .is_ok()
+    }
+
+    /// Returns the occupant of a specific node if it exists.
+    fn get_occupant(&self, node: &Node) -> Option<Amphipod> {
+        let result = self
+            .amphipods
+            .binary_search_by_key(node, |amphipod| amphipod.location);
+
+        if let Ok(idx) = result {
+            Some(self.amphipods[idx])
+        } else {
+            None
+        }
+    }
+
     /// Checks if an amphipod can leave the side room they are in.
     fn can_leave_side_room(&self, amphipod: &Amphipod) -> bool {
         if amphipod.location.y > 2 {
@@ -145,26 +165,6 @@ impl Burrow {
         false
     }
 
-    /// Returns true if this node is already taken up by another amphipod.
-    fn is_occupied(&self, node: &Node) -> bool {
-        self.amphipods
-            .binary_search_by_key(node, |amphipod| amphipod.location)
-            .is_ok()
-    }
-
-    /// Returns the occupant of a specific node if it exists.
-    fn get_occupant(&self, node: &Node) -> Option<Amphipod> {
-        let result = self
-            .amphipods
-            .binary_search_by_key(node, |amphipod| amphipod.location);
-
-        if let Ok(idx) = result {
-            Some(self.amphipods[idx])
-        } else {
-            None
-        }
-    }
-
     /// Count the number of amphipods that are currently exhausted (i.e. no longer able to make any
     /// moves).
     fn nr_exhausted(&self) -> usize {
@@ -184,5 +184,145 @@ impl PartialOrd<Self> for Burrow {
 impl Ord for Burrow {
     fn cmp(&self, other: &Self) -> Ordering {
         self.nr_exhausted().cmp(&other.nr_exhausted())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_normalize() {
+        let mut burrow = unfinished_burrow();
+        burrow.normalize();
+        assert_eq!(burrow, unfinished_burrow());
+    }
+
+    #[test]
+    fn test_finished() {
+        assert!(finished_burrow().finished());
+        assert!(!unfinished_burrow().finished());
+    }
+
+    #[test]
+    fn test_is_occupied() {
+        let burrow = unfinished_burrow();
+
+        assert!(burrow.is_occupied(&Node { y: 3, x: 3 }));
+        assert!(!burrow.is_occupied(&Node { y: 1, x: 1 }));
+    }
+
+    #[test]
+    fn test_get_occupant() {
+        let burrow = unfinished_burrow();
+        let c = Amphipod::new('C', Node { y: 3, x: 3 });
+
+        assert_eq!(burrow.get_occupant(&Node { y: 3, x: 3 }), Some(c));
+        assert_eq!(burrow.get_occupant(&Node { y: 1, x: 1 }), None);
+    }
+
+    #[test]
+    fn test_can_leave_side_room() {
+        let burrow = unfinished_burrow();
+        let c = Amphipod::new('C', Node { y: 3, x: 3 });
+        let d = Amphipod::new('D', Node { y: 2, x: 3 });
+
+        assert!(!burrow.can_leave_side_room(&c));
+        assert!(burrow.can_leave_side_room(&d));
+    }
+
+    #[test]
+    fn test_find_place_in_side_room() {
+        let burrow = in_progress_burrow_1();
+        let a = Amphipod::new('A', Node { y: 2, x: 5 });
+        let b = Amphipod::new('B', Node { y: 3, x: 7 });
+
+        assert_eq!(
+            burrow.find_place_in_side_room(&a),
+            Some(Node { y: 3, x: 3 })
+        );
+        assert_eq!(burrow.find_place_in_side_room(&b), None);
+    }
+
+    #[test]
+    fn test_path_through_hallway_is_free() {
+        let burrow = in_progress_burrow_2();
+        let a = Amphipod::new('A', Node { y: 2, x: 5 });
+
+        assert!(burrow.path_through_hallway_is_free(&a, &Node { y: 1, x: 2 }));
+        assert!(!burrow.path_through_hallway_is_free(&a, &Node { y: 1, x: 11 }));
+    }
+
+    #[test]
+    fn test_creates_deadlock() {
+        let burrow = in_progress_burrow_2();
+        let b = Amphipod::new('B', Node { y: 2, x: 7 });
+
+        assert!(burrow.creates_deadlock(&b, &Node { y: 1, x: 8 }));
+        assert!(!burrow.creates_deadlock(&b, &Node { y: 1, x: 11 }));
+    }
+
+    fn finished_burrow() -> Burrow {
+        Burrow {
+            amphipods: vec![
+                Amphipod::new('A', Node { y: 2, x: 3 }),
+                Amphipod::new('B', Node { y: 2, x: 5 }),
+                Amphipod::new('C', Node { y: 2, x: 7 }),
+                Amphipod::new('D', Node { y: 2, x: 9 }),
+                Amphipod::new('A', Node { y: 3, x: 3 }),
+                Amphipod::new('B', Node { y: 3, x: 5 }),
+                Amphipod::new('C', Node { y: 3, x: 7 }),
+                Amphipod::new('D', Node { y: 3, x: 9 }),
+            ],
+            side_room_depth: 2,
+        }
+    }
+
+    fn unfinished_burrow() -> Burrow {
+        Burrow {
+            amphipods: vec![
+                Amphipod::new('D', Node { y: 2, x: 3 }),
+                Amphipod::new('A', Node { y: 2, x: 5 }),
+                Amphipod::new('B', Node { y: 2, x: 7 }),
+                Amphipod::new('A', Node { y: 2, x: 9 }),
+                Amphipod::new('C', Node { y: 3, x: 3 }),
+                Amphipod::new('C', Node { y: 3, x: 5 }),
+                Amphipod::new('B', Node { y: 3, x: 7 }),
+                Amphipod::new('D', Node { y: 3, x: 9 }),
+            ],
+            side_room_depth: 2,
+        }
+    }
+
+    fn in_progress_burrow_1() -> Burrow {
+        Burrow {
+            amphipods: vec![
+                Amphipod::new('D', Node { y: 1, x: 1 }),
+                Amphipod::new('C', Node { y: 1, x: 2 }),
+                Amphipod::new('A', Node { y: 2, x: 5 }),
+                Amphipod::new('B', Node { y: 2, x: 7 }),
+                Amphipod::new('A', Node { y: 2, x: 9 }),
+                Amphipod::new('C', Node { y: 3, x: 5 }),
+                Amphipod::new('B', Node { y: 3, x: 7 }),
+                Amphipod::new('D', Node { y: 3, x: 9 }),
+            ],
+            side_room_depth: 2,
+        }
+    }
+
+    fn in_progress_burrow_2() -> Burrow {
+        Burrow {
+            amphipods: vec![
+                Amphipod::new('C', Node { y: 1, x: 1 }),
+                Amphipod::new('D', Node { y: 1, x: 6 }),
+                Amphipod::new('A', Node { y: 2, x: 5 }),
+                Amphipod::new('B', Node { y: 2, x: 7 }),
+                Amphipod::new('A', Node { y: 2, x: 9 }),
+                Amphipod::new('C', Node { y: 3, x: 5 }),
+                Amphipod::new('B', Node { y: 3, x: 7 }),
+                Amphipod::new('D', Node { y: 3, x: 9 }),
+            ],
+            side_room_depth: 2,
+        }
     }
 }
