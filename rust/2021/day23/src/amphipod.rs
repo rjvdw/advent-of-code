@@ -28,7 +28,7 @@ impl Amphipod {
             }
     }
 
-    pub fn get_target_burrow(&self) -> usize {
+    pub fn get_target_side_room(&self) -> usize {
         match self.0 {
             Color::Amber => 3,
             Color::Bronze => 5,
@@ -88,16 +88,16 @@ mod tests {
     }
 
     #[test]
-    fn test_get_target_burrow() {
+    fn test_get_target_side_room() {
         let a = Amphipod::new('A', 0);
         let b = Amphipod::new('B', 0);
         let c = Amphipod::new('C', 0);
         let d = Amphipod::new('D', 0);
 
-        assert_eq!(a.get_target_burrow(), 3);
-        assert_eq!(b.get_target_burrow(), 5);
-        assert_eq!(c.get_target_burrow(), 7);
-        assert_eq!(d.get_target_burrow(), 9);
+        assert_eq!(a.get_target_side_room(), 3);
+        assert_eq!(b.get_target_side_room(), 5);
+        assert_eq!(c.get_target_side_room(), 7);
+        assert_eq!(d.get_target_side_room(), 9);
     }
 
     #[test]

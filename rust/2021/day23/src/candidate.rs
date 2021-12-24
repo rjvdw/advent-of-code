@@ -6,9 +6,14 @@ const HALLWAY_X: [usize; 7] = [1, 2, 4, 6, 8, 10, 11];
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub struct Candidate {
+    /// The amphipods in this burrow and their locations.
     pub amphipods: Vec<(Node, Amphipod)>,
+
+    /// Keeps track of all ampipods that have moved twice already.
     pub exhausted: Vec<bool>,
-    pub burrow_depth: usize,
+
+    /// The depth of the side rooms.
+    pub side_room_depth: usize,
 }
 
 impl Candidate {
@@ -29,8 +34,8 @@ impl Candidate {
     pub fn is_done(&self) -> bool {
         self.amphipods
             .iter()
-            // no need to check the y coordinate, if the x coordinate matches, they must be in a burrow
-            .all(|(node, amphipod)| node.x == amphipod.get_target_burrow())
+            // no need to check the y coordinate, if the x coordinate matches, they must be in a side_room
+            .all(|(node, amphipod)| node.x == amphipod.get_target_side_room())
     }
 
     /// Checks whether there are any amphipods above the current one
@@ -43,34 +48,34 @@ impl Candidate {
         false
     }
 
-    /// Checks if this amphipod can move directly to their burrow.
-    pub fn move_to_burrow(&self, node: &Node, amphipod: &Amphipod) -> Option<Node> {
-        if node.is_burrow() && self.exit_is_blocked(node) {
+    /// Checks if this amphipod can move directly to their side room.
+    pub fn find_move_to_side_room(&self, node: &Node, amphipod: &Amphipod) -> Option<Node> {
+        if node.is_side_room() && self.exit_is_blocked(node) {
             None
         } else {
-            let burrow = amphipod.get_target_burrow();
-            let mut room = Node { x: burrow, y: 2 };
+            let side_room = amphipod.get_target_side_room();
+            let mut room = Node { x: side_room, y: 2 };
             let bottom_room = Node {
-                x: burrow,
-                y: self.burrow_depth + 1,
+                x: side_room,
+                y: self.side_room_depth + 1,
             };
 
             let path_is_blocked = !self.path_exists(node, &room);
-            let burrow_is_full = self.amphipods.get_node(&room).is_some();
+            let side_room_is_full = self.amphipods.get_amphipod(&room).is_some();
 
-            if path_is_blocked || burrow_is_full {
+            if path_is_blocked || side_room_is_full {
                 None
             } else {
                 let mut target_room = bottom_room;
-                while room.y <= self.burrow_depth {
+                while room.y <= self.side_room_depth {
                     room.y += 1;
-                    if let Some(other) = self.amphipods.get_node(&room) {
+                    if let Some(other) = self.amphipods.get_amphipod(&room) {
                         if other.has_same_type(amphipod) {
                             if target_room.y >= room.y {
                                 target_room.y = room.y - 1;
                             }
                         } else {
-                            // there is an amphipod with the wrong color in this burrow
+                            // there is an amphipod with the wrong color in this side room
                             return None;
                         }
                     }
@@ -82,9 +87,8 @@ impl Candidate {
     }
 
     /// Returns a list of nodes that this amphipod can move to.
-    pub fn move_to_hallway(&self, node: &Node, amphipod: &Amphipod) -> Vec<Node> {
-        if node.is_burrow() {
-            // currently in a burrow, must move to the hallway
+    pub fn find_moves_to_hallway(&self, node: &Node, amphipod: &Amphipod) -> Vec<Node> {
+        if node.is_side_room() {
             HALLWAY_X
                 .iter()
                 .copied()
@@ -116,20 +120,22 @@ impl Candidate {
     }
 
     /// Assume two amphipods (A & B) that are both in the hallway. If A blocks B from reaching their
-    /// burrow and B blocks A from reaching their burrow, then it's impossible for either of them to
-    /// ever reach their burrow.
+    /// side room and B blocks A from reaching their side room, then it's impossible for either of
+    /// them to ever reach their side room.
     fn wont_block(&self, node: &Node, amphipod: &Amphipod) -> bool {
         for (other_node, other_amphipod) in &self.amphipods {
             if other_node.y == 1 {
                 let a_x = node.x;
-                let a_burrow = amphipod.get_target_burrow();
+                let a_side_room = amphipod.get_target_side_room();
 
                 let b_x = other_node.x;
-                let b_burrow = other_amphipod.get_target_burrow();
+                let b_side_room = other_amphipod.get_target_side_room();
 
-                let a_blocks_b = (b_x < a_x && a_x < b_burrow) || (b_x > a_x && a_x > b_burrow);
+                let a_blocks_b =
+                    (b_x < a_x && a_x < b_side_room) || (b_x > a_x && a_x > b_side_room);
 
-                let b_blocks_a = (a_x < b_x && b_x < a_burrow) || (a_x > b_x && b_x > a_burrow);
+                let b_blocks_a =
+                    (a_x < b_x && b_x < a_side_room) || (a_x > b_x && b_x > a_side_room);
 
                 if a_blocks_b && b_blocks_a {
                     return false;
@@ -192,7 +198,7 @@ mod tests {
                 (Node { x: 9, y: 3 }, Amphipod::new('D', 7)),
             ],
             exhausted: vec![],
-            burrow_depth: 2,
+            side_room_depth: 2,
         }
     }
 
@@ -209,7 +215,7 @@ mod tests {
                 (Node { x: 9, y: 3 }, Amphipod::new('D', 7)),
             ],
             exhausted: vec![],
-            burrow_depth: 2,
+            side_room_depth: 2,
         }
     }
 }

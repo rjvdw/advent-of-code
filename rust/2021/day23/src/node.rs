@@ -7,15 +7,15 @@ pub struct Node {
 }
 
 impl Node {
-    /// Checks whether this node represents a burrow.
-    pub fn is_burrow(&self) -> bool {
+    /// Checks whether this node represents a side room.
+    pub fn is_side_room(&self) -> bool {
         self.y > 1
     }
 
     /// The distance between two nodes.
     pub fn distance_to(&self, other: &Node) -> usize {
         if self.y == 1 || other.y == 1 || self.x == other.x {
-            // already in the hallway, or just moving within the same burrow
+            // already in the hallway, or just moving within the same side room
             taxi_cab_2d((self.x, self.y), (other.x, other.y))
         } else {
             // need to move to the hallway first
@@ -31,12 +31,12 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_is_burrow() {
-        assert!(!Node { x: 6, y: 1 }.is_burrow());
-        assert!(Node { x: 5, y: 2 }.is_burrow());
-        assert!(Node { x: 5, y: 3 }.is_burrow());
-        assert!(Node { x: 5, y: 4 }.is_burrow());
-        assert!(Node { x: 5, y: 5 }.is_burrow());
+    fn test_is_side_room() {
+        assert!(!Node { x: 6, y: 1 }.is_side_room());
+        assert!(Node { x: 5, y: 2 }.is_side_room());
+        assert!(Node { x: 5, y: 3 }.is_side_room());
+        assert!(Node { x: 5, y: 4 }.is_side_room());
+        assert!(Node { x: 5, y: 5 }.is_side_room());
     }
 
     #[test]
