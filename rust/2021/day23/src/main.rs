@@ -87,14 +87,17 @@ fn process_next_state(
     costs: &mut HashMap<Burrow, usize>,
     cheapest: &mut Option<usize>,
 ) {
+    if let Some(v) = cheapest {
+        if *v <= cost {
+            // this state is more expensive than the cheapest state we found
+            return;
+        }
+    }
+
     next_state.normalize();
 
     if next_state.finished() {
-        *cheapest = match cheapest {
-            None => Some(cost),
-            Some(v) if *v > cost => Some(cost),
-            _ => *cheapest,
-        };
+        *cheapest = Some(cost);
     } else if let Some(existing) = costs.get_mut(&next_state) {
         if cost < *existing {
             queue.push(next_state);

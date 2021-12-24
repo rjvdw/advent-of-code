@@ -34,6 +34,11 @@ impl Amphipod {
         self.color.home() == self.location.x
     }
 
+    /// Checks whether an amphipod is in a side room.
+    pub fn is_in_side_room(&self) -> bool {
+        self.location.is_side_room()
+    }
+
     /// Returns a new amphipod with an updated location. If the location is a side room, the
     /// amphipod becomes exhausted.
     pub fn with_location(&self, location: Node) -> Amphipod {
