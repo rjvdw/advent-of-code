@@ -4,7 +4,8 @@ if (args.Length != 1)
     Environment.Exit(1);
 }
 
-IEnumerable<string> ReadInput(int day) => File.ReadAllLines(Path.Join(args[0], $"day{day:D2}.txt"));
+IEnumerable<string> ReadInput(int day, string suffix = "") =>
+    File.ReadAllLines(Path.Join(args[0], $"day{day:D2}{suffix}.txt"));
 
 Day01.Solution.Solve(ReadInput(1), 1);
 Day01.Solution.Solve(ReadInput(1), 3);
@@ -35,3 +36,5 @@ Day20.Solution.Solve(ReadInput(20), 50);
 Day21.Solution.Solve(ReadInput(21), "part1", 1000);
 Day21.Solution.Solve(ReadInput(21), "part2", 21);
 Day22.Solution.Solve(ReadInput(22));
+Day23.Solution.Solve(ReadInput(23, "-1"));
+Day23.Solution.Solve(ReadInput(23, "-2"));
