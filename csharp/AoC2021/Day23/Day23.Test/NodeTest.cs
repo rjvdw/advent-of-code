@@ -42,4 +42,23 @@ public class NodeTest
 
         Assert.Equal(expected, actual);
     }
+
+    [Fact]
+    public void TestCompareTo()
+    {
+        // y equal, x equal
+        Assert.Equal(0, new Node(1, 1).CompareTo(new Node(1, 1)));
+
+        // y equal, x greater
+        Assert.True(new Node(1, 2).CompareTo(new Node(1, 1)) > 0);
+
+        // y equal, x less
+        Assert.True(new Node(1, 0).CompareTo(new Node(1, 1)) < 0);
+
+        // y greater
+        Assert.True(new Node(2, 1).CompareTo(new Node(1, 1)) > 0);
+
+        // y less
+        Assert.True(new Node(0, 1).CompareTo(new Node(1, 1)) < 0);
+    }
 }

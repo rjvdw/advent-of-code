@@ -15,7 +15,7 @@ public class BurrowTest
     [Fact]
     public void TestMinimumRemainingCost()
     {
-        Assert.Equal(9302, UnfinishedBurrow().MinimumRemainingCost());
+        Assert.Equal(9303, UnfinishedBurrow().MinimumRemainingCost());
     }
 
     [Fact]
@@ -51,22 +51,42 @@ public class BurrowTest
     }
 
     [Fact]
-    public void TryFindPlaceInSideRoom()
+    public void TestTryFindPlaceInSideRoom()
     {
-        var burrow = InProgressBurrow1();
-        var a = Amphipod.Parse('A', (2, 5));
-        var b = Amphipod.Parse('B', (3, 7));
+        var burrow = new Burrow(
+            new List<Amphipod>
+            {
+                Amphipod.Parse('A', (1, 1)),
+                Amphipod.Parse('C', (1, 2)),
+                Amphipod.Parse('D', (1, 10)),
+                Amphipod.Parse('D', (1, 11)),
+                Amphipod.Parse('B', (2, 7)),
+                Amphipod.Parse('B', (3, 5)),
+                Amphipod.Parse('C', (3, 7)),
+                Amphipod.Parse('A', (3, 9)),
+            },
+            2
+        );
 
-        Assert.True(burrow.TryFindPlaceInSideRoom(a, out var node));
-        Assert.Equal(new Node(3, 3), node);
+        // can move to empty side room
+        var a = Amphipod.Parse('A', (3, 9));
+        Assert.True(burrow.TryFindPlaceInSideRoom(a, out var aTo));
+        Assert.Equal(aTo, new Node(3, 3));
 
-        Assert.False(burrow.TryFindPlaceInSideRoom(b, out _));
+        // can move to non-empty side room with only same color
+        var b = Amphipod.Parse('B', (2, 7));
+        Assert.True(burrow.TryFindPlaceInSideRoom(b, out var bTo));
+        Assert.Equal(bTo, new Node(2, 5));
+
+        // cannot move to side room with wrong color
+        var d = Amphipod.Parse('D', (1, 10));
+        Assert.False(burrow.TryFindPlaceInSideRoom(d, out _));
     }
 
     [Fact]
     public void TestPathThroughHallwayIsFree()
     {
-        var burrow = InProgressBurrow2();
+        var burrow = InProgressBurrow();
         var a = Amphipod.Parse('A', (2, 5));
 
         Assert.True(burrow.PathThroughHallwayIsFree(a, (1, 2)));
@@ -76,7 +96,7 @@ public class BurrowTest
     [Fact]
     public void TestCreatesDeadlock()
     {
-        var burrow = InProgressBurrow2();
+        var burrow = InProgressBurrow();
         var b = Amphipod.Parse('B', (2, 7));
 
         Assert.True(burrow.CreatesDeadlock(b, (1, 8)));
@@ -86,7 +106,7 @@ public class BurrowTest
     [Fact]
     public void WithUpdatedAmphipod()
     {
-        var burrow = InProgressBurrow2();
+        var burrow = InProgressBurrow();
         var expected = new Burrow(
             new List<Amphipod>
             {
@@ -130,31 +150,16 @@ public class BurrowTest
             Amphipod.Parse('D', (2, 3)),
             Amphipod.Parse('A', (2, 5)),
             Amphipod.Parse('B', (2, 7)),
-            Amphipod.Parse('A', (2, 9)),
+            Amphipod.Parse('D', (2, 9)),
             Amphipod.Parse('C', (3, 3)),
             Amphipod.Parse('C', (3, 5)),
             Amphipod.Parse('B', (3, 7)),
-            Amphipod.Parse('D', (3, 9)),
+            Amphipod.Parse('A', (3, 9)),
         },
         2
     );
 
-    private static Burrow InProgressBurrow1() => new(
-        new List<Amphipod>
-        {
-            Amphipod.Parse('D', (1, 1)),
-            Amphipod.Parse('C', (1, 2)),
-            Amphipod.Parse('A', (2, 5)),
-            Amphipod.Parse('B', (2, 7)),
-            Amphipod.Parse('A', (2, 9)),
-            Amphipod.Parse('C', (3, 5)),
-            Amphipod.Parse('B', (3, 7)),
-            Amphipod.Parse('D', (3, 9)),
-        },
-        2
-    );
-
-    private static Burrow InProgressBurrow2() => new(
+    private static Burrow InProgressBurrow() => new(
         new List<Amphipod>
         {
             Amphipod.Parse('C', (1, 1)),
