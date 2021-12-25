@@ -83,6 +83,32 @@ public class BurrowTest
         Assert.False(burrow.CreatesDeadlock(b, (1, 11)));
     }
 
+    [Fact]
+    public void WithUpdatedAmphipod()
+    {
+        var burrow = InProgressBurrow2();
+        var expected = new Burrow(
+            new List<Amphipod>
+            {
+                Amphipod.Parse('C', (1, 1)),
+                Amphipod.Parse('A', (1, 2)),
+                Amphipod.Parse('D', (1, 6)),
+                Amphipod.Parse('B', (2, 7)),
+                Amphipod.Parse('A', (2, 9)),
+                Amphipod.Parse('C', (3, 5)),
+                Amphipod.Parse('B', (3, 7)),
+                Amphipod.Parse('D', (3, 9)),
+            },
+            2
+        );
+        var a = Amphipod.Parse('A', (2, 5));
+
+        var (next, cost) = burrow.WithUpdatedAmphipod(2, a, (1, 2));
+
+        Assert.Equal(4, cost);
+        Assert.Equal(expected, next);
+    }
+
     private static Burrow FinishedBurrow() => new(
         new List<Amphipod>
         {
