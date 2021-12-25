@@ -4,6 +4,8 @@ public record Burrow(List<Amphipod> Amphipods, int SideRoomDepth)
 {
     public bool IsFinished() => Amphipods.All(a => a.IsHome());
 
+    public int ComputePriority() => Amphipods.Count(a => !a.Exhausted);
+
     public int MinimumRemainingCost() => Amphipods
         .Where(amphipod => !amphipod.IsHome())
         .Sum(amphipod => amphipod.ComputeCost((2, amphipod.Home)));

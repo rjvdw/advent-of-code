@@ -68,7 +68,26 @@ public static class Solution
         ref int? cheapest
     )
     {
-        throw new NotImplementedException("TODO");
+        if (cost + nextState.MinimumRemainingCost() >= cheapest)
+            return;
+
+        if (nextState.IsFinished())
+        {
+            cheapest = cost;
+        }
+        else if (costs.ContainsKey(nextState))
+        {
+            if (cost < costs[nextState])
+            {
+                queue.Enqueue(nextState, nextState.ComputePriority());
+                costs[nextState] = cost;
+            }
+        }
+        else
+        {
+            queue.Enqueue(nextState, nextState.ComputePriority());
+            costs[nextState] = cost;
+        }
     }
 
     public static (IEnumerable<Amphipod> Amphipods, int SideRoomDepth) Parse(IEnumerable<string> input)
