@@ -39,3 +39,4 @@ Day22.Solution.Solve(ReadInput(22));
 Day23.Solution.Solve(ReadInput(23, "-1"));
 Day23.Solution.Solve(ReadInput(23, "-2"));
 Day24.Solution.Solve(ReadInput(24));
+Day25.Solution.Solve(ReadInput(25));
