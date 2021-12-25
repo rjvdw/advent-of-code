@@ -2,7 +2,7 @@ namespace Day23;
 
 public record Burrow(List<Amphipod> Amphipods, int SideRoomDepth)
 {
-    private static readonly int[] HallwayX = { 1, 2, 4, 6, 8, 10, 11 };
+    /*private*/public static readonly int[] HallwayX = { 1, 2, 4, 6, 8, 10, 11 };
 
     public bool IsFinished() => Amphipods.All(a => a.IsHome());
 
@@ -57,26 +57,24 @@ public record Burrow(List<Amphipod> Amphipods, int SideRoomDepth)
         return moves;
     }
 
-    private bool IsOccupied(Node node) => Amphipods.All(a => a.Location != node);
+    /*private*/public bool IsOccupied(Node node) => Amphipods.Any(a => a.Location == node);
 
-    private bool TryGetOccupant(Node node, out Amphipod occupant)
+    /*private*/public bool TryGetOccupant(Node node, out Amphipod occupant)
     {
+        occupant = null!;
         var amphipod = Amphipods.Find(a => a.Location == node);
 
         if (amphipod is null)
-        {
-            occupant = null!;
             return false;
-        }
 
         occupant = amphipod;
         return true;
     }
 
-    private bool CanLeaveSideRoom(Amphipod amphipod) =>
-        amphipod.Location.Y > 2 && IsOccupied((amphipod.Location.Y - 1, amphipod.Location.X));
+    /*private*/public bool CanLeaveSideRoom(Amphipod amphipod) =>
+        amphipod.Location.Y <= 2 || !IsOccupied((amphipod.Location.Y - 1, amphipod.Location.X));
 
-    private bool TryFindPlaceInSideRoom(Amphipod amphipod, out Node node)
+    /*private*/public bool TryFindPlaceInSideRoom(Amphipod amphipod, out Node node)
     {
         var x = amphipod.Home;
         var y = SideRoomDepth + 1;
@@ -101,7 +99,7 @@ public record Burrow(List<Amphipod> Amphipods, int SideRoomDepth)
         return false;
     }
 
-    private bool PathThroughHallwayIsFree(Amphipod amphipod, Node to)
+    /*private*/public bool PathThroughHallwayIsFree(Amphipod amphipod, Node to)
     {
         var min = Math.Min(amphipod.Location.X, to.X);
         var max = Math.Max(amphipod.Location.X, to.X);
@@ -115,7 +113,7 @@ public record Burrow(List<Amphipod> Amphipods, int SideRoomDepth)
         return true;
     }
 
-    private (Burrow, int) WithUpdatedAmphipod(int idx, Amphipod amphipod, Node to)
+    /*private*/public (Burrow, int) WithUpdatedAmphipod(int idx, Amphipod amphipod, Node to)
     {
         var cost = amphipod.ComputeCost(to);
         var amphipods = new List<Amphipod>(Amphipods) { [idx] = amphipod.WithLocation(to) };
@@ -125,7 +123,7 @@ public record Burrow(List<Amphipod> Amphipods, int SideRoomDepth)
         return (nextState, cost);
     }
 
-    private bool CreatesDeadlock(Amphipod amphipod, Node to)
+    /*private*/public bool CreatesDeadlock(Amphipod amphipod, Node to)
     {
         foreach (var other in Amphipods)
         {
