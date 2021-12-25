@@ -96,11 +96,11 @@ public static class Solution
         var minDepth = 0;
         var maxDepth = 0;
 
-        var y = 0;
+        var y = -1;
         foreach (var line in input)
         {
             y += 1;
-            var x = 0;
+            var x = -1;
             foreach (var ch in line)
             {
                 x += 1;

@@ -1,6 +1,6 @@
 namespace Day23;
 
-public record Amphipod(AmphipodColor Color, bool Exhausted, Node Location)
+public record Amphipod(AmphipodColor Color, bool Exhausted, Node Location) : IComparable<Amphipod>
 {
     public static Amphipod Parse(char ch, Node location) => new(
         AmphipodColorExtensions.Parse(ch),
@@ -21,6 +21,8 @@ public record Amphipod(AmphipodColor Color, bool Exhausted, Node Location)
         location.IsSideRoom(),
         location
     );
+
+    public int CompareTo(Amphipod? other) => Location.CompareTo(other?.Location);
 }
 
 public enum AmphipodColor
