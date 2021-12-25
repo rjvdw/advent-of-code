@@ -10,7 +10,7 @@ public record Amphipod(AmphipodColor Color, bool Exhausted, Node Location)
 
     public int ComputeCost(Node to) => Color.Cost() * Location.DistanceTo(to);
 
-    public int Home() => Color.Home();
+    public int Home => Color.Home();
 
     public bool IsHome() => Color.Home() == Location.X;
 

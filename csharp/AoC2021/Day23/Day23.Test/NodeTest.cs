@@ -33,4 +33,13 @@ public class NodeTest
         Assert.Equal(2, nodeC.DistanceTo(nodeB));
         Assert.Equal(0, nodeC.DistanceTo(nodeC));
     }
+
+    [Fact]
+    public void TestImplicitConversionFromTuple()
+    {
+        var expected = new Node(2, 3);
+        Node actual = (2, 3);
+
+        Assert.Equal(expected, actual);
+    }
 }
