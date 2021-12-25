@@ -6,8 +6,14 @@ const HALLWAY_X: [usize; 7] = [1, 2, 4, 6, 8, 10, 11];
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub struct Burrow {
+    /// The amphipods that live in this burrow.
     pub amphipods: Vec<Amphipod>,
+
+    /// The depth of the side rooms in this burrow.
     pub side_room_depth: usize,
+
+    /// An optimistic estimate of the minimum cost for all amphipods to reach their target burrows.
+    pub cost_estimate: usize,
 }
 
 impl Burrow {
@@ -19,24 +25,6 @@ impl Burrow {
     /// Checks whether all amphipods are home.
     pub fn finished(&self) -> bool {
         self.amphipods.iter().all(|amphipod| amphipod.is_home())
-    }
-
-    /// If every amphipod could magically walk from their current location to their home, how
-    /// much energy would this take? There is no way for this state to reach a finished state in a
-    /// cost lower than this.
-    pub fn minimum_remaining_cost(&self) -> usize {
-        let mut total = 0;
-        for amphipod in &self.amphipods {
-            if amphipod.is_home() {
-                continue;
-            }
-
-            total += amphipod.compute_cost(&Node {
-                y: 2, // amphipod might have to move deeper, but this is just a heuristic
-                x: amphipod.home(),
-            });
-        }
-        total
     }
 
     /// Try to find an amphipod that can move directly home.
@@ -86,6 +74,8 @@ impl Burrow {
         let cost = amphipod.compute_cost(&to);
         let mut next_state = self.clone();
         next_state.amphipods[idx] = amphipod.with_location(to);
+        next_state.cost_estimate -= amphipod.estimate_cost();
+        next_state.cost_estimate += next_state.amphipods[idx].estimate_cost();
         (next_state, cost)
     }
 
@@ -182,15 +172,6 @@ impl Burrow {
 
         false
     }
-
-    /// Count the number of amphipods that are currently exhausted (i.e. no longer able to make any
-    /// moves).
-    fn nr_exhausted(&self) -> usize {
-        self.amphipods
-            .iter()
-            .filter(|amphipod| amphipod.exhausted)
-            .count()
-    }
 }
 
 impl PartialOrd<Self> for Burrow {
@@ -201,7 +182,7 @@ impl PartialOrd<Self> for Burrow {
 
 impl Ord for Burrow {
     fn cmp(&self, other: &Self) -> Ordering {
-        self.nr_exhausted().cmp(&other.nr_exhausted())
+        other.cost_estimate.cmp(&self.cost_estimate)
     }
 }
 
@@ -220,11 +201,6 @@ mod tests {
     fn test_finished() {
         assert!(finished_burrow().finished());
         assert!(!unfinished_burrow().finished());
-    }
-
-    #[test]
-    fn test_minimum_remaining_cost() {
-        assert_eq!(unfinished_burrow().minimum_remaining_cost(), 9302);
     }
 
     #[test]
@@ -298,6 +274,7 @@ mod tests {
                 Amphipod::new('D', Node { y: 3, x: 9 }),
             ],
             side_room_depth: 2,
+            cost_estimate: 0,
         }
     }
 
@@ -314,6 +291,7 @@ mod tests {
                 Amphipod::new('D', Node { y: 3, x: 9 }),
             ],
             side_room_depth: 2,
+            cost_estimate: 0,
         }
     }
 
@@ -330,6 +308,7 @@ mod tests {
                 Amphipod::new('D', Node { y: 3, x: 9 }),
             ],
             side_room_depth: 2,
+            cost_estimate: 0,
         }
     }
 
@@ -346,6 +325,7 @@ mod tests {
                 Amphipod::new('D', Node { y: 3, x: 9 }),
             ],
             side_room_depth: 2,
+            cost_estimate: 0,
         }
     }
 }

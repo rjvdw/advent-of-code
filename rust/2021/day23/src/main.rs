@@ -36,6 +36,7 @@ fn find_cheapest_path(amphipods: &[Amphipod], side_room_depth: usize) -> Option<
     let mut initial_state = Burrow {
         amphipods: amphipods.to_vec(),
         side_room_depth,
+        cost_estimate: amphipods.iter().map(|a| a.estimate_cost()).sum(),
     };
     initial_state.normalize();
     queue.push(initial_state.clone());
@@ -87,7 +88,7 @@ fn process_next_state(
     cheapest: &mut Option<usize>,
 ) {
     if let Some(v) = cheapest {
-        if cost + next_state.minimum_remaining_cost() >= *v {
+        if cost + next_state.cost_estimate >= *v {
             // this state is more expensive than the cheapest state we found
             return;
         }

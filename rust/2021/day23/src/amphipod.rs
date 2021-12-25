@@ -48,6 +48,19 @@ impl Amphipod {
             location,
         }
     }
+
+    /// Returns an estimate for the minimum energy cost that this amphipod will need to reach their
+    /// desired side room.
+    pub fn estimate_cost(&self) -> usize {
+        if self.is_home() {
+            0
+        } else {
+            self.compute_cost(&Node {
+                y: 2,
+                x: self.home(),
+            })
+        }
+    }
 }
 
 impl PartialOrd<Self> for Amphipod {
