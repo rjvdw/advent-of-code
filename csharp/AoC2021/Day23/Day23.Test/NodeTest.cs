@@ -5,13 +5,13 @@ namespace Day23.Test;
 public class NodeTest
 {
     [Fact]
-    public void TestIsBurrow()
+    public void TestIsSideRoom()
     {
-        Assert.False(new Node(1, 6).IsBurrow());
-        Assert.True(new Node(2, 5).IsBurrow());
-        Assert.True(new Node(3, 5).IsBurrow());
-        Assert.True(new Node(4, 5).IsBurrow());
-        Assert.True(new Node(5, 5).IsBurrow());
+        Assert.False(new Node(1, 6).IsSideRoom());
+        Assert.True(new Node(2, 5).IsSideRoom());
+        Assert.True(new Node(3, 5).IsSideRoom());
+        Assert.True(new Node(4, 5).IsSideRoom());
+        Assert.True(new Node(5, 5).IsSideRoom());
     }
 
     [Fact]

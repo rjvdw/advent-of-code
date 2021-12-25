@@ -1,35 +1,61 @@
 namespace Day23;
 
-public record Amphipod(Color Color, int Index)
+public record Amphipod(AmphipodColor Color, bool Exhausted, Node Location)
 {
-    public static Amphipod Parse(char ch, int index) =>
-        ch switch
-        {
-            'A' => new Amphipod(Color.Amber, index),
-            'B' => new Amphipod(Color.Bronze, index),
-            'C' => new Amphipod(Color.Copper, index),
-            _ => new Amphipod(Color.Desert, index),
-        };
+    public static Amphipod Parse(char ch, Node location) => new(
+        AmphipodColorExtensions.Parse(ch),
+        false,
+        location
+    );
 
-    public int ComputeEnergy(int steps) =>
-        steps * Color switch
-        {
-            Color.Amber => 1,
-            Color.Bronze => 10,
-            Color.Copper => 100,
-            Color.Desert => 1000,
-            _ => throw new InvalidOperationException($"Invalid Amphipod: {this}"),
-        };
+    public int ComputeCost(Node to) => Color.Cost() * Location.DistanceTo(to);
 
-    public int TargetBurrow =>
-        Color switch
-        {
-            Color.Amber => 3,
-            Color.Bronze => 5,
-            Color.Copper => 7,
-            Color.Desert => 9,
-            _ => throw new InvalidOperationException($"Invalid Amphipod: {this}"),
-        };
+    public int Home() => Color.Home();
 
-    public Amphipod WithIndex(int index) => new(Color, index);
+    public bool IsHome() => Color.Home() == Location.X;
+
+    public bool IsInSideRoom() => Location.IsSideRoom();
+
+    public Amphipod WithLocation(Node location) => new(
+        Color,
+        location.IsSideRoom(),
+        location
+    );
+}
+
+public enum AmphipodColor
+{
+    Amber,
+    Bronze,
+    Copper,
+    Desert,
+}
+
+internal static class AmphipodColorExtensions
+{
+    internal static AmphipodColor Parse(char ch) => ch switch
+    {
+        'A' => AmphipodColor.Amber,
+        'B' => AmphipodColor.Bronze,
+        'C' => AmphipodColor.Copper,
+        _ => AmphipodColor.Desert,
+    };
+
+    internal static int Cost(this AmphipodColor color) => color switch
+    {
+        AmphipodColor.Amber => 1,
+        AmphipodColor.Bronze => 10,
+        AmphipodColor.Copper => 100,
+        AmphipodColor.Desert => 1000,
+        _ => throw new ArgumentOutOfRangeException(nameof(color), color, "Invalid color"),
+    };
+
+    internal static int Home(this AmphipodColor color) => color switch
+    {
+        AmphipodColor.Amber => 3,
+        AmphipodColor.Bronze => 5,
+        AmphipodColor.Copper => 7,
+        AmphipodColor.Desert => 9,
+        _ => throw new ArgumentOutOfRangeException(nameof(color), color, "Invalid color"),
+    };
 }

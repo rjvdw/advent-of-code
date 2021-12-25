@@ -2,7 +2,7 @@ namespace Day23;
 
 public record Node(int Y, int X)
 {
-    public bool IsBurrow() => Y > 1;
+    public bool IsSideRoom() => Y > 1;
 
     public int DistanceTo(Node other) =>
         Y == 1 || other.Y == 1 || X == other.X
