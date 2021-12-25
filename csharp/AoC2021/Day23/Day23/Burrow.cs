@@ -57,28 +57,94 @@ public record Burrow(List<Amphipod> Amphipods, int SideRoomDepth)
         return moves;
     }
 
-    private bool CanLeaveSideRoom(Amphipod amphipod)
+    private bool IsOccupied(Node node) => Amphipods.All(a => a.Location != node);
+
+    private bool TryGetOccupant(Node node, out Amphipod occupant)
     {
-        throw new NotImplementedException("TODO");
+        var amphipod = Amphipods.Find(a => a.Location == node);
+
+        if (amphipod is null)
+        {
+            occupant = null!;
+            return false;
+        }
+
+        occupant = amphipod;
+        return true;
     }
+
+    private bool CanLeaveSideRoom(Amphipod amphipod) =>
+        amphipod.Location.Y > 2 && IsOccupied((amphipod.Location.Y - 1, amphipod.Location.X));
 
     private bool TryFindPlaceInSideRoom(Amphipod amphipod, out Node node)
     {
-        throw new NotImplementedException("TODO");
+        var x = amphipod.Home;
+        var y = SideRoomDepth + 1;
+        node = null!;
+
+        while (y > 1)
+        {
+            if (TryGetOccupant((y, x), out var occupant))
+            {
+                if (occupant.Color != amphipod.Color)
+                    return false;
+
+                y -= 1;
+            }
+            else
+            {
+                node = (y, x);
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private bool PathThroughHallwayIsFree(Amphipod amphipod, Node to)
     {
-        throw new NotImplementedException("TODO");
+        var min = Math.Min(amphipod.Location.X, to.X);
+        var max = Math.Max(amphipod.Location.X, to.X);
+        for (var x = min; x <= max; x += 1)
+        {
+            var node = new Node(1, x);
+            if (node != amphipod.Location && IsOccupied(node))
+                return false;
+        }
+
+        return true;
     }
 
-    private (Burrow, int) WithUpdatedAmphipod(int idx, Amphipod amphipod, Node node)
+    private (Burrow, int) WithUpdatedAmphipod(int idx, Amphipod amphipod, Node to)
     {
-        throw new NotImplementedException("TODO");
+        var cost = amphipod.ComputeCost(to);
+        var amphipods = new List<Amphipod>(Amphipods) { [idx] = amphipod.WithLocation(to) };
+        amphipods.Sort();
+        var nextState = new Burrow(amphipods, SideRoomDepth);
+
+        return (nextState, cost);
     }
 
     private bool CreatesDeadlock(Amphipod amphipod, Node to)
     {
-        throw new NotImplementedException("TODO");
+        foreach (var other in Amphipods)
+        {
+            if (other.IsInSideRoom())
+                continue;
+
+            var aX = to.X;
+            var aSideRoom = amphipod.Home;
+
+            var bX = other.Location.X;
+            var bSideRoom = other.Home;
+
+            var aBlocksB = (bX < aX && aX < bSideRoom) || (bX > aX && aX > bSideRoom);
+            var bBlocksA = (aX < bX && bX < aSideRoom) || (aX > bX && bX > aSideRoom);
+
+            if (aBlocksB && bBlocksA)
+                return true;
+        }
+
+        return false;
     }
 }
