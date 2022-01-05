@@ -18,7 +18,7 @@ fn main() {
     let invalid_score = results
         .iter()
         .filter(|r| matches!(r, Analysis::Invalid(_)))
-        .map(|r| r.score())
+        .map(Analysis::score)
         .sum::<u64>();
 
     println!("The total score of all invalid lines is {}.", invalid_score);
@@ -26,7 +26,7 @@ fn main() {
     let mut valid_scores = results
         .iter()
         .filter(|r| matches!(r, Analysis::Valid(_)))
-        .map(|r| r.score())
+        .map(Analysis::score)
         .collect::<Vec<u64>>();
     valid_scores.sort_unstable();
 

@@ -1,7 +1,7 @@
 use std::collections::HashSet;
+use std::num::ParseIntError;
 
 use grid::{grid, Grid};
-
 use rdcl_aoc_helpers::error::ParseError;
 use rdcl_aoc_helpers::grid::iterators::WithGridIterator;
 use rdcl_aoc_helpers::input::MultilineFromStr;
@@ -94,16 +94,19 @@ impl MultilineFromStr for Board {
     }
 
     fn parse(&mut self, line: &str) -> Result<(), Self::Err> {
-        let nrs = line.split_whitespace().map(|x| x.parse::<u8>());
+        let nrs = line
+            .split_whitespace()
+            .map(str::parse::<u8>)
+            .collect::<Result<Vec<u8>, ParseIntError>>()?;
 
         if self.numbers.cols() == 0 {
             for nr in nrs {
-                self.numbers.push_col(vec![nr?]);
+                self.numbers.push_col(vec![nr]);
             }
         } else {
             let mut row = Vec::with_capacity(self.numbers.cols());
             for nr in nrs {
-                row.push(nr?);
+                row.push(nr);
             }
             self.numbers.push_row(row);
         }

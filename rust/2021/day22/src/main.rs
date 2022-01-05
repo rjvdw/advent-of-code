@@ -63,7 +63,7 @@ fn execute_reboot_sequence(cuboids: &[Cuboid]) -> (usize, usize) {
 }
 
 fn count_cubes(cuboids: &[Cuboid]) -> usize {
-    cuboids.iter().map(|c| c.size()).sum()
+    cuboids.iter().map(Cuboid::size).sum()
 }
 
 #[cfg(test)]

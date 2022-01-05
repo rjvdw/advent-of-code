@@ -24,7 +24,7 @@ impl Burrow {
 
     /// Checks whether all amphipods are home.
     pub fn finished(&self) -> bool {
-        self.amphipods.iter().all(|amphipod| amphipod.is_home())
+        self.amphipods.iter().all(Amphipod::is_home)
     }
 
     /// Try to find an amphipod that can move directly home.

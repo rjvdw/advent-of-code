@@ -16,7 +16,7 @@ impl Packet {
     pub fn sum_versions(&self) -> u64 {
         self.sub_packets
             .iter()
-            .map(|p| p.sum_versions())
+            .map(Packet::sum_versions)
             .sum::<u64>()
             + (self.version as u64)
     }
@@ -25,7 +25,7 @@ impl Packet {
         match self.type_id.cmp(&4) {
             Ordering::Equal => self.value,
             Ordering::Less => {
-                let subs = self.sub_packets.iter().map(|p| p.eval());
+                let subs = self.sub_packets.iter().map(Packet::eval);
 
                 match self.type_id {
                     0 => subs.sum(),
