@@ -33,7 +33,7 @@ impl State {
         self.floors
             .iter()
             .take(self.floors.len() - 1)
-            .all(|f| f.is_empty())
+            .all(Vec::is_empty)
     }
 
     pub fn use_elevator(&self, direction: Direction, items: &[Item]) -> Option<State> {
@@ -41,7 +41,7 @@ impl State {
             || (self.floor == self.floors.len() - 1 && direction.is_up())
             || !(items.len() == 1 || items.len() == 2)
             || !items.iter().all(|i| self.floors[self.floor].contains(i))
-            || (direction.is_down() && self.floors.iter().take(self.floor).all(|f| f.is_empty()))
+            || (direction.is_down() && self.floors.iter().take(self.floor).all(Vec::is_empty))
         {
             return None;
         }
@@ -79,14 +79,14 @@ impl State {
         let generators: Vec<String> = floor
             .iter()
             .filter(|i| i.is_generator())
-            .map(|i| i.get_label())
+            .map(Item::get_label)
             .collect();
 
         generators.is_empty()
             || floor
                 .iter()
                 .filter(|i| i.is_microchip())
-                .map(|i| i.get_label())
+                .map(Item::get_label)
                 .all(|i| generators.contains(&i))
     }
 }

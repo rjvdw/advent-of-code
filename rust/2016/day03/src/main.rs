@@ -27,7 +27,7 @@ fn main() {
 fn parse_by_row(path: &str) -> usize {
     File::open(path)
         .read_lines::<Triangle>(1)
-        .filter(|t| t.is_possible())
+        .filter(Triangle::is_possible)
         .count()
 }
 

@@ -11,14 +11,11 @@ fn main() {
     let args = get_args(&["<Input file>"], 1);
     let rooms = File::open(&args[1]).read_lines::<Room>(1);
 
-    let valid_rooms: Vec<Room> = rooms.filter(|room| room.is_valid()).collect();
+    let valid_rooms: Vec<Room> = rooms.filter(Room::is_valid).collect();
 
     println!(
         "The sum of the sectors of all the valid rooms is {}.",
-        valid_rooms
-            .iter()
-            .map(|room| room.get_sector())
-            .sum::<u32>()
+        valid_rooms.iter().map(Room::get_sector).sum::<u32>()
     );
 
     for room in valid_rooms {

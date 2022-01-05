@@ -92,11 +92,7 @@ impl IPv7 {
     }
 
     pub fn supports_ssl(&self) -> bool {
-        let abas: Vec<(char, char)> = self
-            .sequences
-            .iter()
-            .flat_map(|seq| seq.get_abas())
-            .collect();
+        let abas: Vec<(char, char)> = self.sequences.iter().flat_map(Sequence::get_abas).collect();
 
         for (a, b) in abas {
             if self.sequences.iter().any(|seq| seq.contains_bab((a, b))) {
