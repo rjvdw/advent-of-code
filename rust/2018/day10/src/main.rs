@@ -69,7 +69,7 @@ fn find_message(points: &[Point]) -> (usize, Vec<Point>) {
 
 fn height(points: &[Point]) -> i64 {
     let mut y_range = MinMax::default();
-    for (_, y) in points.iter().map(|p| p.get_position()) {
+    for (_, y) in points.iter().map(Point::get_position) {
         y_range.update(y);
     }
     y_range.len_inclusive()

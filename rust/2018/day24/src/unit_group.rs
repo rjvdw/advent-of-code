@@ -138,7 +138,7 @@ impl fmt::Display for UnitGroup {
             write!(f, " (")?;
             if !self.immune_to.is_empty() {
                 let mut immunities: Vec<String> =
-                    self.immune_to.iter().map(|at| at.to_string()).collect();
+                    self.immune_to.iter().map(ToString::to_string).collect();
                 immunities.sort_unstable();
                 write!(f, "immune to {}", immunities.join(", "))?;
 
@@ -148,7 +148,7 @@ impl fmt::Display for UnitGroup {
             }
             if !self.weak_to.is_empty() {
                 let mut weaknesses: Vec<String> =
-                    self.weak_to.iter().map(|at| at.to_string()).collect();
+                    self.weak_to.iter().map(ToString::to_string).collect();
                 weaknesses.sort_unstable();
                 write!(f, "weak to {}", weaknesses.join(", "))?;
             }

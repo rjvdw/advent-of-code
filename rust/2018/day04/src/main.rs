@@ -14,7 +14,7 @@ fn main() {
     let mut log_entries = File::open(&args[1])
         .read_lines(1)
         .collect::<Vec<LogEntry>>();
-    log_entries.sort_unstable_by_key(|e| e.get_timestamp());
+    log_entries.sort_unstable_by_key(LogEntry::get_timestamp);
 
     let analysis = perform_sleep_analysis(&log_entries);
     match analysis.get_biggest_sleeper() {

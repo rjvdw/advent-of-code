@@ -40,7 +40,7 @@ fn find_overlap(claims: &[Claim]) -> (usize, Vec<usize>) {
     let safe_squares = claims
         .iter()
         .filter(|claim| claim.into_iter().all(|p| !overlap.contains(&p)))
-        .map(|claim| claim.get_nr())
+        .map(Claim::get_nr)
         .collect();
 
     (overlap.len(), safe_squares)

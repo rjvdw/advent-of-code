@@ -75,7 +75,7 @@ fn battle(unit_groups: &[UnitGroup], boost: usize) -> Option<(Faction, usize)> {
 
     loop {
         // find selection order
-        unit_groups.sort_unstable_by(|a, b| a.selection_phase_cmp(b));
+        unit_groups.sort_unstable_by(UnitGroup::selection_phase_cmp);
 
         // clear stuff in preparation for a new round
         remaining_units.clear();
