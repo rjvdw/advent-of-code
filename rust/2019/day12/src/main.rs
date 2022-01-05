@@ -27,7 +27,7 @@ fn run_simulation(moons: &[Moon], steps: usize) -> i64 {
     for _ in 1..=steps {
         moons = moons.iter().map(|moon| moon.update_moon(&moons)).collect();
     }
-    moons.iter().map(|moon| moon.total_energy()).sum()
+    moons.iter().map(Moon::total_energy).sum()
 }
 
 macro_rules! get_seen_key {
