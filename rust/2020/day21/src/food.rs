@@ -22,12 +22,16 @@ impl FromStr for Food {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.find("(contains") {
             Some(idx) => {
-                let ingredients = s[..idx].trim().split(' ').map(|v| v.to_string()).collect();
+                let ingredients = s[..idx]
+                    .trim()
+                    .split(' ')
+                    .map(ToString::to_string)
+                    .collect();
 
                 let allergens = s[idx + 9..s.len() - 1]
                     .trim()
                     .split(", ")
-                    .map(|v| v.to_string())
+                    .map(ToString::to_string)
                     .collect();
 
                 Ok(Food {

@@ -55,7 +55,7 @@ fn find_possible_ingredients_per_allergen(foods: &[Food]) -> HashMap<String, Has
                 None => {
                     possible_ingredients_per_allergen.insert(
                         allergen.to_string(),
-                        food.ingredients.iter().map(|v| v.to_string()).collect(),
+                        food.ingredients.iter().cloned().collect(),
                     );
                 }
             }
@@ -71,7 +71,7 @@ fn find_safe_ingredients(
 ) -> HashSet<String> {
     foods
         .iter()
-        .flat_map(|f| f.ingredients.iter().map(|i| i.to_string()))
+        .flat_map(|f| f.ingredients.iter().cloned())
         .filter(|i| {
             possible_ingredients_per_allergen
                 .iter()
@@ -110,7 +110,7 @@ fn find_dangerous_ingredients(
                 let ingredients: Vec<String> = ingredients
                     .iter()
                     .filter(|&i| !dangerous_ingredients.contains(i))
-                    .map(|v| v.to_string())
+                    .cloned()
                     .collect();
 
                 if ingredients.len() == 1 {
@@ -131,7 +131,7 @@ fn find_dangerous_ingredients(
         mapping
             .iter()
             .map(|(_, ingredient)| ingredient)
-            .map(|v| v.to_string())
+            .cloned()
             .collect(),
         dangerous_ingredients.len() == possible_ingredients_per_allergen.len(),
     )
