@@ -33,7 +33,7 @@ impl Program {
                     .children
                     .iter()
                     .map(|c| programs.get(c))
-                    .map(|p| p.unwrap())
+                    .map(Option::unwrap)
                     .map(|p| p.get_weight(programs, weights))
                     .sum::<usize>();
 

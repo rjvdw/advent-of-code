@@ -23,7 +23,7 @@ fn make_a_run_for_it(scanners: &[Scanner], delay: u64) -> (usize, u64) {
     scanners
         .iter()
         .filter(|scanner| scanner.will_detect_you(scanner.position(delay)))
-        .map(|scanner| scanner.severity())
+        .map(Scanner::severity)
         .fold((0, 0), |acc, severity| (acc.0 + 1, acc.1 + severity))
 }
 
