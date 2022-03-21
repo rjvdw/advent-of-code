@@ -51,7 +51,7 @@ impl fmt::Debug for PuzzleInput {
             self.your_ticket,
         )?;
 
-        for ticket in self.nearby_tickets.to_vec() {
+        for ticket in &self.nearby_tickets.to_vec() {
             write!(f, "\n{:?}", ticket)?;
         }
 
@@ -62,10 +62,10 @@ impl fmt::Debug for PuzzleInput {
 impl PuzzleInput {
     /// Filters out nearby tickets that are invalid, and returns the sum of the invalid values.
     pub fn filter_out_invalid_nearby_tickets(&mut self) -> u32 {
-        let mut filtered = Vec::new();
+        let mut filtered = vec![];
         let mut sum = 0;
 
-        for ticket in self.nearby_tickets.to_vec() {
+        for ticket in self.nearby_tickets.iter().cloned() {
             let (valid, count) = self.count_invalid_values_in_ticket(&ticket);
             if valid {
                 filtered.push(ticket);

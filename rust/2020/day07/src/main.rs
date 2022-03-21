@@ -85,7 +85,7 @@ mod tests {
         .as_records::<Bag>()
         .unwrap();
 
-        let matching_bags = find_bags_that_may_contain_color(&values, &"shiny gold".to_string());
+        let matching_bags = find_bags_that_may_contain_color(&values, "shiny gold");
         assert_eq!(matching_bags.len(), 4);
         assert!(matching_bags.contains("bright white"));
         assert!(matching_bags.contains("muted yellow"));
@@ -107,10 +107,7 @@ mod tests {
         .as_records::<Bag>()
         .unwrap();
 
-        assert_eq!(
-            count_required_nr_of_bags(&values, &"shiny gold".to_string()),
-            126
-        );
+        assert_eq!(count_required_nr_of_bags(&values, "shiny gold"), 126);
     }
 
     #[test]
@@ -124,6 +121,6 @@ mod tests {
         .as_records::<Bag>()
         .unwrap();
 
-        assert_eq!(count_required_nr_of_bags(&values, &"AAA".to_string()), 24);
+        assert_eq!(count_required_nr_of_bags(&values, "AAA"), 24);
     }
 }

@@ -47,32 +47,32 @@ mod valid_year_tests {
 
     #[test]
     fn test_valid_year_between_bounds() {
-        assert!(valid_year(&"2020".to_string(), 2000, 2030))
+        assert!(valid_year("2020", 2000, 2030))
     }
 
     #[test]
     fn test_valid_year_at_lower_bound() {
-        assert!(valid_year(&"2000".to_string(), 2000, 2030))
+        assert!(valid_year("2000", 2000, 2030))
     }
 
     #[test]
     fn test_valid_year_at_upper_bound() {
-        assert!(valid_year(&"2030".to_string(), 2000, 2030))
+        assert!(valid_year("2030", 2000, 2030))
     }
 
     #[test]
     fn test_valid_year_below_lower_bound() {
-        assert!(!valid_year(&"1999".to_string(), 2000, 2030))
+        assert!(!valid_year("1999", 2000, 2030))
     }
 
     #[test]
     fn test_valid_year_above_upper_bound() {
-        assert!(!valid_year(&"2031".to_string(), 2000, 2030))
+        assert!(!valid_year("2031", 2000, 2030))
     }
 
     #[test]
     fn test_invalid_year() {
-        assert!(!valid_year(&"abcd".to_string(), 2000, 2030))
+        assert!(!valid_year("abcd", 2000, 2030))
     }
 }
 
@@ -85,62 +85,62 @@ mod tests {
 
         #[test]
         fn test_valid_height_between_bounds_using_cm() {
-            assert!(valid_height(&"175cm".to_string(), 50, 100, 100, 200))
+            assert!(valid_height("175cm", 50, 100, 100, 200))
         }
 
         #[test]
         fn test_valid_height_at_lower_bound_using_cm() {
-            assert!(valid_height(&"100cm".to_string(), 50, 100, 100, 200))
+            assert!(valid_height("100cm", 50, 100, 100, 200))
         }
 
         #[test]
         fn test_valid_height_at_upper_bound_using_cm() {
-            assert!(valid_height(&"200cm".to_string(), 50, 100, 100, 200))
+            assert!(valid_height("200cm", 50, 100, 100, 200))
         }
 
         #[test]
         fn test_valid_height_below_lower_bound_using_cm() {
-            assert!(!valid_height(&"99cm".to_string(), 50, 100, 100, 200))
+            assert!(!valid_height("99cm", 50, 100, 100, 200))
         }
 
         #[test]
         fn test_valid_height_above_upper_bound_using_cm() {
-            assert!(!valid_height(&"201cm".to_string(), 50, 100, 100, 200))
+            assert!(!valid_height("201cm", 50, 100, 100, 200))
         }
 
         #[test]
         fn test_valid_height_between_bounds_using_in() {
-            assert!(valid_height(&"75in".to_string(), 50, 100, 100, 200))
+            assert!(valid_height("75in", 50, 100, 100, 200))
         }
 
         #[test]
         fn test_valid_height_at_lower_bound_using_in() {
-            assert!(valid_height(&"50in".to_string(), 50, 100, 100, 200))
+            assert!(valid_height("50in", 50, 100, 100, 200))
         }
 
         #[test]
         fn test_valid_height_at_upper_bound_using_in() {
-            assert!(valid_height(&"100in".to_string(), 50, 100, 100, 200))
+            assert!(valid_height("100in", 50, 100, 100, 200))
         }
 
         #[test]
         fn test_valid_height_below_lower_bound_using_in() {
-            assert!(!valid_height(&"49in".to_string(), 50, 100, 100, 200))
+            assert!(!valid_height("49in", 50, 100, 100, 200))
         }
 
         #[test]
         fn test_valid_height_above_upper_bound_using_in() {
-            assert!(!valid_height(&"101in".to_string(), 50, 100, 100, 200))
+            assert!(!valid_height("101in", 50, 100, 100, 200))
         }
 
         #[test]
         fn test_invalid_unit() {
-            assert!(!valid_height(&"150km".to_string(), 50, 100, 100, 200))
+            assert!(!valid_height("150km", 50, 100, 100, 200))
         }
 
         #[test]
         fn test_invalid_height() {
-            assert!(!valid_height(&"abcm".to_string(), 50, 100, 100, 200))
+            assert!(!valid_height("abcm", 50, 100, 100, 200))
         }
     }
 
@@ -150,14 +150,14 @@ mod tests {
 
         #[test]
         fn test_valid_color() {
-            assert!(valid_color(&"#18ab2e".to_string()))
+            assert!(valid_color("#18ab2e"))
         }
 
         #[test]
         fn test_invalid_color() {
-            assert!(!valid_color(&"#qwerty".to_string()));
-            assert!(!valid_color(&"#123".to_string()));
-            assert!(!valid_color(&"123123".to_string()));
+            assert!(!valid_color("#qwerty"));
+            assert!(!valid_color("#123"));
+            assert!(!valid_color("123123"));
         }
     }
 
@@ -167,18 +167,18 @@ mod tests {
 
         #[test]
         fn test_valid_color() {
-            assert!(valid_eye_color(&"amb".to_string()));
-            assert!(valid_eye_color(&"blu".to_string()));
-            assert!(valid_eye_color(&"brn".to_string()));
-            assert!(valid_eye_color(&"gry".to_string()));
-            assert!(valid_eye_color(&"grn".to_string()));
-            assert!(valid_eye_color(&"hzl".to_string()));
-            assert!(valid_eye_color(&"oth".to_string()));
+            assert!(valid_eye_color("amb"));
+            assert!(valid_eye_color("blu"));
+            assert!(valid_eye_color("brn"));
+            assert!(valid_eye_color("gry"));
+            assert!(valid_eye_color("grn"));
+            assert!(valid_eye_color("hzl"));
+            assert!(valid_eye_color("oth"));
         }
 
         #[test]
         fn test_invalid_color() {
-            assert!(!valid_eye_color(&"ylw".to_string()))
+            assert!(!valid_eye_color("ylw"))
         }
     }
 
@@ -188,14 +188,14 @@ mod tests {
 
         #[test]
         fn test_valid_passport_id() {
-            assert!(valid_passport_id(&"012345678".to_string()))
+            assert!(valid_passport_id("012345678"))
         }
 
         #[test]
         fn test_invalid_passport_id() {
-            assert!(!valid_passport_id(&"12345678".to_string()));
-            assert!(!valid_passport_id(&"0123456789".to_string()));
-            assert!(!valid_passport_id(&"abcdefghi".to_string()));
+            assert!(!valid_passport_id("12345678"));
+            assert!(!valid_passport_id("0123456789"));
+            assert!(!valid_passport_id("abcdefghi"));
         }
     }
 }

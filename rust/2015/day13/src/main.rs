@@ -104,39 +104,31 @@ impl FromStr for Edge {
     type Err = ParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let person1;
-        let person2;
-        let score;
-
-        if let Some(idx) = s.find(' ') {
-            person1 = s[..idx].to_string();
+        let person1 = if let Some(idx) = s.find(' ') {
+            s[..idx].to_string()
         } else {
             return Err(parse_error!("Invalid input: {}", s));
-        }
+        };
 
-        if let Some(idx) = s.rfind(' ') {
-            person2 = s[idx + 1..s.len() - 1].to_string();
+        let person2 = if let Some(idx) = s.rfind(' ') {
+            s[idx + 1..s.len() - 1].to_string()
         } else {
             return Err(parse_error!("Invalid input: {}", s));
-        }
+        };
 
-        let sign;
-        let score_idx;
-        if let Some(idx) = s.find("gain") {
-            sign = 1;
-            score_idx = idx + 4;
+        let (sign, score_idx) = if let Some(idx) = s.find("gain") {
+            (1, idx + 4)
         } else if let Some(idx) = s.find("lose") {
-            sign = -1;
-            score_idx = idx + 4;
+            (-1, idx + 4)
         } else {
             return Err(parse_error!("Invalid input: {}", s));
-        }
+        };
 
-        if let Some(idx) = s[score_idx..].find("happiness units") {
-            score = sign * s[score_idx..score_idx + idx].trim().parse::<i32>()?;
+        let score = if let Some(idx) = s[score_idx..].find("happiness units") {
+            sign * s[score_idx..score_idx + idx].trim().parse::<i32>()?
         } else {
             return Err(parse_error!("Invalid input: {}", s));
-        }
+        };
 
         Ok(Edge(person1, person2, score))
     }

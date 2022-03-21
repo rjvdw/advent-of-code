@@ -26,7 +26,7 @@ fn solve_captcha(captcha: &str) -> (usize, usize) {
     let n = chars.len();
 
     for (idx, &el) in chars.iter().enumerate() {
-        let idx1 = idx.checked_sub(1).unwrap_or_else(|| n - 1);
+        let idx1 = idx.checked_sub(1).unwrap_or(n - 1);
         let idx2 = (idx + n - n / 2) % n;
 
         if el == chars[idx1] {

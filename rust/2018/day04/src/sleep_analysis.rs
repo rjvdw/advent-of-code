@@ -27,8 +27,7 @@ impl SleepAnalysis {
     pub fn get_most_reliable_sleeper(&self) -> Option<(usize, u32, usize)> {
         self.frequencies
             .iter()
-            .map(|(&guard, f)| f.iter().enumerate().map(move |(idx, v)| (guard, idx, *v)))
-            .flatten()
+            .flat_map(|(&guard, f)| f.iter().enumerate().map(move |(idx, v)| (guard, idx, *v)))
             .max_by_key(|(_, _, v)| *v)
             .map(|(guard, minute, _)| (guard, *self.slept_for.get(&guard).unwrap_or(&0), minute))
     }
@@ -36,8 +35,7 @@ impl SleepAnalysis {
     pub fn get_most_frequent_sleeping_minute(&self, guard: usize) -> usize {
         self.frequencies
             .get(&guard)
-            .map(|f| f.iter().enumerate().max_by_key(|(_, &v)| v))
-            .flatten()
+            .and_then(|f| f.iter().enumerate().max_by_key(|(_, &v)| v))
             .map(|(idx, _)| idx)
             .unwrap_or(0)
     }

@@ -67,18 +67,15 @@ where
     V: Default + Ord + Add<Output = V> + Copy,
     <V as Add>::Output: Ord,
 {
-    let iter = graph
-        .keys()
-        .map(|starting_node| {
-            traverse_graph(
-                graph,
-                &[starting_node.clone()],
-                Default::default(),
-                circular,
-                distance_req,
-            )
-        })
-        .flatten();
+    let iter = graph.keys().filter_map(|starting_node| {
+        traverse_graph(
+            graph,
+            &[starting_node.clone()],
+            Default::default(),
+            circular,
+            distance_req,
+        )
+    });
 
     match distance_req {
         MinOrMax::Min => iter.min_by_key(|(_, distance)| *distance),
@@ -110,22 +107,19 @@ where
 
     if traveled.len() + 1 == graph.len() {
         if circular {
-            let iter = iter
-                .map(|(path, distance)| {
-                    if path.is_empty() {
-                        Some((path, distance))
-                    } else {
-                        let first = path.first().unwrap();
-                        let last = path.last().unwrap();
+            let iter = iter.filter_map(|(path, distance)| {
+                if path.is_empty() {
+                    Some((path, distance))
+                } else {
+                    let first = path.first().unwrap();
+                    let last = path.last().unwrap();
 
-                        graph
-                            .get(last)
-                            .map(|sg| sg.get(first))
-                            .flatten()
-                            .map(|d| (path, distance + *d))
-                    }
-                })
-                .flatten();
+                    graph
+                        .get(last)
+                        .and_then(|sg| sg.get(first))
+                        .map(|d| (path, distance + *d))
+                }
+            });
 
             match distance_req {
                 MinOrMax::Min => iter.min_by_key(|(_, distance)| *distance),
@@ -138,11 +132,9 @@ where
             }
         }
     } else {
-        let iter = iter
-            .map(|(traveled, distance)| {
-                traverse_graph(graph, &traveled, distance, circular, distance_req)
-            })
-            .flatten();
+        let iter = iter.filter_map(|(traveled, distance)| {
+            traverse_graph(graph, &traveled, distance, circular, distance_req)
+        });
 
         match distance_req {
             MinOrMax::Min => iter.min_by_key(|(_, distance)| *distance),

@@ -130,12 +130,11 @@ impl Cave {
         let neighbours = self.get_neighbours(unit.position);
         let targets: Vec<Unit> = neighbours
             .iter()
-            .map(|&c| {
+            .filter_map(|&c| {
                 self.units
                     .iter()
                     .find(|u| u.is_alive() && u.position == c && unit.opposes(u))
             })
-            .flatten()
             .copied()
             .collect();
 
