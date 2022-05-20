@@ -44,7 +44,7 @@ fn next_offset_v2(offset: &mut i32) {
     }
 }
 
-fn safe_get_mut(jumps: &mut Vec<i32>, idx: i32) -> Option<&mut i32> {
+fn safe_get_mut(jumps: &mut [i32], idx: i32) -> Option<&mut i32> {
     match usize::try_from(idx).ok() {
         Some(idx) => jumps.get_mut(idx),
         None => None,

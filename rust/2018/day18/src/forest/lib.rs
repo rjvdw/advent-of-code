@@ -87,7 +87,7 @@ impl Forest {
         counts
     }
 
-    fn update_counts(&self, counts: &mut Vec<Vec<usize>>, (x, y): (usize, usize)) {
+    fn update_counts(&self, counts: &mut [Vec<usize>], (x, y): (usize, usize)) {
         for i in 0..3 {
             for j in 0..3 {
                 if i != 1 || j != 1 {
