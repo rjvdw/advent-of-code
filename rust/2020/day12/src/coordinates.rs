@@ -12,7 +12,7 @@ pub struct Coordinates(pub i32, pub i32);
 
 impl Coordinates {
     pub fn manhattan_distance(self) -> u32 {
-        self.0.abs() as u32 + self.1.abs() as u32
+        self.0.unsigned_abs() + self.1.unsigned_abs()
     }
 
     pub fn rotate(self, degrees: i32) -> Coordinates {

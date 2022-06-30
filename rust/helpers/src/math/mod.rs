@@ -89,7 +89,7 @@ pub fn solve_crt((n_1, a_1): (u64, u64), (n_2, a_2): (u64, u64)) -> u64 {
 
 #[allow(clippy::many_single_char_names)]
 fn crt_mod_mult_helper(a: u64, m: i64, n: u64, modulus: u64) -> u64 {
-    mul_mod(mul_mod(a, m.abs() as u64, modulus), n, modulus)
+    mul_mod(mul_mod(a, m.unsigned_abs(), modulus), n, modulus)
 }
 
 #[allow(clippy::many_single_char_names)]
