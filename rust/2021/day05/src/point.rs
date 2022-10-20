@@ -18,7 +18,7 @@ impl FromStr for Point {
                 x: s[..p].parse()?,
                 y: s[p + 1..].parse()?,
             }),
-            None => return Err(parse_error!("Invalid input: {}", s)),
+            None => Err(parse_error!("Invalid input: {}", s)),
         }
     }
 }

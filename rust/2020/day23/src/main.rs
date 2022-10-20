@@ -68,7 +68,7 @@ fn cups_from_labeling(mut labeling: usize, nr_cups: usize) -> (Vec<usize>, Vec<u
 
 fn as_answer(linked_list: &[usize], part: &Part) -> usize {
     match part {
-        Part::One => iter::successors(linked_list.get(0), |&&cup| linked_list.get(cup))
+        Part::One => iter::successors(linked_list.first(), |&&cup| linked_list.get(cup))
             .take_while(|&&cup| cup != 0)
             .fold(0, |acc, &cup| BASE * acc + cup + 1),
         Part::Two => (linked_list[0] + 1) * (linked_list[linked_list[0]] + 1),

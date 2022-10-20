@@ -53,7 +53,7 @@ impl Direction {
     /// Turn an arbitrary number of steps. Positive numbers turn to the left, negative numbers turn
     /// to the right.
     pub fn turn(&self, steps: isize) -> Direction {
-        let actual_steps = (4 + (steps % 4)) % 4;
+        let actual_steps = steps.rem_euclid(4);
         match actual_steps {
             0 => *self,
             1 => self.turn_left(),
