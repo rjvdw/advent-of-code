@@ -14,9 +14,9 @@ name = "aoc-2017-13"
 path = "src/main.rs"
 
 [[bin]]
-name = "aoc-2017-3-visualisation"
+name = "aoc-2017-13-visualisation"
 path = "src/visualisation.rs"
 
 [dependencies]
-rdcl_aoc_helpers = "0.9.1"
-termion = "1.5.5"
+rdcl_aoc_helpers = "0.10.0"
+termion = "2.0.1"

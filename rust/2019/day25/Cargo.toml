@@ -14,6 +14,6 @@ name = "aoc-2019-25-play"
 path = "src/play.rs"
 
 [dependencies]
-rdcl_aoc_helpers = "0.9.1"
-termion = "1.5.5"
+rdcl_aoc_helpers = "0.10.0"
+termion = "2.0.1"
 shared = { path = "../shared" }

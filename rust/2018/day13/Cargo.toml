@@ -17,8 +17,6 @@ path = "src/main.rs"
 name = "aoc-2018-13-visualisation"
 path = "src/visualisation.rs"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
-rdcl_aoc_helpers = "0.9.1"
-termion = "1.5.5"
+rdcl_aoc_helpers = "0.10.0"
+termion = "2.0.1"

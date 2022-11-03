@@ -14,4 +14,4 @@ name = "aoc-2021-19-rotations"
 path = "src/all-rotations.rs"
 
 [dependencies]
-rdcl_aoc_helpers = "0.9.1"
+rdcl_aoc_helpers = "0.10.0"
