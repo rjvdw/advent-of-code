@@ -20,7 +20,7 @@ pub trait MachineRegister: Debug + Display {
 
     /// Writes a boolean value (1 = true, 0 = false) to a register.
     fn write_bool(&mut self, key: char, condition: bool) {
-        self.write(key, if condition { 1 } else { 0 });
+        self.write(key, i64::from(condition));
     }
 }
 

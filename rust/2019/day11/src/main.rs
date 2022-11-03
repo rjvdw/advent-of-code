@@ -67,11 +67,7 @@ fn paint(program: &intcode::Program, starting_color: i64) -> (HashSet<(i64, i64)
     }
 
     while !program.has_halted() {
-        let color = if painted.contains(&current_position) {
-            1
-        } else {
-            0
-        };
+        let color = i64::from(painted.contains(&current_position));
         program.send_message(color);
         program.run();
 

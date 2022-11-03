@@ -30,9 +30,7 @@ fn find_shortest_reduction(polymer: &str) -> (String, String) {
     let mut shortest = polymer.to_string();
     let mut stripped_unit = 0;
     for unit in b'A'..=b'Z' {
-        let stripped = polymer
-            .replace(unit as char, "")
-            .replace((unit + LU_DIFF) as char, "");
+        let stripped = polymer.replace([unit as char, (unit + LU_DIFF) as char], "");
         if stripped.len() < polymer.len() {
             let reduced = reduce_polymer(&stripped);
             if reduced.len() < shortest.len() {

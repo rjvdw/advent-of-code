@@ -202,7 +202,7 @@ impl Program {
     /// Reads the current position to find out where to write, and moves the instruction pointer one
     /// position.
     fn write_bool_arg(&mut self, modes: &mut i64, value: bool) {
-        self.write_arg(modes, if value { 1 } else { 0 })
+        self.write_arg(modes, i64::from(value))
     }
 
     /// Reads the current position, and works out the mode for this position. Moves the instruction

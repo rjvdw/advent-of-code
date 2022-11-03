@@ -37,7 +37,7 @@ fn is_nice_according_to_old_model(line: &str) -> bool {
     let mut chars = line.chars();
 
     if let Some(first_char) = chars.next() {
-        let mut nr_vowels = if VOWELS.contains(&first_char) { 1 } else { 0 };
+        let mut nr_vowels = i32::from(VOWELS.contains(&first_char));
         let mut prev_char = first_char;
         let mut has_double_chars = false;
 

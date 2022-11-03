@@ -38,15 +38,11 @@ impl Packet {
                 let a = self.sub_packets[0].eval();
                 let b = self.sub_packets[1].eval();
 
-                if match self.type_id {
+                u64::from(match self.type_id {
                     5 => a > b,
                     6 => a < b,
                     _ => a == b,
-                } {
-                    1
-                } else {
-                    0
-                }
+                })
             }
         }
     }
