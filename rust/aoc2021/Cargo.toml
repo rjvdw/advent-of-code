@@ -1,0 +1,114 @@
+[package]
+name = "aoc2021"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "aoc2021-day01"
+path = "src/day01/main.rs"
+
+[[bin]]
+name = "aoc2021-day02"
+path = "src/day02/main.rs"
+
+[[bin]]
+name = "aoc2021-day03"
+path = "src/day03/main.rs"
+
+[[bin]]
+name = "aoc2021-day04"
+path = "src/day04/main.rs"
+
+[[bin]]
+name = "aoc2021-day05"
+path = "src/day05/main.rs"
+
+[[bin]]
+name = "aoc2021-day06"
+path = "src/day06/main.rs"
+
+[[bin]]
+name = "aoc2021-day07"
+path = "src/day07/main.rs"
+
+[[bin]]
+name = "aoc2021-day08"
+path = "src/day08/main.rs"
+
+[[bin]]
+name = "aoc2021-day09"
+path = "src/day09/main.rs"
+
+[[bin]]
+name = "aoc2021-day10"
+path = "src/day10/main.rs"
+
+[[bin]]
+name = "aoc2021-day11"
+path = "src/day11/main.rs"
+
+[[bin]]
+name = "aoc2021-day12"
+path = "src/day12/main.rs"
+
+[[bin]]
+name = "aoc2021-day13"
+path = "src/day13/main.rs"
+
+[[bin]]
+name = "aoc2021-day14"
+path = "src/day14/main.rs"
+
+[[bin]]
+name = "aoc2021-day15"
+path = "src/day15/main.rs"
+
+[[bin]]
+name = "aoc2021-day16"
+path = "src/day16/main.rs"
+
+[[bin]]
+name = "aoc2021-day17"
+path = "src/day17/main.rs"
+
+[[bin]]
+name = "aoc2021-day18"
+path = "src/day18/main.rs"
+
+[[bin]]
+name = "aoc2021-day19"
+path = "src/day19/main.rs"
+
+[[bin]]
+name = "aoc2021-day20"
+path = "src/day20/main.rs"
+
+[[bin]]
+name = "aoc2021-day21"
+path = "src/day21/main.rs"
+
+[[bin]]
+name = "aoc2021-day22"
+path = "src/day22/main.rs"
+
+[[bin]]
+name = "aoc2021-day23"
+path = "src/day23/main.rs"
+
+[[bin]]
+name = "aoc2021-day24"
+path = "src/day24/main.rs"
+
+[[bin]]
+name = "aoc2021-day25"
+path = "src/day25/main.rs"
+
+[lib]
+name = "shared"
+path = "src/shared/lib.rs"
+
+[dependencies]
+rdcl_aoc_helpers = "0.10.0"
+grid = "0.9.0"
+itertools = "0.10.3"
+lazy_static = "1.4.0"

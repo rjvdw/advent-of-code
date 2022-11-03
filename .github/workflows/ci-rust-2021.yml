@@ -5,12 +5,12 @@ on:
     branches:
       - '**'
     paths:
-      - 'rust/2021/**'
+      - 'rust/aoc2021/**'
       - '.github/workflows/ci-rust-2021.yml'
 
 defaults:
   run:
-    working-directory: rust/2021
+    working-directory: rust/aoc2021
 
 jobs:
   build:
