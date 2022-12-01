@@ -262,6 +262,10 @@ public class SnailNumber
         public ParsingBranch Parsing = ParsingBranch.Left;
         private readonly Stack<(ParsingBranch, (SnailNumber Left, SnailNumber Right))> _stack = new();
 
+        public ParsingState()
+        {
+        }
+
         public void Push()
         {
             _stack.Push((Parsing, Pair));
