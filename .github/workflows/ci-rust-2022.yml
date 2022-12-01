@@ -1,0 +1,37 @@
+name: "rust 2022"
+
+on:
+  push:
+    branches:
+      - '**'
+    paths:
+      - 'rust/2022/**'
+      - '.github/workflows/ci-rust-2022.yml'
+
+defaults:
+  run:
+    working-directory: rust/2022
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: |
+            **/target
+            ~/.cargo/registry/index
+            ~/.cargo/registry/cache
+            ~/.cargo/git
+          key: ${{ runner.os }}-targets
+      - name: update
+        run: rustup update
+      - name: fmt
+        run: cargo fmt -- --check
+      - name: clippy
+        run: cargo clippy --all-targets
+      - name: check
+        run: cargo check --all-targets
+      - name: test
+        run: cargo test
