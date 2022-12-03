@@ -1,0 +1,13 @@
+[package]
+name = "rdcl_aoc2020"
+version = "0.1.0"
+authors = ["Ruud van der Weide <rj@rdcl.dev>"]
+edition = "2021"
+
+[[bin]]
+name = "rdcl_aoc2020_day01"
+path = "src/day01.rs"
+
+[dependencies]
+rdcl_aoc_core = { path = "../lib/core" }
+clap = { version = "3", features = ["derive"] }

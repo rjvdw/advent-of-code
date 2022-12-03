@@ -1,12 +1,16 @@
-use clap::Parser;
-use rdcl_aoc_core::input::InputReader;
+//! The solution for [advent of code 2022, day 3](https://adventofcode.com/2022/day/3)
+
 use std::collections::HashSet;
-use std::error;
 use std::path::PathBuf;
 use std::str::FromStr;
 
-/// The solution for advent of code 2022, day 3
+use clap::Parser;
+
+use rdcl_aoc_core::input::InputReader;
+use rdcl_aoc_core::MainResult;
+
 #[derive(Parser, Debug)]
+#[clap(about = "The solution for advent of code 2022, day 3")]
 struct Args {
     /// The file which contains the puzzle input.
     input: PathBuf,
@@ -16,7 +20,7 @@ struct Args {
     group_size: usize,
 }
 
-fn main() -> Result<(), Box<dyn error::Error>> {
+fn main() -> MainResult {
     let args: Args = Args::parse();
     let input = InputReader::from(args.input);
     let rucksacks = input

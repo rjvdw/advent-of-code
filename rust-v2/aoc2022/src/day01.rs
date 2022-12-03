@@ -1,10 +1,14 @@
-use clap::Parser;
-use rdcl_aoc_core::input::InputReader;
-use std::error;
+//! The solution for [advent of code 2022, day 1](https://adventofcode.com/2022/day/1)
+
 use std::path::PathBuf;
 
-/// The solution for advent of code 2022, day 1
+use clap::Parser;
+
+use rdcl_aoc_core::input::InputReader;
+use rdcl_aoc_core::{DynResult, MainResult};
+
 #[derive(Parser, Debug)]
+#[clap(about = "The solution for advent of code 2022, day 1")]
 struct Args {
     /// The file which contains the puzzle input.
     input: PathBuf,
@@ -14,7 +18,7 @@ struct Args {
     top_n: usize,
 }
 
-fn main() -> Result<(), Box<dyn error::Error>> {
+fn main() -> MainResult {
     let args: Args = Args::parse();
     let input = InputReader::from(args.input);
     let calories_per_elf = parse_input(input.read_lines())?;
@@ -40,7 +44,7 @@ fn max_calories(values: &[u32], n: usize) -> Option<u32> {
     }
 }
 
-fn parse_input<T>(lines: T) -> Result<Vec<u32>, Box<dyn error::Error>>
+fn parse_input<T>(lines: T) -> DynResult<Vec<u32>>
 where
     T: Iterator<Item = String>,
 {

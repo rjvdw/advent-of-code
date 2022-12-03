@@ -1,10 +1,27 @@
+//! Helper to read Advent of Code input files.
+//!
+//! # Usage
+//!
+//! ```
+//! use rdcl_aoc_core::input::InputReader;
+//!
+//! use std::str::FromStr;
+//! use std::path::PathBuf;
+//!
+//! fn example() {
+//!     let input = InputReader::from(PathBuf::from("path/to/input/file"));
+//!     let lines = input.read_lines().collect::<Vec<String>>();
+//!     let parsed = input.parse_lines(u32::from_str).collect::<Vec<u32>>();
+//! }
+//! ```
+
 use core::fmt;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::path::PathBuf;
 use std::process::exit;
 
-/// Helper to read Advent of Code input files
+/// Contains the location of the input file and allows for operations to be performed on said file.
 pub struct InputReader {
     input: PathBuf,
 }
@@ -26,6 +43,7 @@ impl InputReader {
         })
     }
 
+    /// Reads the lines from the file and transforms them with the provided parser
     pub fn parse_lines<T, F, E>(&self, parser: F) -> impl Iterator<Item = T>
     where
         F: Fn(&str) -> Result<T, E> + 'static,
