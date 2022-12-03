@@ -1,35 +1,35 @@
-extern crate rdcl_aoc_helpers;
+use clap::Parser;
+use rdcl_aoc_core::input::InputReader;
+use std::error;
+use std::path::PathBuf;
 
-use rdcl_aoc_helpers::args::get_args;
-use rdcl_aoc_helpers::error::{ParseError, WithOrExit};
-use std::fs::File;
-use std::io;
-use std::io::{BufRead, BufReader};
-
-fn main() {
-    let args = get_args(&["<input file>"], 1);
-
-    let file = File::open(&args[1]).or_exit_with(1);
-    let lines = BufReader::new(file).lines();
-    let score_part_1 = play_part_1(lines).or_exit_with(1);
-
-    println!("Your score for part 1 will be {}", score_part_1);
-
-    let file = File::open(&args[1]).or_exit_with(1);
-    let lines = BufReader::new(file).lines();
-    let score_part_2 = play_part_2(lines).or_exit_with(1);
-
-    println!("Your score for part 2 will be {}", score_part_2);
+/// The solution for advent of code 2022, day 2
+#[derive(Parser, Debug)]
+struct Args {
+    /// The file which contains the puzzle input.
+    input: PathBuf,
 }
 
-fn play_part_1<T>(lines: T) -> Result<u32, ParseError>
+fn main() -> Result<(), Box<dyn error::Error>> {
+    let args: Args = Args::parse();
+    let input = InputReader::from(args.input);
+
+    let score_part_1 = play_part_1(input.read_lines())?;
+    println!("Your score for part 1 will be {}", score_part_1);
+
+    let score_part_2 = play_part_2(input.read_lines())?;
+    println!("Your score for part 2 will be {}", score_part_2);
+
+    Ok(())
+}
+
+fn play_part_1<T>(lines: T) -> Result<u32, Box<dyn error::Error>>
 where
-    T: Iterator<Item = io::Result<String>>,
+    T: Iterator<Item = String>,
 {
     let mut score = 0;
 
     for line in lines {
-        let line = line?;
         let chars = line.as_bytes();
 
         let opponent = Choice::from(chars[0]);
@@ -41,14 +41,13 @@ where
     Ok(score)
 }
 
-fn play_part_2<T>(lines: T) -> Result<u32, ParseError>
+fn play_part_2<T>(lines: T) -> Result<u32, Box<dyn error::Error>>
 where
-    T: Iterator<Item = io::Result<String>>,
+    T: Iterator<Item = String>,
 {
     let mut score = 0;
 
     for line in lines {
-        let line = line?;
         let chars = line.as_bytes();
 
         let opponent = Choice::from(chars[0]);
@@ -161,23 +160,17 @@ impl Scorable for Outcome {
 mod tests {
     use super::*;
 
+    fn test_data() -> impl Iterator<Item = String> {
+        InputReader::from(PathBuf::from("./test-inputs/day02.txt")).read_lines()
+    }
+
     #[test]
     fn test_part_1() {
-        let input = vec![
-            Ok("A Y".to_string()),
-            Ok("B X".to_string()),
-            Ok("C Z".to_string()),
-        ];
-        assert_eq!(play_part_1(input.into_iter()), Ok(15));
+        assert_eq!(play_part_1(test_data()).unwrap(), 15);
     }
 
     #[test]
     fn test_part_2() {
-        let input = vec![
-            Ok("A Y".to_string()),
-            Ok("B X".to_string()),
-            Ok("C Z".to_string()),
-        ];
-        assert_eq!(play_part_2(input.into_iter()), Ok(12));
+        assert_eq!(play_part_2(test_data()).unwrap(), 12);
     }
 }

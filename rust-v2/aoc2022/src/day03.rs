@@ -1,17 +1,26 @@
-extern crate rdcl_aoc_helpers;
-
-use rdcl_aoc_helpers::args::get_args;
-use rdcl_aoc_helpers::error::ParseError;
-use rdcl_aoc_helpers::input::WithReadLines;
+use clap::Parser;
+use rdcl_aoc_core::input::InputReader;
 use std::collections::HashSet;
-use std::fs::File;
+use std::error;
+use std::path::PathBuf;
 use std::str::FromStr;
 
-fn main() {
-    let args = get_args(&["<input file>"], 1);
+/// The solution for advent of code 2022, day 3
+#[derive(Parser, Debug)]
+struct Args {
+    /// The file which contains the puzzle input.
+    input: PathBuf,
 
-    let rucksacks = File::open(&args[1])
-        .read_lines(1)
+    /// The size of the groups.
+    #[clap(long, short, value_parser, default_value_t = 3)]
+    group_size: usize,
+}
+
+fn main() -> Result<(), Box<dyn error::Error>> {
+    let args: Args = Args::parse();
+    let input = InputReader::from(args.input);
+    let rucksacks = input
+        .parse_lines(Rucksack::from_str)
         .collect::<Vec<Rucksack>>();
 
     println!(
@@ -19,14 +28,15 @@ fn main() {
         rucksacks.iter().map(|r| r.find_overlap()).sum::<u32>()
     );
 
-    let group_size = 3;
-    match find_badges(&rucksacks, group_size) {
+    match find_badges(&rucksacks, args.group_size) {
         Some(v) => println!("The sum of the priorities of all badges is {}", v),
         _ => eprintln!(
             "Unable to divide the elves in groups of size {}",
-            group_size
+            args.group_size
         ),
     };
+
+    Ok(())
 }
 
 fn find_badges(rucksacks: &[Rucksack], group_size: usize) -> Option<u32> {
@@ -76,7 +86,7 @@ impl Rucksack {
 }
 
 impl FromStr for Rucksack {
-    type Err = ParseError;
+    type Err = ();
 
     fn from_str(line: &str) -> Result<Self, Self::Err> {
         let nr_items_per_compartment = line.len() / 2;
@@ -107,84 +117,33 @@ impl FromStr for Rucksack {
 mod tests {
     use super::*;
 
-    #[test]
-    fn test_find_overlap_1() {
-        let rucksack = "vJrwpWtwJgWrhcsFMMfFFhFp".parse::<Rucksack>().unwrap();
-        assert_eq!(rucksack.find_overlap(), 16);
+    fn test_data() -> impl Iterator<Item = Rucksack> {
+        InputReader::from(PathBuf::from("./test-inputs/day03.txt")).parse_lines(Rucksack::from_str)
     }
 
     #[test]
-    fn test_find_overlap_2() {
-        let rucksack = "jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL"
-            .parse::<Rucksack>()
-            .unwrap();
-        assert_eq!(rucksack.find_overlap(), 38);
-    }
-
-    #[test]
-    fn test_find_overlap_3() {
-        let rucksack = "PmmdzqPrVvPwwTWBwg".parse::<Rucksack>().unwrap();
-        assert_eq!(rucksack.find_overlap(), 42);
-    }
-
-    #[test]
-    fn test_find_overlap_4() {
-        let rucksack = "wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn"
-            .parse::<Rucksack>()
-            .unwrap();
-        assert_eq!(rucksack.find_overlap(), 22);
-    }
-
-    #[test]
-    fn test_find_overlap_5() {
-        let rucksack = "ttgJtRGJQctTZtZT".parse::<Rucksack>().unwrap();
-        assert_eq!(rucksack.find_overlap(), 20);
-    }
-
-    #[test]
-    fn test_find_overlap_6() {
-        let rucksack = "CrZsJsPPZsGzwwsLwLmpwMDw".parse::<Rucksack>().unwrap();
-        assert_eq!(rucksack.find_overlap(), 19);
+    fn test_find_overlap() {
+        let overlaps = test_data()
+            .map(|rucksack| rucksack.find_overlap())
+            .collect::<Vec<u32>>();
+        assert_eq!(overlaps, vec![16, 38, 42, 22, 20, 19]);
     }
 
     #[test]
     fn test_find_badges_1() {
-        let rucksacks = vec![
-            "vJrwpWtwJgWrhcsFMMfFFhFp".parse::<Rucksack>().unwrap(),
-            "jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL"
-                .parse::<Rucksack>()
-                .unwrap(),
-            "PmmdzqPrVvPwwTWBwg".parse::<Rucksack>().unwrap(),
-        ];
+        let rucksacks = test_data().take(3).collect::<Vec<Rucksack>>();
         assert_eq!(find_badges(&rucksacks, 3), Some(18));
     }
 
     #[test]
     fn test_find_badges_2() {
-        let rucksacks = vec![
-            "wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn"
-                .parse::<Rucksack>()
-                .unwrap(),
-            "ttgJtRGJQctTZtZT".parse::<Rucksack>().unwrap(),
-            "CrZsJsPPZsGzwwsLwLmpwMDw".parse::<Rucksack>().unwrap(),
-        ];
+        let rucksacks = test_data().skip(3).take(3).collect::<Vec<Rucksack>>();
         assert_eq!(find_badges(&rucksacks, 3), Some(52));
     }
 
     #[test]
     fn test_find_badges_3() {
-        let rucksacks = vec![
-            "vJrwpWtwJgWrhcsFMMfFFhFp".parse::<Rucksack>().unwrap(),
-            "jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL"
-                .parse::<Rucksack>()
-                .unwrap(),
-            "PmmdzqPrVvPwwTWBwg".parse::<Rucksack>().unwrap(),
-            "wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn"
-                .parse::<Rucksack>()
-                .unwrap(),
-            "ttgJtRGJQctTZtZT".parse::<Rucksack>().unwrap(),
-            "CrZsJsPPZsGzwwsLwLmpwMDw".parse::<Rucksack>().unwrap(),
-        ];
+        let rucksacks = test_data().collect::<Vec<Rucksack>>();
         assert_eq!(find_badges(&rucksacks, 3), Some(70));
     }
 }

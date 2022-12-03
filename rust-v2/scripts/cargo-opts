@@ -1,0 +1,20 @@
+#!/bin/sh
+
+output=""
+
+if [ $# -ge 1 ]; then
+  year=$1
+  if [ ${#year} -lt 4 ]; then
+    year="20${year}"
+  fi
+  shift
+  output="${output} --package rdcl_aoc${year}"
+fi
+
+if [ $# -ge 1 ]; then
+  day=$(printf %02d "$1")
+  shift
+  output="${output} --bin rdcl_aoc${year}_day${day}"
+fi
+
+echo "${output}"
