@@ -16,6 +16,10 @@ path = "src/day02/main.rs"
 name = "rdcl_aoc2020_day03"
 path = "src/day03/main.rs"
 
+[[bin]]
+name = "rdcl_aoc2020_day04"
+path = "src/day04/main.rs"
+
 [lib]
 name = "rdcl_aoc2020"
 path = "src/shared/lib.rs"
@@ -23,3 +27,5 @@ path = "src/shared/lib.rs"
 [dependencies]
 rdcl_aoc_core = { path = "../lib/core" }
 clap = { version = "3", features = ["derive"] }
+regex = "1"
+lazy_static = "1"
