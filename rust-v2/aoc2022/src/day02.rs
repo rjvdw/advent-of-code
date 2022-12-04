@@ -5,7 +5,6 @@ use std::path::PathBuf;
 use clap::Parser;
 
 use rdcl_aoc_core::input::InputReader;
-use rdcl_aoc_core::{DynResult, MainResult};
 
 use crate::day02_lib::choice::Choice;
 use crate::day02_lib::outcome::Outcome;
@@ -21,18 +20,16 @@ struct Args {
     input: PathBuf,
 }
 
-fn main() -> MainResult {
+fn main() {
     let args: Args = Args::parse();
     let input = InputReader::from(args.input);
 
-    let (score_part_1, score_part_2) = play(input.read_lines())?;
+    let (score_part_1, score_part_2) = play(input.read_lines());
     println!("Your score for part 1 will be {}", score_part_1);
     println!("Your score for part 2 will be {}", score_part_2);
-
-    Ok(())
 }
 
-fn play<T>(lines: T) -> DynResult<(u32, u32)>
+fn play<T>(lines: T) -> (u32, u32)
 where
     T: Iterator<Item = String>,
 {
@@ -52,7 +49,7 @@ where
         score_p2 += compute_score(you_p2, opponent);
     }
 
-    Ok((score_p1, score_p2))
+    (score_p1, score_p2)
 }
 
 fn compute_score(you: Choice, opponent: Choice) -> u32 {
@@ -69,6 +66,6 @@ mod tests {
 
     #[test]
     fn test_play() {
-        assert_eq!(play(test_data()).unwrap(), (15, 12));
+        assert_eq!(play(test_data()), (15, 12));
     }
 }

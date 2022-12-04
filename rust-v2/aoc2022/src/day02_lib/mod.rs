@@ -1,4 +1,4 @@
-//! Helper library for day02
+//! Helper library for day 2
 
 pub mod choice;
 pub mod outcome;

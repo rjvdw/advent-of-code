@@ -7,7 +7,6 @@ use std::str::FromStr;
 use clap::Parser;
 
 use rdcl_aoc_core::input::InputReader;
-use rdcl_aoc_core::MainResult;
 
 #[derive(Parser, Debug)]
 #[clap(about = "The solution for advent of code 2022, day 3")]
@@ -20,7 +19,7 @@ struct Args {
     group_size: usize,
 }
 
-fn main() -> MainResult {
+fn main() {
     let args: Args = Args::parse();
     let input = InputReader::from(args.input);
     let rucksacks = input
@@ -39,8 +38,6 @@ fn main() -> MainResult {
             args.group_size
         ),
     };
-
-    Ok(())
 }
 
 fn find_badges(rucksacks: &[Rucksack], group_size: usize) -> Option<u32> {

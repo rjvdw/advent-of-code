@@ -6,7 +6,6 @@ use std::str::FromStr;
 use clap::Parser;
 
 use rdcl_aoc_core::input::InputReader;
-use rdcl_aoc_core::MainResult;
 
 #[derive(Parser, Debug)]
 #[clap(about = "The solution for advent of code 2020, day 1")]
@@ -23,7 +22,7 @@ struct Args {
     target: u32,
 }
 
-fn main() -> MainResult {
+fn main() {
     let args: Args = Args::parse();
     let input = InputReader::from(args.input)
         .parse_lines(u32::from_str)
@@ -47,8 +46,6 @@ fn main() -> MainResult {
             );
         }
     }
-
-    Ok(())
 }
 
 fn find_numbers_that_sum_to(numbers: &[u32], target: u32, count: usize) -> Option<Vec<u32>> {
