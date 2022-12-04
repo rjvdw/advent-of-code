@@ -8,6 +8,10 @@ edition = "2021"
 name = "rdcl_aoc2020_day01"
 path = "src/day01/main.rs"
 
+[[bin]]
+name = "rdcl_aoc2020_day02"
+path = "src/day02/main.rs"
+
 [lib]
 name = "rdcl_aoc2020"
 path = "src/shared/lib.rs"

@@ -21,8 +21,8 @@ struct Args {
 
 fn main() {
     let args: Args = Args::parse();
-    let input = InputReader::from(args.input);
-    let (nr_contains, nr_overlaps) = count(input.parse_lines(AssignmentPair::from_str));
+    let input = InputReader::from(args.input).parse_lines(AssignmentPair::from_str);
+    let (nr_contains, nr_overlaps) = count(input);
 
     println!(
         "There are {} assignment pairs that fully overlap",
