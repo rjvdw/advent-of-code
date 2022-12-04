@@ -5,7 +5,7 @@ use std::str::FromStr;
 use rdcl_aoc_core::err_parse_error;
 use rdcl_aoc_core::error::ParseError;
 
-use crate::day04_lib::assignment::Assignment;
+use crate::assignment::Assignment;
 
 #[derive(Debug, Eq, PartialEq)]
 pub struct AssignmentPair {

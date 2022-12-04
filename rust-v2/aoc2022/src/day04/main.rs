@@ -7,9 +7,10 @@ use clap::Parser;
 
 use rdcl_aoc_core::input::InputReader;
 
-use crate::day04_lib::assignment_pair::AssignmentPair;
+use crate::assignment_pair::AssignmentPair;
 
-mod day04_lib;
+mod assignment;
+mod assignment_pair;
 
 #[derive(Parser, Debug)]
 #[clap(about = "The solution for advent of code 2022, day 4")]
@@ -49,7 +50,7 @@ mod tests {
     use super::*;
 
     fn test_data() -> impl Iterator<Item = AssignmentPair> {
-        InputReader::from(PathBuf::from("./test-inputs/day04.txt"))
+        InputReader::from(PathBuf::from("./src/day04/test.txt"))
             .parse_lines(AssignmentPair::from_str)
     }
 

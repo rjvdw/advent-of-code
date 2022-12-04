@@ -73,7 +73,7 @@ mod tests {
     use super::*;
 
     fn test_data() -> Vec<u32> {
-        InputReader::from(PathBuf::from("./test-inputs/day01.txt"))
+        InputReader::from(PathBuf::from("./src/day01/test.txt"))
             .parse_lines(u32::from_str)
             .collect()
     }

@@ -1,8 +1,8 @@
 //! Represents either Rock, Paper or Scissors.
 
-use crate::day02_lib::outcome::Outcome;
-use crate::day02_lib::rock_paper_scissors::RockPaperScissors;
-use crate::day02_lib::with_score::WithScore;
+use crate::outcome::Outcome;
+use crate::rock_paper_scissors::RockPaperScissors;
+use crate::with_score::WithScore;
 
 #[derive(PartialEq, Eq, Copy, Clone)]
 pub enum Choice {

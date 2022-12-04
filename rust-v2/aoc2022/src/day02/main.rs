@@ -6,12 +6,15 @@ use clap::Parser;
 
 use rdcl_aoc_core::input::InputReader;
 
-use crate::day02_lib::choice::Choice;
-use crate::day02_lib::outcome::Outcome;
-use crate::day02_lib::rock_paper_scissors::RockPaperScissors;
-use crate::day02_lib::with_score::WithScore;
+use crate::choice::Choice;
+use crate::outcome::Outcome;
+use crate::rock_paper_scissors::RockPaperScissors;
+use crate::with_score::WithScore;
 
-mod day02_lib;
+mod choice;
+mod outcome;
+mod rock_paper_scissors;
+mod with_score;
 
 #[derive(Parser, Debug)]
 #[clap(about = "The solution for advent of code 2022, day 2")]
@@ -61,7 +64,7 @@ mod tests {
     use super::*;
 
     fn test_data() -> impl Iterator<Item = String> {
-        InputReader::from(PathBuf::from("./test-inputs/day02.txt")).read_lines()
+        InputReader::from(PathBuf::from("./src/day02/test.txt")).read_lines()
     }
 
     #[test]

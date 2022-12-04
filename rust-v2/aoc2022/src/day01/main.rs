@@ -69,7 +69,7 @@ mod tests {
     use super::*;
 
     fn test_data() -> impl Iterator<Item = String> {
-        InputReader::from(PathBuf::from("./test-inputs/day01.txt")).read_lines()
+        InputReader::from(PathBuf::from("./src/day01/test.txt")).read_lines()
     }
 
     fn input() -> Vec<u32> {

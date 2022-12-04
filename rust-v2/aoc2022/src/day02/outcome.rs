@@ -1,6 +1,6 @@
 //! Represents the possible outcomes of a game of rock-paper-scissors.
 
-use crate::day02_lib::with_score::WithScore;
+use crate::with_score::WithScore;
 
 pub enum Outcome {
     Win,
