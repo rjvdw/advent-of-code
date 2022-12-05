@@ -119,7 +119,7 @@ mod tests {
     use super::*;
 
     fn test_data() -> impl Iterator<Item = Rucksack> {
-        InputReader::from(PathBuf::from("./src/day03/test.txt")).parse_lines(Rucksack::from_str)
+        InputReader::from("./src/day03/test.txt").parse_lines(Rucksack::from_str)
     }
 
     #[test]

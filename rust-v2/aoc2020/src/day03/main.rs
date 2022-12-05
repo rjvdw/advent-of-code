@@ -66,7 +66,7 @@ mod tests {
     use super::*;
 
     fn test_data() -> Map {
-        Map::parse(InputReader::from(PathBuf::from("./src/day03/test.txt")).read_lines())
+        Map::parse(InputReader::from("./src/day03/test.txt").read_lines())
     }
 
     #[test]

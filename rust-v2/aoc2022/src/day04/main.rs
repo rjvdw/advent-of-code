@@ -50,8 +50,7 @@ mod tests {
     use super::*;
 
     fn test_data() -> impl Iterator<Item = AssignmentPair> {
-        InputReader::from(PathBuf::from("./src/day04/test.txt"))
-            .parse_lines(AssignmentPair::from_str)
+        InputReader::from("./src/day04/test.txt").parse_lines(AssignmentPair::from_str)
     }
 
     #[test]

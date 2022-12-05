@@ -9,7 +9,7 @@
 //! use std::path::PathBuf;
 //!
 //! fn example() {
-//!     let input = InputReader::from(PathBuf::from("path/to/input/file"));
+//!     let input = InputReader::from("path/to/input/file");
 //!     let lines = input.read_lines().collect::<Vec<String>>();
 //!     let parsed = input.parse_lines(u32::from_str).collect::<Vec<u32>>();
 //! }
@@ -18,17 +18,17 @@
 use core::fmt;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
-use std::path::PathBuf;
+use std::path::Path;
 use std::process::exit;
 
 /// Contains the location of the input file and allows for operations to be performed on said file.
-pub struct InputReader {
-    input: PathBuf,
+pub struct InputReader<P: AsRef<Path>> {
+    input: P,
 }
 
-impl InputReader {
+impl<P: AsRef<Path>> InputReader<P> {
     /// Construct a new input reader from a given input path
-    pub fn from(input: PathBuf) -> InputReader {
+    pub fn from(input: P) -> InputReader<P> {
         InputReader { input }
     }
 

@@ -77,7 +77,7 @@ mod tests {
     use super::*;
 
     fn test_data(file: &str) -> impl Iterator<Item = String> {
-        InputReader::from(PathBuf::from(format!("./src/day04/{}", file))).read_lines()
+        InputReader::from(format!("./src/day04/{}", file)).read_lines()
     }
 
     #[test]
