@@ -1,0 +1,56 @@
+#!/bin/sh
+
+set -e
+
+year=$1
+if [ ${#year} -lt 4 ]; then
+  year="20${year}"
+fi
+shift
+
+package="aoc${year}"
+if [ ! -d "${package}" ]; then
+  >&2 echo "package '${package}' does not exist, please create it first"
+  exit 1
+fi
+
+day=$(printf %02d "$1")
+day_short="${day#"${day%%[!0]*}"}"
+shift
+
+src="${package}/src/day${day}"
+if [ -d "${src}" ]; then
+  >&1 echo "'${src}' already exists"
+fi
+
+mkdir "${src}"
+touch "${src}/test.txt"
+cat > "${src}/main.rs" <<EOT
+//! The solution for [advent of code $year, day $day_short](https://adventofcode.com/$year/day/$day_short)
+
+use std::path::PathBuf;
+
+use clap::Parser;
+
+#[derive(Parser, Debug)]
+#[clap(about = "The solution for advent of code $year, day $day_short")]
+struct Args {
+    /// The file which contains the puzzle input.
+    input: PathBuf,
+}
+
+fn main() {
+    let args: Args = Args::parse();
+}
+
+#[cfg(test)]
+mod tests {
+    use rdcl_aoc_core::input::InputReader;
+
+    use super::*;
+
+    fn test_data() -> impl Iterator<Item = String> {
+        InputReader::from("./src/day$day/test.txt").read_lines()
+    }
+}
+EOT
