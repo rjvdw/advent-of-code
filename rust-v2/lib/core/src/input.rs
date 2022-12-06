@@ -43,6 +43,21 @@ impl<P: AsRef<Path>> InputReader<P> {
         })
     }
 
+    /// Reads a single line from the file. Useful if the input is a single line.
+    pub fn read_line(&self) -> String {
+        match BufReader::new(self.open_file()).lines().next() {
+            Some(Ok(line)) => line,
+            Some(Err(e)) => {
+                eprintln!("Failed to read line: {}", e);
+                exit(1);
+            }
+            None => {
+                eprintln!("Input file is empty");
+                exit(1);
+            }
+        }
+    }
+
     /// Reads the lines from the file and transforms them with the provided parser
     pub fn parse_lines<T, F, E>(&self, parser: F) -> impl Iterator<Item = T>
     where
