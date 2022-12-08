@@ -134,8 +134,6 @@ fn find_dir_to_delete(
 
 #[cfg(test)]
 mod tests {
-    use rdcl_aoc_core::input::InputReader;
-
     use super::*;
 
     fn test_data() -> impl Iterator<Item = String> {

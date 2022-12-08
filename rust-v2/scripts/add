@@ -32,6 +32,8 @@ use std::path::PathBuf;
 
 use clap::Parser;
 
+use rdcl_aoc_core::input::InputReader;
+
 #[derive(Parser, Debug)]
 #[clap(about = "The solution for advent of code $year, day $day_short")]
 struct Args {
@@ -41,12 +43,11 @@ struct Args {
 
 fn main() {
     let args: Args = Args::parse();
+    let input = InputReader::from(args.input);
 }
 
 #[cfg(test)]
 mod tests {
-    use rdcl_aoc_core::input::InputReader;
-
     use super::*;
 
     fn test_data() -> impl Iterator<Item = String> {
