@@ -32,6 +32,10 @@ path = "src/day06/main.rs"
 name = "rdcl_aoc2022_day07"
 path = "src/day07/main.rs"
 
+[[bin]]
+name = "rdcl_aoc2022_day08"
+path = "src/day08/main.rs"
+
 [lib]
 name = "rdcl_aoc2022"
 path = "src/shared/lib.rs"
@@ -39,3 +43,4 @@ path = "src/shared/lib.rs"
 [dependencies]
 rdcl_aoc_core = { path = "../lib/core" }
 clap = { version = "3", features = ["derive"] }
+grid = "0.9"
