@@ -56,7 +56,7 @@ mod tests {
 
     #[test]
     fn test_parse() {
-        assert_eq!(Forest::parse(test_data()), forest(),);
+        assert_eq!(Forest::parse(test_data()), forest());
     }
 
     #[test]
