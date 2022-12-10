@@ -10,7 +10,6 @@ use rdcl_aoc_core::input::InputReader;
 
 use crate::output::Output;
 
-mod ocr;
 mod output;
 
 #[derive(Parser, Debug)]

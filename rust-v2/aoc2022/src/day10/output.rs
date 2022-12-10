@@ -1,6 +1,6 @@
 use termion::color;
 
-use crate::ocr::ocr;
+use rdcl_aoc_ocr::ocr;
 
 pub struct Output {
     /// The buffer in which colorized output is collected.

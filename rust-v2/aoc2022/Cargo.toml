@@ -50,6 +50,7 @@ path = "src/shared/lib.rs"
 
 [dependencies]
 rdcl_aoc_core = { path = "../lib/core" }
+rdcl_aoc_ocr = { path = "../lib/ocr" }
 clap = { version = "3", features = ["derive"] }
 grid = "0.9"
 termion = "2"
