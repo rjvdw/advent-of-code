@@ -26,6 +26,6 @@ path = "src/shared/lib.rs"
 
 [dependencies]
 rdcl_aoc_core = { path = "../lib/core" }
-clap = { version = "3", features = ["derive"] }
+clap = { version = "4", features = ["derive"] }
 regex = "1"
 lazy_static = "1"
