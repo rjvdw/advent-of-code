@@ -234,12 +234,17 @@ dependencies = [
  "clap",
  "grid",
  "rdcl_aoc_core",
+ "rdcl_aoc_math",
  "rdcl_aoc_ocr",
  "termion",
 ]
 
 [[package]]
 name = "rdcl_aoc_core"
+version = "0.1.0"
+
+[[package]]
+name = "rdcl_aoc_math"
 version = "0.1.0"
 
 [[package]]
