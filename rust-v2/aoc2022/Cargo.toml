@@ -48,6 +48,10 @@ path = "src/day10/main.rs"
 name = "rdcl_aoc2022_day11"
 path = "src/day11/main.rs"
 
+[[bin]]
+name = "rdcl_aoc2022_day12"
+path = "src/day12/main.rs"
+
 [lib]
 name = "rdcl_aoc2022"
 path = "src/shared/lib.rs"
@@ -56,6 +60,7 @@ path = "src/shared/lib.rs"
 rdcl_aoc_core = { path = "../lib/core" }
 rdcl_aoc_math = { path = "../lib/math" }
 rdcl_aoc_ocr = { path = "../lib/ocr" }
+rdcl_aoc_pathfinding = { path = "../lib/pathfinding" }
 clap = { version = "4", features = ["derive"] }
 grid = "0.9"
 termion = "2"

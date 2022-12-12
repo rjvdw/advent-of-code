@@ -236,6 +236,7 @@ dependencies = [
  "rdcl_aoc_core",
  "rdcl_aoc_math",
  "rdcl_aoc_ocr",
+ "rdcl_aoc_pathfinding",
  "termion",
 ]
 
@@ -249,6 +250,10 @@ version = "0.1.0"
 
 [[package]]
 name = "rdcl_aoc_ocr"
+version = "0.1.0"
+
+[[package]]
+name = "rdcl_aoc_pathfinding"
 version = "0.1.0"
 
 [[package]]
