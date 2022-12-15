@@ -11,6 +11,7 @@ use rdcl_aoc_core::input::InputReader;
 use crate::point::Point;
 use crate::sensor::Sensor;
 
+mod line;
 mod point;
 mod sensor;
 
@@ -112,16 +113,13 @@ fn count_empty_spaces(sensors: &[Sensor], row: i64) -> usize {
 }
 
 fn find_distress_beacon(sensors: &[Sensor], lower_bound: i64, upper_bound: i64) -> Option<Point> {
-    for y in lower_bound..=upper_bound {
-        let sections = analyze_row(sensors, y)
-            .iter()
-            .filter(|section| section.1 >= lower_bound && section.0 <= upper_bound)
-            .map(|section| (section.0.max(lower_bound), section.1.min(upper_bound)))
-            .collect::<Vec<(i64, i64)>>();
-
-        if sections.len() != 1 {
-            let x = sections.iter().map(|section| section.1).min().unwrap() + 1;
-            return Some(Point(x, y));
+    for (i, line1) in sensors.iter().flat_map(|s| s.get_edges()).enumerate() {
+        for line2 in sensors.iter().flat_map(|s| s.get_edges()).skip(i + 1) {
+            if let Some(point) = line1.find_intersection_point(&line2, lower_bound, upper_bound) {
+                if sensors.iter().all(|sensor| !sensor.contains(&point)) {
+                    return Some(point);
+                }
+            }
         }
     }
 

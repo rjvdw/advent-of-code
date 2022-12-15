@@ -5,6 +5,7 @@ use rdcl_aoc_core::err_parse_error;
 use rdcl_aoc_core::error::ParseError;
 use rdcl_aoc_pathfinding::taxi_cab_2d;
 
+use crate::line::Line;
 use crate::point::Point;
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Hash)]
@@ -16,6 +17,20 @@ pub struct Sensor {
 impl Sensor {
     pub fn size(&self) -> i64 {
         taxi_cab_2d(self.coordinate.as_tuple(), self.closest_beacon.as_tuple())
+    }
+
+    pub fn contains(&self, point: &Point) -> bool {
+        taxi_cab_2d(self.coordinate.as_tuple(), point.as_tuple()) <= self.size()
+    }
+
+    pub fn get_edges(&self) -> Vec<Line> {
+        let distance = self.size() + 1;
+        vec![
+            Line(1, self.coordinate.1 - (self.coordinate.0 + distance)),
+            Line(-1, self.coordinate.1 - (self.coordinate.0 + distance)),
+            Line(1, self.coordinate.1 + (self.coordinate.0 + distance)),
+            Line(-1, self.coordinate.1 + (self.coordinate.0 + distance)),
+        ]
     }
 }
 
