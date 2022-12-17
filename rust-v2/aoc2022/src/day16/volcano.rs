@@ -11,45 +11,40 @@ use crate::valve::Valve;
 #[derive(Debug, Default)]
 pub struct Volcano {
     valves: HashMap<Label, Valve>,
+    useful_valves: HashMap<Label, Valve>,
     connections: HashMap<(Label, Label), usize>,
 }
 
 impl Volcano {
-    fn useful_valves(&self) -> impl Iterator<Item = Label> + '_ {
-        self.valves
-            .iter()
-            .filter(|(_, valve)| valve.flow_rate() > 0)
-            .map(|(label, _)| *label)
-    }
-
-    pub fn find_max_pressure_relief(&self, start: Label, time_limit: usize) -> usize {
-        let valves: HashSet<Label> = self.useful_valves().collect();
-
-        self.find(
-            (start, time_limit),
-            (start, 0),
-            valves.len(),
-            0,
-            &valves,
-            &mut HashSet::new(),
-        )
-    }
-
-    pub fn find_max_pressure_relief_with_elephant(&self, start: Label, time_limit: usize) -> usize {
-        let valves: HashSet<Label> = self.useful_valves().collect();
-
+    pub fn find_max_pressure_relief(&self, start: Label, time_remaining: usize) -> usize {
         let mut best = 0;
-        for division in 0..=valves.len() / 2 {
+        self.find(
+            (start, time_remaining),
+            (start, 0),
+            &mut best,
+            self.useful_valves.len(),
+            0,
+            &mut HashSet::new(),
+        );
+        best
+    }
+
+    pub fn find_max_pressure_relief_with_elephant(
+        &self,
+        start: Label,
+        time_remaining: usize,
+    ) -> usize {
+        let mut best = 0;
+        for division in (0..=self.useful_valves.len() / 2).rev() {
             let result = self.find(
-                (start, time_limit),
-                (start, time_limit),
+                (start, time_remaining),
+                (start, time_remaining),
+                &mut best,
                 division,
                 0,
-                &valves,
                 &mut HashSet::new(),
             );
             println!("{} -- {}", division, result);
-            best = best.max(result);
         }
         best
     }
@@ -70,62 +65,112 @@ impl Volcano {
         &self,
         you: (Label, usize),
         elephant: (Label, usize),
+        best_so_far: &mut usize,
         division: usize,
         relieved: usize,
-        valves: &HashSet<Label>,
         open: &mut HashSet<Label>,
     ) -> usize {
+        let (start, time_remaining) = if division > 0 { you } else { elephant };
+
+        // Start by applying a heuristic. Compute an upper bound for the best possible result from
+        // the current situation. If this upper bound is lower than the best score that was found so
+        // far, then there is no point continuing down this branch.
+        let upper_bound = self.compute_upper_bound_for_relief(you, elephant, open, division);
+        if relieved + upper_bound < *best_so_far {
+            // no point going any further
+            return 0;
+        }
+
+        // Determine which valves can still be opened, given the remaining time.
+        let mut valves: Vec<(Label, Valve, usize)> = self
+            .useful_valves
+            .iter()
+            .filter(|(label, _)| !open.contains(label))
+            .map(|(&label, &valve)| {
+                (
+                    label,
+                    valve,
+                    *self.connections.get(&(start, label)).unwrap(),
+                )
+            })
+            .filter(|(_, _, distance)| *distance < time_remaining)
+            .collect();
+
+        // Sort the valves by the highest possible relief they can provide. Try the valves with the
+        // highest relief first.
+        valves.sort_unstable_by_key(|(_, valve, distance)| {
+            valve.flow_rate() * (time_remaining - *distance)
+        });
+
         let mut best = relieved;
+        for (label, valve, distance) in valves.into_iter().rev() {
+            open.insert(label);
+            let time_remaining = time_remaining - distance;
+            let relieved = relieved + time_remaining * valve.flow_rate();
 
-        for valve in valves {
-            if open.contains(valve) {
-                continue;
-            }
-
-            if division > 0 {
-                let (start, time_limit) = you;
-                let distance = *self.connections.get(&(start, *valve)).unwrap();
-                if distance > time_limit {
-                    continue;
-                }
-
-                open.insert(*valve);
-                let time_limit = time_limit - distance;
-                let flow_rate = self.valves.get(valve).unwrap().flow_rate() as usize;
-                let relieved = relieved + time_limit * flow_rate;
-                best = best.max(self.find(
-                    (*valve, time_limit),
+            best = best.max(if division > 0 {
+                self.find(
+                    (label, time_remaining),
                     elephant,
+                    best_so_far,
                     division - 1,
                     relieved,
-                    valves,
                     open,
-                ));
-                open.remove(valve);
+                )
             } else {
-                let (start, time_limit) = elephant;
-                let distance = *self.connections.get(&(start, *valve)).unwrap();
-                if distance > time_limit {
-                    continue;
-                }
-
-                open.insert(*valve);
-                let time_limit = time_limit - distance;
-                let flow_rate = self.valves.get(valve).unwrap().flow_rate() as usize;
-                let relieved = relieved + time_limit * flow_rate;
-                best = best.max(self.find(
+                self.find(
                     you,
-                    (*valve, time_limit),
+                    (label, time_remaining),
+                    best_so_far,
                     division,
                     relieved,
-                    valves,
                     open,
-                ));
-                open.remove(valve);
+                )
+            });
+            *best_so_far = (*best_so_far).max(best);
+
+            open.remove(&label);
+        }
+        best
+    }
+
+    /// Upper bound for the amount of pressure that could possibly be relieved.
+    fn compute_upper_bound_for_relief(
+        &self,
+        you: (Label, usize),
+        elephant: (Label, usize),
+        open: &HashSet<Label>,
+        division: usize,
+    ) -> usize {
+        let mut score = 0;
+
+        for (&label, &valve) in &self.useful_valves {
+            if !open.contains(&label) {
+                let score_you = if division > 0 {
+                    let (position, time_remaining) = you;
+                    let distance = *self.connections.get(&(position, label)).unwrap();
+                    if distance < time_remaining {
+                        valve.flow_rate() * (time_remaining - distance)
+                    } else {
+                        0
+                    }
+                } else {
+                    0
+                };
+
+                let (position, time_remaining) = elephant;
+                let distance = *self.connections.get(&(position, label)).unwrap();
+                let score_elephant = if distance < time_remaining {
+                    valve.flow_rate() * (time_remaining - distance)
+                } else {
+                    0
+                };
+
+                score += score_you.max(score_elephant);
             }
         }
 
-        best
+        score
     }
 
     pub fn parse<T>(input: T) -> Result<Volcano, ParseError>
@@ -147,6 +192,9 @@ impl Volcano {
             let valve = line[..i].parse::<Valve>()?;
             labels.push(valve.label());
             volcano.valves.insert(valve.label(), valve);
+            if valve.flow_rate() > 0 {
+                volcano.useful_valves.insert(valve.label(), valve);
+            }
 
             let sub = match line[i + 2..].strip_prefix("tunnels lead to valves ") {
                 Some(s) => s,

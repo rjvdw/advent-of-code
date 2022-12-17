@@ -8,7 +8,7 @@ use crate::label::Label;
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Hash)]
 pub struct Valve {
     label: Label,
-    flow_rate: u32,
+    flow_rate: usize,
 }
 
 impl Valve {
@@ -16,7 +16,7 @@ impl Valve {
         self.label
     }
 
-    pub fn flow_rate(&self) -> u32 {
+    pub fn flow_rate(&self) -> usize {
         self.flow_rate
     }
 }
