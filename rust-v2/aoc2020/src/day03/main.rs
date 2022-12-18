@@ -18,7 +18,7 @@ struct Args {
     /// The file which contains the puzzle input.
     input: PathBuf,
 
-    /// One or more slopes to evaluate (in the form "<RIGHT>/<DOWN>").
+    /// One or more slopes to evaluate (in the form "RIGHT/DOWN").
     #[clap(long, short, value_parser, required(true))]
     slope: Vec<Slope>,
 }
