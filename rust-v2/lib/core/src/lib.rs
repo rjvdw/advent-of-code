@@ -2,6 +2,7 @@ extern crate core;
 
 pub mod error;
 pub mod input;
+pub mod parser;
 
 /// Type alias for results that may contain any error
 pub type DynResult<T> = Result<T, Box<dyn std::error::Error>>;
