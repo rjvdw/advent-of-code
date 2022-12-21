@@ -76,13 +76,33 @@ path = "src/day17/main.rs"
 name = "rdcl_aoc2022_day18"
 path = "src/day18/main.rs"
 
-[[bin]]
-name = "rdcl_aoc2022_day19"
-path = "src/day19/main.rs"
+#[[bin]]
+#name = "rdcl_aoc2022_day19"
+#path = "src/day19/main.rs"
 
 [[bin]]
 name = "rdcl_aoc2022_day20"
 path = "src/day20/main.rs"
+
+#[[bin]]
+#name = "rdcl_aoc2022_day21"
+#path = "src/day21/main.rs"
+
+#[[bin]]
+#name = "rdcl_aoc2022_day22"
+#path = "src/day22/main.rs"
+
+#[[bin]]
+#name = "rdcl_aoc2022_day23"
+#path = "src/day23/main.rs"
+
+#[[bin]]
+#name = "rdcl_aoc2022_day24"
+#path = "src/day24/main.rs"
+
+#[[bin]]
+#name = "rdcl_aoc2022_day25"
+#path = "src/day25/main.rs"
 
 [lib]
 name = "rdcl_aoc2022"
