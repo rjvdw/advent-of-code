@@ -7,7 +7,6 @@ use std::path::PathBuf;
 use clap::Parser;
 
 use rdcl_aoc_core::input::InputReader;
-use rdcl_aoc_core::MainResult;
 
 use crate::label::Label;
 use crate::volcano::Volcano;
@@ -36,10 +35,9 @@ struct Args {
     training_time: usize,
 }
 
-fn main() -> MainResult {
+fn main() {
     let args: Args = Args::parse();
-    let input = InputReader::from(args.input);
-    let volcano = Volcano::parse(input.read_lines())?;
+    let volcano = InputReader::from(args.input).parse::<Volcano>();
 
     let max_relief = volcano.find_max_pressure_relief(args.starting_point, args.time_limit);
     println!(
@@ -55,8 +53,6 @@ fn main() -> MainResult {
         "If you were to train an elephant first, then the maximum pressure that can be relieved is {}",
         max_relief
     );
-
-    Ok(())
 }
 
 #[cfg(test)]
@@ -64,7 +60,7 @@ mod tests {
     use super::*;
 
     fn test_data() -> Volcano {
-        Volcano::parse(InputReader::from("./src/day16/test.txt").read_lines()).unwrap()
+        InputReader::from("./src/day16/test.txt").parse()
     }
 
     #[test]

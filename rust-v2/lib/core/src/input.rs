@@ -21,6 +21,8 @@ use std::io::{BufRead, BufReader};
 use std::path::Path;
 use std::process::exit;
 
+use crate::error::ParseError;
+
 /// Contains the location of the input file and allows for operations to be performed on said file.
 pub struct InputReader<P: AsRef<Path>> {
     input: P,
@@ -73,6 +75,17 @@ impl<P: AsRef<Path>> InputReader<P> {
         })
     }
 
+    /// Reads and parses all lines in the file
+    pub fn parse<T: FromInput>(&self) -> T {
+        match T::parse(self.read_lines()) {
+            Ok(v) => v,
+            Err(e) => {
+                eprintln!("Failed to parse input: {:?}", e);
+                exit(1);
+            }
+        }
+    }
+
     /// Opens the file for reading
     fn open_file(&self) -> File {
         match File::open(&self.input) {
@@ -83,4 +96,11 @@ impl<P: AsRef<Path>> InputReader<P> {
             }
         }
     }
+}
+
+/// Types that can be constructed by reading the entire input.
+pub trait FromInput: Sized {
+    fn parse<T>(input: T) -> Result<Self, ParseError>
+    where
+        T: Iterator<Item = String>;
 }

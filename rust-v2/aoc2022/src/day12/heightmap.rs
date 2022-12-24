@@ -1,6 +1,7 @@
 use grid::Grid;
 
 use rdcl_aoc_core::error::ParseError;
+use rdcl_aoc_core::input::FromInput;
 use rdcl_aoc_pathfinding::{taxi_cab_2d, AStar};
 
 #[derive(Debug)]
@@ -39,8 +40,10 @@ impl Heightmap {
         let y = point.1;
         self.grid[y][x]
     }
+}
 
-    pub fn parse<T>(input: T) -> Result<Heightmap, ParseError>
+impl FromInput for Heightmap {
+    fn parse<T>(input: T) -> Result<Self, ParseError>
     where
         T: Iterator<Item = String>,
     {

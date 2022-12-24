@@ -19,9 +19,7 @@ struct Args {
 
 fn main() {
     let args: Args = Args::parse();
-    let input = InputReader::from(args.input);
-
-    let forest = Forest::parse(input.read_lines());
+    let forest = InputReader::from(args.input).parse::<Forest>();
 
     println!(
         "The number of visible trees is: {}",
@@ -40,8 +38,8 @@ mod tests {
 
     use super::*;
 
-    fn test_data() -> impl Iterator<Item = String> {
-        InputReader::from("./src/day08/test.txt").read_lines()
+    fn test_data() -> Forest {
+        InputReader::from("./src/day08/test.txt").parse::<Forest>()
     }
 
     fn forest() -> Forest {
@@ -56,7 +54,7 @@ mod tests {
 
     #[test]
     fn test_parse() {
-        assert_eq!(Forest::parse(test_data()), forest());
+        assert_eq!(test_data(), forest());
     }
 
     #[test]

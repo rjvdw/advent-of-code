@@ -2,6 +2,7 @@ use std::collections::{HashMap, HashSet};
 
 use rdcl_aoc_core::err_parse_error;
 use rdcl_aoc_core::error::ParseError;
+use rdcl_aoc_core::input::FromInput;
 use rdcl_aoc_pathfinding::AStar;
 
 use crate::label::Label;
@@ -172,8 +173,10 @@ impl Volcano {
 
         score
     }
+}
 
-    pub fn parse<T>(input: T) -> Result<Volcano, ParseError>
+impl FromInput for Volcano {
+    fn parse<T>(input: T) -> Result<Self, ParseError>
     where
         T: Iterator<Item = String>,
     {

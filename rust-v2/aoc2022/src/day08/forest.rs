@@ -1,6 +1,8 @@
 use std::collections::HashSet;
 
 use grid::Grid;
+use rdcl_aoc_core::error::ParseError;
+use rdcl_aoc_core::input::FromInput;
 
 #[derive(Debug, Eq, PartialEq)]
 pub struct Forest {
@@ -11,22 +13,6 @@ impl Forest {
     /// Constructs a new forest given the heights of its trees.
     pub fn new(heights: Grid<u8>) -> Forest {
         Forest { heights }
-    }
-
-    /// Parses a forest from an input file.
-    pub fn parse<T>(input: T) -> Forest
-    where
-        T: Iterator<Item = String>,
-    {
-        let mut grid: Grid<u8> = Grid::new(0, 0);
-
-        for line in input {
-            let row: Vec<u8> = line.bytes().map(|b| b - b'0').collect();
-
-            grid.push_row(row);
-        }
-
-        Forest::new(grid)
     }
 
     /// Counts the number of trees that are visible from outside the forest.
@@ -147,5 +133,22 @@ impl Forest {
                 }
             }
         }
+    }
+}
+
+impl FromInput for Forest {
+    fn parse<T>(input: T) -> Result<Self, ParseError>
+    where
+        T: Iterator<Item = String>,
+    {
+        let mut grid: Grid<u8> = Grid::new(0, 0);
+
+        for line in input {
+            let row: Vec<u8> = line.bytes().map(|b| b - b'0').collect();
+
+            grid.push_row(row);
+        }
+
+        Ok(Forest::new(grid))
     }
 }
