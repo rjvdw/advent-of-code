@@ -3,13 +3,15 @@ use std::str::FromStr;
 use rdcl_aoc_core::error::ParseError;
 use rdcl_aoc_core::parser::Parser;
 
-#[derive(Debug)]
+use crate::pool::Resources;
+
+#[derive(Debug, Eq, PartialEq)]
 pub struct Blueprint {
-    id: u8,
-    ore_robot: u8,
-    clay_robot: u8,
-    obsidian_robot: (u8, u8),
-    geode_robot: (u8, u8),
+    pub id: u32,
+    pub ore_robot: Resources,
+    pub clay_robot: Resources,
+    pub obsidian_robot: Resources,
+    pub geode_robot: Resources,
 }
 
 impl FromStr for Blueprint {
@@ -33,10 +35,60 @@ impl FromStr for Blueprint {
 
         Ok(Blueprint {
             id,
-            ore_robot: ore_robot_ore,
-            clay_robot: clay_robot_ore,
-            obsidian_robot: (obsidian_robot_ore, obsidian_robot_clay),
-            geode_robot: (geode_robot_ore, geode_robot_obsidian),
+            ore_robot: Resources {
+                ore: ore_robot_ore,
+                ..Default::default()
+            },
+            clay_robot: Resources {
+                ore: clay_robot_ore,
+                ..Default::default()
+            },
+            obsidian_robot: Resources {
+                ore: obsidian_robot_ore,
+                clay: obsidian_robot_clay,
+                ..Default::default()
+            },
+            geode_robot: Resources {
+                ore: geode_robot_ore,
+                obsidian: geode_robot_obsidian,
+                ..Default::default()
+            },
         })
+    }
+}
+
+#[cfg(test)]
+pub mod tests {
+    use rdcl_aoc_core::input::InputReader;
+
+    use super::*;
+
+    pub fn test_data() -> Vec<Blueprint> {
+        InputReader::from("./src/day19/test.txt")
+            .parse_lines(Blueprint::from_str)
+            .collect()
+    }
+
+    #[test]
+    fn test_from_str() {
+        assert_eq!(
+            test_data(),
+            vec![
+                Blueprint {
+                    id: 1,
+                    ore_robot: Resources::new(4, 0, 0, 0),
+                    clay_robot: Resources::new(2, 0, 0, 0),
+                    obsidian_robot: Resources::new(3, 14, 0, 0),
+                    geode_robot: Resources::new(2, 0, 7, 0),
+                },
+                Blueprint {
+                    id: 2,
+                    ore_robot: Resources::new(2, 0, 0, 0),
+                    clay_robot: Resources::new(3, 0, 0, 0),
+                    obsidian_robot: Resources::new(3, 8, 0, 0),
+                    geode_robot: Resources::new(3, 0, 12, 0),
+                },
+            ]
+        );
     }
 }
