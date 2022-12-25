@@ -100,9 +100,9 @@ path = "src/day23/main.rs"
 name = "rdcl_aoc2022_day24"
 path = "src/day24/main.rs"
 
-#[[bin]]
-#name = "rdcl_aoc2022_day25"
-#path = "src/day25/main.rs"
+[[bin]]
+name = "rdcl_aoc2022_day25"
+path = "src/day25/main.rs"
 
 [lib]
 name = "rdcl_aoc2022"
