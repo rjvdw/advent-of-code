@@ -1,21 +1,16 @@
 use std::fmt;
 
-#[derive(Debug, Copy, Clone, Eq, PartialEq, Hash)]
+#[derive(Debug, Copy, Clone, Eq, PartialEq, Hash, Default)]
 pub enum Tile {
     Open,
     Closed,
+    #[default]
     OutOfBounds,
 }
 
 impl Tile {
     pub fn is_within_bounds(&self) -> bool {
         !matches!(self, Tile::OutOfBounds)
-    }
-}
-
-impl Default for Tile {
-    fn default() -> Self {
-        Tile::OutOfBounds
     }
 }
 

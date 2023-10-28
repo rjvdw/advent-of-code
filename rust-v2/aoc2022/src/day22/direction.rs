@@ -1,10 +1,11 @@
 use std::fmt;
 
-#[derive(Debug, Copy, Clone, Eq, PartialEq, Hash)]
+#[derive(Debug, Copy, Clone, Eq, PartialEq, Hash, Default)]
 pub enum Direction {
     Up,
     Down,
     Left,
+    #[default]
     Right,
 }
 
@@ -34,12 +35,6 @@ impl Direction {
             Direction::Left => (position.0 - 1, position.1),
             Direction::Right => (position.0 + 1, position.1),
         }
-    }
-}
-
-impl Default for Direction {
-    fn default() -> Self {
-        Direction::Right
     }
 }
 

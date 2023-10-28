@@ -4,3 +4,4 @@ members = [
     "lib/*",
 ]
 exclude = []
+resolver = "2"

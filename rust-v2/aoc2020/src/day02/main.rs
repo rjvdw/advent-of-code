@@ -54,9 +54,7 @@ where
 
                 (policy, pw)
             }
-            None => {
-                return err_parse_error!("Invalid input: {}", line)?;
-            }
+            None => err_parse_error!("Invalid input: {}", line)?,
         };
 
         if PolicyV1::check(&policy, pw) {

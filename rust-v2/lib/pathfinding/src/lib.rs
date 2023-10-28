@@ -120,7 +120,7 @@ impl<P> Eq for SortablePoint<P> {}
 
 impl<P> PartialOrd<Self> for SortablePoint<P> {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        other.f_score.partial_cmp(&self.f_score)
+        Some(self.cmp(other))
     }
 }
 
@@ -300,7 +300,7 @@ mod tests {
             }
 
             fn get_neighbours(&self, (x, y): &Self::Point) -> Vec<(u64, Self::Point)> {
-                vec![(*x - 1, *y), (*x + 1, *y), (*x, *y - 1), (*x, *y + 1)]
+                [(*x - 1, *y), (*x + 1, *y), (*x, *y - 1), (*x, *y + 1)]
                     .iter()
                     .filter(|(x, y)| *x > 0 && *x <= self.width && *y > 0 && *y <= self.height)
                     .filter(|p| !self.obstacles.contains(p))
