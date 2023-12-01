@@ -198,6 +198,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "rdcl_aoc2023"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "rdcl_aoc_core",
+]
+
+[[package]]
 name = "rdcl_aoc_core"
 version = "0.1.0"
 

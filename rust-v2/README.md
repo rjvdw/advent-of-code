@@ -27,16 +27,16 @@ To reduce the verbosity in these commands, there is also a helper script availab
 
 ```shell
 # run the solution for a specific day
-cargo run $(scripts/aoc 2022 01)
+cargo run $(scripts/cargo-opts 2022 01)
 
 # or using shorthand
-cargo run $(scripts/aoc 22 1)
+cargo run $(scripts/cargo-opts 22 1)
 
 # run all tests for a specific year
-cargo test $(scripts/aoc 22)
+cargo test $(scripts/cargo-opts 22)
 
 # run all tests for a specific day
-cargo test $(scripts/aoc 22 1)
+cargo test $(scripts/cargo-opts 22 1)
 ```
 
 [Advent of Code]: https://adventofcode.com/
