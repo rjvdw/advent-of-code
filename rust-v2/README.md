@@ -42,4 +42,3 @@ cargo test $(scripts/cargo-opts 22 1)
 [Advent of Code]: https://adventofcode.com/
 [workflows-CI-badge]: https://github.com/rjvdw/advent-of-code/actions/workflows/ci-rust-v2.yml/badge.svg
 [actions]: https://github.com/rjvdw/advent-of-code/actions/workflows/ci-rust-v2.yml
-
