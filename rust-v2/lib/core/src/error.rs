@@ -12,6 +12,12 @@ impl fmt::Display for ParseError {
     }
 }
 
+impl From<()> for ParseError {
+    fn from(_value: ()) -> Self {
+        ParseError("could not parse".to_string())
+    }
+}
+
 impl From<std::io::Error> for ParseError {
     fn from(err: std::io::Error) -> Self {
         ParseError(format!("{:?}", err))

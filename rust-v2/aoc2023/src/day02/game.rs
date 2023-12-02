@@ -1,7 +1,6 @@
 use std::collections::HashMap;
 use std::str::FromStr;
 
-use rdcl_aoc_core::err_parse_error;
 use rdcl_aoc_core::error::ParseError;
 
 #[derive(Debug, Clone)]
@@ -14,11 +13,7 @@ impl FromStr for Grab {
         let mut set = vec![];
 
         for cubes in grab.split(", ") {
-            let pos = match cubes.find(' ') {
-                Some(pos) => pos,
-                None => return err_parse_error!("Invalid input: {}", grab),
-            };
-
+            let pos = cubes.find(' ').ok_or(())?;
             let count = cubes[0..pos].parse()?;
             let color = cubes[pos + 1..].to_string();
             set.push((count, color));
@@ -54,16 +49,8 @@ impl FromStr for Game {
     type Err = ParseError;
 
     fn from_str(line: &str) -> Result<Self, Self::Err> {
-        let line = match line.strip_prefix("Game ") {
-            Some(rest) => rest,
-            None => return err_parse_error!("Invalid input: {}", line),
-        };
-
-        let pos = match line.find(':') {
-            Some(pos) => pos,
-            None => return err_parse_error!("Invalid input: {}", line),
-        };
-
+        let line = line.strip_prefix("Game ").ok_or(())?;
+        let pos = line.find(':').ok_or(())?;
         let id = line[0..pos].parse()?;
         let mut counts: HashMap<String, usize> = HashMap::new();
 
