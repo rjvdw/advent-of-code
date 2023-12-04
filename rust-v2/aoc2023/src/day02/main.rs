@@ -25,7 +25,7 @@ struct Args {
 fn main() -> MainResult {
     let args: Args = Args::parse();
     let input = InputReader::from(args.input);
-    let games = input.parse_lines(Game::from_str).collect::<Vec<Game>>();
+    let games = input.parse_lines(Game::from_str).collect::<Vec<_>>();
 
     let cubes = args.test_cubes.parse::<Grab>()?;
 
