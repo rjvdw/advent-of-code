@@ -1,6 +1,5 @@
 //! The solution for [advent of code 2023, day 4](https://adventofcode.com/2023/day/4)
 
-use std::collections::HashMap;
 use std::path::PathBuf;
 use std::str::FromStr;
 
@@ -32,7 +31,7 @@ fn main() -> MainResult {
         score
     );
 
-    let score = evaluate(&cards).values().sum::<usize>();
+    let score = evaluate(&cards).iter().sum::<usize>();
     println!(
         "Using the correct scoring system, you end up with {} cards",
         score
@@ -41,16 +40,16 @@ fn main() -> MainResult {
     Ok(())
 }
 
-fn evaluate(cards: &[ScratchCard]) -> HashMap<usize, usize> {
-    let mut ids: HashMap<usize, usize> = cards.iter().map(|card| (card.id(), 1)).collect();
+fn evaluate(cards: &[ScratchCard]) -> Vec<usize> {
+    let mut ids = vec![1usize; cards.len()];
 
     for card in cards {
         let id = card.id();
-        let count = *ids.get(&id).unwrap();
+        let count = ids[id - 1];
         let matching = card.count_matching_numbers();
 
-        for x in id + 1..=id + matching {
-            *ids.get_mut(&x).unwrap() += count;
+        for item in ids.iter_mut().skip(id).take(matching) {
+            *item += count;
         }
     }
 
@@ -83,9 +82,6 @@ mod tests {
     fn test_evaluate() {
         let cards = test_data();
 
-        assert_eq!(
-            evaluate(&cards),
-            HashMap::from([(1, 1), (2, 2), (3, 4), (4, 8), (5, 14), (6, 1)]),
-        );
+        assert_eq!(evaluate(&cards), vec![1, 2, 4, 8, 14, 1]);
     }
 }
