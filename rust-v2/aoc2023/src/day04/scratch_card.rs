@@ -1,4 +1,7 @@
 use rdcl_aoc_core::error::ParseError;
+use rdcl_aoc_core::parser::{
+    parse_whitespace_separated_to_hashset, parse_whitespace_separated_to_vec,
+};
 use std::collections::HashSet;
 use std::str::FromStr;
 
@@ -45,18 +48,8 @@ impl FromStr for ScratchCard {
         let pos2 = line.find('|').ok_or(())?;
 
         let id = line[..pos1].parse::<usize>()?;
-
-        let winning = line[pos1 + 1..pos2]
-            .trim()
-            .split_ascii_whitespace()
-            .map(|nr| nr.parse())
-            .collect::<Result<HashSet<u32>, _>>()?;
-
-        let yours = line[pos2 + 1..]
-            .trim()
-            .split_ascii_whitespace()
-            .map(|nr| nr.parse())
-            .collect::<Result<Vec<u32>, _>>()?;
+        let winning = parse_whitespace_separated_to_hashset(&line[pos1 + 1..pos2])?;
+        let yours = parse_whitespace_separated_to_vec(&line[pos2 + 1..])?;
 
         Ok(ScratchCard { id, winning, yours })
     }

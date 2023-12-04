@@ -1,6 +1,8 @@
 //! Input parser.
 
+use std::collections::HashSet;
 use std::fmt::Debug;
+use std::hash::Hash;
 use std::str::FromStr;
 
 use crate::err_parse_error;
@@ -96,6 +98,28 @@ impl<'a> Parser<'a> {
     }
 }
 
+/// Parse a string as a whitespace separated list of values into a Vec.
+pub fn parse_whitespace_separated_to_vec<T>(line: &str) -> Result<Vec<T>, T::Err>
+where
+    T: FromStr,
+{
+    line.trim()
+        .split_ascii_whitespace()
+        .map(|v| v.parse::<T>())
+        .collect::<Result<Vec<T>, T::Err>>()
+}
+
+/// Parse a string as a whitespace separated list of values into a HashSet.
+pub fn parse_whitespace_separated_to_hashset<T>(line: &str) -> Result<HashSet<T>, T::Err>
+where
+    T: FromStr + Hash + Eq,
+{
+    line.trim()
+        .split_ascii_whitespace()
+        .map(|v| v.parse::<T>())
+        .collect::<Result<HashSet<T>, T::Err>>()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -154,5 +178,47 @@ mod tests {
             &err.0,
             "Could not parse value 'Some input' with error 'ParseIntError { kind: InvalidDigit }'"
         );
+    }
+
+    #[test]
+    fn test_parse_whitespace_separated_to_vec_1() {
+        let line = "10  20  30";
+        let parsed = parse_whitespace_separated_to_vec::<u32>(line);
+        assert_eq!(parsed, Ok(vec![10, 20, 30]));
+    }
+
+    #[test]
+    fn test_parse_whitespace_separated_to_vec_2() {
+        let line = "  10  20  30  ";
+        let parsed = parse_whitespace_separated_to_vec::<u32>(line);
+        assert_eq!(parsed, Ok(vec![10, 20, 30]));
+    }
+
+    #[test]
+    fn test_parse_whitespace_separated_to_vec_3() {
+        let line = "10  20  asd";
+        let parsed = parse_whitespace_separated_to_vec::<u32>(line);
+        assert!(parsed.is_err());
+    }
+
+    #[test]
+    fn test_parse_whitespace_separated_to_hashset_1() {
+        let line = "10  20  30";
+        let parsed = parse_whitespace_separated_to_hashset::<u32>(line);
+        assert_eq!(parsed, Ok(HashSet::from([10, 20, 30])));
+    }
+
+    #[test]
+    fn test_parse_whitespace_separated_to_hashset_2() {
+        let line = "  10  20  30  ";
+        let parsed = parse_whitespace_separated_to_hashset::<u32>(line);
+        assert_eq!(parsed, Ok(HashSet::from([10, 20, 30])));
+    }
+
+    #[test]
+    fn test_parse_whitespace_separated_to_hashset_3() {
+        let line = "10  20  asd";
+        let parsed = parse_whitespace_separated_to_hashset::<u32>(line);
+        assert!(parsed.is_err());
     }
 }
