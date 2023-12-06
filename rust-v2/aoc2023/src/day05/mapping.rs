@@ -18,19 +18,14 @@ pub trait Mappings {
 
 impl Mappable for Vec<Mapping> {
     fn apply_to_nr(&self, nr: u64) -> u64 {
-        let mut result = nr;
-        for mapping in self {
-            result = mapping.apply_to_nr(result);
-        }
-        result
+        self.iter()
+            .fold(nr, |acc, mapping| mapping.apply_to_nr(acc))
     }
 
     fn apply_to_ranges(&self, ranges: &[(u64, u64)]) -> Vec<(u64, u64)> {
-        let mut result = ranges.to_vec();
-        for mapping in self {
-            result = mapping.apply_to_ranges(&result);
-        }
-        result
+        self.iter().fold(ranges.to_vec(), |acc, mapping| {
+            mapping.apply_to_ranges(&acc)
+        })
     }
 }
 
@@ -73,12 +68,13 @@ impl Mapping {
 
 impl Mappable for Mapping {
     fn apply_to_nr(&self, nr: u64) -> u64 {
-        for range in &self.ranges {
-            if let Some(v) = range.apply(nr) {
-                return v;
-            }
-        }
-        nr
+        self.ranges
+            .iter()
+            .map(|range| range.apply(nr))
+            .filter(|o| o.is_some())
+            .flatten()
+            .next()
+            .unwrap_or(nr)
     }
 
     fn apply_to_ranges(&self, source_range: &[(u64, u64)]) -> Vec<(u64, u64)> {
@@ -272,7 +268,7 @@ mod tests {
             ApplyToRangeResult {
                 unmatched_left: Some((0, 10)),
                 unmatched_right: None,
-                matched: None
+                matched: None,
             }
         );
         assert_eq!(
@@ -280,7 +276,7 @@ mod tests {
             ApplyToRangeResult {
                 unmatched_left: Some((15, 20)),
                 unmatched_right: None,
-                matched: Some((50, 55))
+                matched: Some((50, 55)),
             }
         );
         assert_eq!(
@@ -288,7 +284,7 @@ mod tests {
             ApplyToRangeResult {
                 unmatched_left: None,
                 unmatched_right: None,
-                matched: Some((50, 60))
+                matched: Some((50, 60)),
             }
         );
         assert_eq!(
@@ -296,7 +292,7 @@ mod tests {
             ApplyToRangeResult {
                 unmatched_left: Some((15, 20)),
                 unmatched_right: Some((30, 35)),
-                matched: Some((50, 60))
+                matched: Some((50, 60)),
             }
         );
         assert_eq!(
@@ -304,7 +300,7 @@ mod tests {
             ApplyToRangeResult {
                 unmatched_left: None,
                 unmatched_right: Some((30, 35)),
-                matched: Some((55, 60))
+                matched: Some((55, 60)),
             }
         );
     }
