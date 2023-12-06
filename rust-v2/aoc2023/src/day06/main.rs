@@ -1,6 +1,5 @@
 //! The solution for [advent of code 2023, day 6](https://adventofcode.com/2023/day/6)
 
-use std::collections::VecDeque;
 use std::path::PathBuf;
 
 use clap::Parser;
@@ -46,54 +45,27 @@ fn compute_margin_of_error(input: &[(u64, u64)]) -> u64 {
 }
 
 fn find_wins(time: u64, distance_to_beat: u64) -> Option<(u64, u64)> {
-    let mut times_to_check = VecDeque::from([time / 2]);
-    let mut pivot: Option<u64> = None;
+    // the goal is to find x in 0..=time such that:
+    //     x * (time - x) > distance_to_beat
+    // which boils down to solving the quadratic equation:
+    //     x^2 - time*x + distance_to_beat = 0
 
-    while let Some(x) = times_to_check.pop_front() {
-        if race(time, x) > distance_to_beat {
-            pivot = Some(x);
-        } else if x > 0 {
-            let half = x / 2;
-            times_to_check.push_back(half);
-            if half > 0 {
-                times_to_check.push_back(x + half);
-            }
-        }
+    let d = (time * time).checked_sub(4 * distance_to_beat)?;
+    let left = (time as f64) / 2.0;
+    let right = (d as f64).sqrt() / 2.0;
+
+    let mut x1 = (left - right) as u64 - 1;
+    let mut x2 = (left + right) as u64 + 1;
+
+    // deal with edge cases:
+    while race(time, x1) <= distance_to_beat {
+        x1 += 1;
+    }
+    while race(time, x2) <= distance_to_beat {
+        x2 -= 1;
     }
 
-    if let Some(x) = pivot {
-        let mut min = 0;
-        let mut max = x;
-        let mut start = max / 2;
-
-        while start > min {
-            if race(time, start) > distance_to_beat {
-                max = start;
-            } else {
-                min = start;
-            }
-            start = min + (max - min) / 2;
-        }
-        start += 1;
-
-        min = x;
-        max = time;
-        let mut end = min + (max - min) / 2;
-
-        while end < max {
-            if race(time, end) > distance_to_beat {
-                min = end;
-            } else {
-                max = end;
-            }
-            end = min + (1 + max - min) / 2;
-        }
-        end -= 1;
-
-        Some((start, end))
-    } else {
-        None
-    }
+    Some((x1, x2))
 }
 
 fn race(time: u64, push_time: u64) -> u64 {
