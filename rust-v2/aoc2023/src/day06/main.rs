@@ -7,7 +7,7 @@ use clap::Parser;
 use rdcl_aoc_core::error::ParseError;
 use rdcl_aoc_core::input::InputReader;
 use rdcl_aoc_core::parser::parse_whitespace_separated_to_vec;
-use rdcl_aoc_core::{err_parse_error, MainResult};
+use rdcl_aoc_core::{assert_or_parse_error, err_parse_error, MainResult};
 
 #[derive(Parser, Debug)]
 #[clap(about = "The solution for advent of code 2023, day 6")]
@@ -73,18 +73,17 @@ fn race(time: u64, push_time: u64) -> u64 {
 }
 
 fn parse_input(input: &[String]) -> Result<Vec<(u64, u64)>, ParseError> {
-    if input.len() != 2 {
-        return err_parse_error!("Input has an incorrect number of lines.");
-    }
+    assert_or_parse_error!(input.len() == 2, "Input has an incorrect number of lines.");
 
     let line1 =
         parse_whitespace_separated_to_vec::<u64>(input[0].strip_prefix("Time:").ok_or(())?)?;
     let line2 =
         parse_whitespace_separated_to_vec::<u64>(input[1].strip_prefix("Distance:").ok_or(())?)?;
 
-    if line1.len() != line2.len() {
-        return err_parse_error!("Number of times do not match number of distances.");
-    }
+    assert_or_parse_error!(
+        line1.len() == line2.len(),
+        "Number of times do not match number of distances."
+    );
 
     let mut parsed = vec![];
     for i in 0..line1.len() {
