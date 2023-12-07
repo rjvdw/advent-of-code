@@ -1,9 +1,10 @@
+use std::collections::HashSet;
+use std::str::FromStr;
+
 use rdcl_aoc_core::error::ParseError;
 use rdcl_aoc_core::parser::{
     parse_whitespace_separated_to_hashset, parse_whitespace_separated_to_vec,
 };
-use std::collections::HashSet;
-use std::str::FromStr;
 
 #[derive(Debug, Clone)]
 pub struct ScratchCard {

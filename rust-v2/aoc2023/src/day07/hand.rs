@@ -1,9 +1,9 @@
-use rdcl_aoc_core::assert_or_parse_error;
 use std::cmp::Ordering;
 use std::collections::HashMap;
 use std::fmt;
 use std::str::FromStr;
 
+use rdcl_aoc_core::assert_or_parse_error;
 use rdcl_aoc_core::error::ParseError;
 
 use crate::card::Card;
