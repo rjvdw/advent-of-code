@@ -220,6 +220,7 @@ version = "0.1.0"
 dependencies = [
  "clap",
  "rdcl_aoc_core",
+ "rdcl_aoc_math",
 ]
 
 [[package]]
