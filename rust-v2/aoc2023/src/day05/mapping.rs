@@ -3,6 +3,7 @@ use std::ops::Range;
 use std::str::FromStr;
 
 use rdcl_aoc_core::error::ParseError;
+use rdcl_aoc_core::ParseResult;
 
 pub trait Mappable {
     fn apply_to_nr(&self, nr: u64) -> u64;
@@ -11,7 +12,7 @@ pub trait Mappable {
 }
 
 pub trait Mappings {
-    fn parse<T>(input: &mut Peekable<T>) -> Result<Vec<Mapping>, ParseError>
+    fn parse<T>(input: &mut Peekable<T>) -> ParseResult<Vec<Mapping>>
     where
         T: Iterator<Item = String>;
 }
@@ -30,7 +31,7 @@ impl Mappable for Vec<Mapping> {
 }
 
 impl Mappings for Vec<Mapping> {
-    fn parse<T>(mut input: &mut Peekable<T>) -> Result<Vec<Mapping>, ParseError>
+    fn parse<T>(mut input: &mut Peekable<T>) -> ParseResult<Vec<Mapping>>
     where
         T: Iterator<Item = String>,
     {
@@ -48,7 +49,7 @@ pub struct Mapping {
 }
 
 impl Mapping {
-    pub fn parse<T>(input: &mut T) -> Result<Mapping, ParseError>
+    pub fn parse<T>(input: &mut T) -> ParseResult<Mapping>
     where
         T: Iterator<Item = String>,
     {

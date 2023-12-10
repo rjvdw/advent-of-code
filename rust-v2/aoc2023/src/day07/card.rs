@@ -1,7 +1,6 @@
 use std::fmt;
 
-use rdcl_aoc_core::err_parse_error;
-use rdcl_aoc_core::error::ParseError;
+use rdcl_aoc_core::{err_parse_error, ParseResult};
 
 const TEN: u8 = 10;
 const JACK: u8 = 11;
@@ -24,7 +23,7 @@ impl Card {
         self.0 == JOKER
     }
 
-    pub fn of(value: char) -> Result<Card, ParseError> {
+    pub fn of(value: char) -> ParseResult<Card> {
         match value {
             v if (0x32..=0x39).contains(&(v as u8)) => Ok(Card(v as u8 - b'0')),
             'T' => Ok(Card(TEN)),

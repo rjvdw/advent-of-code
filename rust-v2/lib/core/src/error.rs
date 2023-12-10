@@ -89,6 +89,7 @@ macro_rules! assert_or_parse_error {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::ParseResult;
 
     #[test]
     fn test_macro_parse_error_no_args() {
@@ -113,20 +114,19 @@ mod tests {
 
     #[test]
     fn test_macro_err_parse_error_no_args() {
-        let err: Result<(), ParseError> = err_parse_error![];
+        let err: ParseResult<()> = err_parse_error![];
         assert_eq!(err, Err(ParseError::from(())));
     }
 
     #[test]
     fn test_macro_err_parse_error_simple() {
-        let err: Result<(), ParseError> = err_parse_error!["This is a simple error."];
+        let err: ParseResult<()> = err_parse_error!["This is a simple error."];
         assert_eq!(err, Err(ParseError("This is a simple error.".to_string())));
     }
 
     #[test]
     fn test_macro_err_parse_error_with_formatting() {
-        let err: Result<(), ParseError> =
-            err_parse_error!["This is an error with {}.", "formatting"];
+        let err: ParseResult<()> = err_parse_error!["This is an error with {}.", "formatting"];
 
         assert_eq!(
             err,
@@ -136,7 +136,7 @@ mod tests {
 
     #[test]
     fn test_macro_assert_or_parse_error_assertion_true_and_no_args() {
-        fn f() -> Result<(), ParseError> {
+        fn f() -> ParseResult<()> {
             assert_or_parse_error!(true);
             Ok(())
         }
@@ -146,7 +146,7 @@ mod tests {
 
     #[test]
     fn test_macro_assert_or_parse_error_assertion_false_and_no_args() {
-        fn f() -> Result<(), ParseError> {
+        fn f() -> ParseResult<()> {
             assert_or_parse_error!(false);
             Ok(())
         }
@@ -156,7 +156,7 @@ mod tests {
 
     #[test]
     fn test_macro_assert_or_parse_error_assertion_true_and_simple() {
-        fn f() -> Result<(), ParseError> {
+        fn f() -> ParseResult<()> {
             assert_or_parse_error!(true, "This is a simple error");
             Ok(())
         }
@@ -166,7 +166,7 @@ mod tests {
 
     #[test]
     fn test_macro_assert_or_parse_error_assertion_false_and_simple() {
-        fn f() -> Result<(), ParseError> {
+        fn f() -> ParseResult<()> {
             assert_or_parse_error!(false, "This is a simple error.");
             Ok(())
         }
@@ -176,7 +176,7 @@ mod tests {
 
     #[test]
     fn test_macro_assert_or_parse_error_assertion_true_and_with_formatting() {
-        fn f() -> Result<(), ParseError> {
+        fn f() -> ParseResult<()> {
             assert_or_parse_error!(true, "This is an error with {}.", "formatting");
             Ok(())
         }
@@ -186,7 +186,7 @@ mod tests {
 
     #[test]
     fn test_macro_assert_or_parse_error_assertion_false_and_with_formatting() {
-        fn f() -> Result<(), ParseError> {
+        fn f() -> ParseResult<()> {
             assert_or_parse_error!(false, "This is an error with {}.", "formatting");
             Ok(())
         }

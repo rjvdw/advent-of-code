@@ -4,9 +4,8 @@ use std::path::PathBuf;
 
 use clap::Parser;
 
-use rdcl_aoc_core::error::ParseError;
 use rdcl_aoc_core::input::InputReader;
-use rdcl_aoc_core::MainResult;
+use rdcl_aoc_core::{MainResult, ParseResult};
 
 use crate::hand::Hand;
 
@@ -55,7 +54,7 @@ fn turn_jacks_into_jokers(input: &mut [InputLine]) {
     }
 }
 
-fn parse_line(line: &str) -> Result<InputLine, ParseError> {
+fn parse_line(line: &str) -> ParseResult<InputLine> {
     let i = line.find(' ').ok_or(())?;
     Ok((line[0..i].parse()?, line[i + 1..].parse()?))
 }

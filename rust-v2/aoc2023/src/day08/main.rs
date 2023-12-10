@@ -5,9 +5,8 @@ use std::path::PathBuf;
 
 use clap::Parser;
 
-use rdcl_aoc_core::error::ParseError;
 use rdcl_aoc_core::input::InputReader;
-use rdcl_aoc_core::{assert_or_parse_error, err_parse_error, MainResult};
+use rdcl_aoc_core::{assert_or_parse_error, err_parse_error, MainResult, ParseResult};
 use rdcl_aoc_math::lcm;
 
 use crate::map::{Direction, Label, Node};
@@ -139,7 +138,7 @@ fn is_done(
     }
 }
 
-fn parse_instructions<T>(input: &mut T) -> Result<Vec<Direction>, ParseError>
+fn parse_instructions<T>(input: &mut T) -> ParseResult<Vec<Direction>>
 where
     T: Iterator<Item = String>,
 {
@@ -158,7 +157,7 @@ where
     Ok(result)
 }
 
-fn parse_map<T>(input: T) -> Result<HashMap<Label, Node>, ParseError>
+fn parse_map<T>(input: T) -> ParseResult<HashMap<Label, Node>>
 where
     T: Iterator<Item = String>,
 {

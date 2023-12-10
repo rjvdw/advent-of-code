@@ -5,8 +5,7 @@ use std::fmt::Debug;
 use std::hash::Hash;
 use std::str::FromStr;
 
-use crate::err_parse_error;
-use crate::error::ParseError;
+use crate::{err_parse_error, ParseResult};
 
 pub struct Parser<'a> {
     input: &'a str,
@@ -26,7 +25,7 @@ impl<'a> Parser<'a> {
         &self.input[self.pos..]
     }
 
-    pub fn skip_text(&mut self, text: &str) -> Result<(), ParseError> {
+    pub fn skip_text(&mut self, text: &str) -> ParseResult<()> {
         if self.exhausted() {
             err_parse_error!("Input string is exhausted.")
         } else if self.rest().starts_with(text) {
@@ -42,7 +41,7 @@ impl<'a> Parser<'a> {
         }
     }
 
-    pub fn take_value<T>(&mut self) -> Result<T, ParseError>
+    pub fn take_value<T>(&mut self) -> ParseResult<T>
     where
         T: FromStr,
         <T as FromStr>::Err: Debug,
@@ -64,7 +63,7 @@ impl<'a> Parser<'a> {
         }
     }
 
-    pub fn take_value_upto<T>(&mut self, suffix: &str) -> Result<T, ParseError>
+    pub fn take_value_upto<T>(&mut self, suffix: &str) -> ParseResult<T>
     where
         T: FromStr,
         <T as FromStr>::Err: Debug,

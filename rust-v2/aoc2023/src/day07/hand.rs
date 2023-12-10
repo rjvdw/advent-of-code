@@ -3,8 +3,8 @@ use std::collections::HashMap;
 use std::fmt;
 use std::str::FromStr;
 
-use rdcl_aoc_core::assert_or_parse_error;
 use rdcl_aoc_core::error::ParseError;
+use rdcl_aoc_core::{assert_or_parse_error, ParseResult};
 
 use crate::card::Card;
 
@@ -114,10 +114,7 @@ impl FromStr for Hand {
             s
         );
 
-        let cards = s
-            .chars()
-            .map(Card::of)
-            .collect::<Result<Vec<_>, ParseError>>()?;
+        let cards = s.chars().map(Card::of).collect::<ParseResult<Vec<_>>>()?;
 
         Ok(Hand(cards.try_into().unwrap()))
     }

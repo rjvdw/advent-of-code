@@ -4,10 +4,9 @@ use std::path::PathBuf;
 
 use clap::Parser;
 
-use rdcl_aoc_core::error::ParseError;
 use rdcl_aoc_core::input::InputReader;
 use rdcl_aoc_core::parser::parse_whitespace_separated_to_vec;
-use rdcl_aoc_core::{assert_or_parse_error, err_parse_error, MainResult};
+use rdcl_aoc_core::{assert_or_parse_error, err_parse_error, MainResult, ParseResult};
 
 #[derive(Parser, Debug)]
 #[clap(about = "The solution for advent of code 2023, day 6")]
@@ -72,7 +71,7 @@ fn race(time: u64, push_time: u64) -> u64 {
     (time - push_time) * push_time
 }
 
-fn parse_input(input: &[String]) -> Result<Vec<(u64, u64)>, ParseError> {
+fn parse_input(input: &[String]) -> ParseResult<Vec<(u64, u64)>> {
     assert_or_parse_error!(input.len() == 2, "Input has an incorrect number of lines.");
 
     let line1 =
@@ -92,7 +91,7 @@ fn parse_input(input: &[String]) -> Result<Vec<(u64, u64)>, ParseError> {
     Ok(parsed)
 }
 
-fn parse_concatenated_input(input: &[String]) -> Result<Vec<(u64, u64)>, ParseError> {
+fn parse_concatenated_input(input: &[String]) -> ParseResult<Vec<(u64, u64)>> {
     if input.len() != 2 {
         return err_parse_error!("Input has an incorrect number of lines.");
     }

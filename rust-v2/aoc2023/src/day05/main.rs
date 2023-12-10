@@ -4,10 +4,9 @@ use std::path::PathBuf;
 
 use clap::Parser;
 
-use rdcl_aoc_core::error::ParseError;
 use rdcl_aoc_core::input::InputReader;
 use rdcl_aoc_core::parser::parse_whitespace_separated_to_vec;
-use rdcl_aoc_core::MainResult;
+use rdcl_aoc_core::{MainResult, ParseResult};
 
 use crate::mapping::{Mappable, Mapping, Mappings};
 
@@ -45,7 +44,7 @@ fn main() -> MainResult {
     Ok(())
 }
 
-fn parse_seeds<T>(input: &mut T) -> Result<(Seeds, SeedRanges), ParseError>
+fn parse_seeds<T>(input: &mut T) -> ParseResult<(Seeds, SeedRanges)>
 where
     T: Iterator<Item = String>,
 {
