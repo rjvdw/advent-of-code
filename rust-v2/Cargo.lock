@@ -127,6 +127,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "grid"
+version = "0.12.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1584ff6141ecb0340eeb8be523d027e3e1fe92ae34d9380a98ea991d65c564cc"
+
+[[package]]
 name = "heck"
 version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -206,7 +212,7 @@ name = "rdcl_aoc2022"
 version = "0.1.0"
 dependencies = [
  "clap",
- "grid",
+ "grid 0.9.0",
  "rdcl_aoc_core",
  "rdcl_aoc_math",
  "rdcl_aoc_ocr",
@@ -219,6 +225,7 @@ name = "rdcl_aoc2023"
 version = "0.1.0"
 dependencies = [
  "clap",
+ "grid 0.12.0",
  "rdcl_aoc_core",
  "rdcl_aoc_math",
 ]
