@@ -21,7 +21,7 @@ use std::io::{BufRead, BufReader};
 use std::path::Path;
 use std::process::exit;
 
-use crate::error::ParseError;
+use crate::ParseResult;
 
 /// Contains the location of the input file and allows for operations to be performed on said file.
 pub struct InputReader<P: AsRef<Path>> {
@@ -100,7 +100,7 @@ impl<P: AsRef<Path>> InputReader<P> {
 
 /// Types that can be constructed by reading the entire input.
 pub trait FromInput: Sized {
-    fn parse<T>(input: T) -> Result<Self, ParseError>
+    fn parse<T>(input: T) -> ParseResult<Self>
     where
         T: Iterator<Item = String>;
 }

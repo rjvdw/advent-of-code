@@ -228,6 +228,7 @@ dependencies = [
  "grid 0.12.0",
  "rdcl_aoc_core",
  "rdcl_aoc_math",
+ "rdcl_aoc_pathfinding",
 ]
 
 [[package]]
