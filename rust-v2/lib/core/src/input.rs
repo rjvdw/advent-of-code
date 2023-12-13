@@ -86,6 +86,17 @@ impl<P: AsRef<Path>> InputReader<P> {
         }
     }
 
+    /// Reads and parses all lines in the file
+    pub fn parse_vec<T: VecFromInput>(&self) -> Vec<T> {
+        match T::parse(self.read_lines()) {
+            Ok(v) => v,
+            Err(e) => {
+                eprintln!("Failed to parse input: {:?}", e);
+                exit(1);
+            }
+        }
+    }
+
     /// Opens the file for reading
     fn open_file(&self) -> File {
         match File::open(&self.input) {
@@ -101,6 +112,12 @@ impl<P: AsRef<Path>> InputReader<P> {
 /// Types that can be constructed by reading the entire input.
 pub trait FromInput: Sized {
     fn parse<T>(input: T) -> ParseResult<Self>
+    where
+        T: Iterator<Item = String>;
+}
+
+pub trait VecFromInput: Sized {
+    fn parse<T>(input: T) -> ParseResult<Vec<Self>>
     where
         T: Iterator<Item = String>;
 }
