@@ -1,6 +1,8 @@
 //! Useful mathematical operations.
 
-use std::ops::{Div, Mul, Rem};
+use ops::{BitAnd, Shl, ShlAssign, Shr, Sub};
+use std::ops;
+use std::ops::{AddAssign, Div, Mul, Rem, RemAssign, SubAssign};
 
 /// Computes the greatest common divisor for numbers a and b.
 /// TODO: May return negative values.
@@ -54,29 +56,84 @@ fn crt_mod_mult_helper(a: u64, m: i64, n: u64, modulus: u64) -> u64 {
     mul_mod(mul_mod(a, m.unsigned_abs(), modulus), n, modulus)
 }
 
+pub trait MulModCompatible:
+    Copy
+    + Default
+    + From<u8>
+    + Eq
+    + Ord
+    + RemAssign<Self>
+    + AddAssign<Self>
+    + Sub<Self, Output = Self>
+    + SubAssign<Self>
+    + BitAnd<Self, Output = Self>
+    + Shl<Self, Output = Self>
+    + ShlAssign<Self>
+    + Shr<Self, Output = Self>
+{
+    fn magic_number() -> Self;
+    fn size() -> usize;
+}
+
+// TODO: Implement for u32
+// impl MulModCompatible for u32 {
+//     fn magic_number() -> Self {
+//         0x8000_0000
+//     }
+//
+//     fn size() -> usize {
+//         32
+//     }
+// }
+
+impl MulModCompatible for u64 {
+    fn magic_number() -> Self {
+        0x8000_0000_0000_0000
+    }
+
+    fn size() -> usize {
+        64
+    }
+}
+
+// FIXME: Hardcoded assumption that usize = u64
+impl MulModCompatible for usize {
+    fn magic_number() -> Self {
+        0x8000_0000_0000_0000
+    }
+
+    fn size() -> usize {
+        64
+    }
+}
+
 /// Multiplies two numbers with a given modulus.
 #[allow(clippy::many_single_char_names)]
-pub fn mul_mod(mut a: u64, mut b: u64, modulus: u64) -> u64 {
+pub fn mul_mod<T: MulModCompatible>(mut a: T, mut b: T, modulus: T) -> T {
     // https://en.wikipedia.org/wiki/Modular_arithmetic#Example_implementations
 
-    let mut result = 0_u64;
-    let mp2 = modulus >> 1;
+    let zero = T::default();
+    let one: T = 1u8.into();
+    let magic = T::magic_number();
+
+    let mut result = zero;
+    let mp2 = modulus >> one;
     a %= modulus;
     b %= modulus;
 
-    for _ in 0..64 {
+    for _ in 0..T::size() {
         result = if result > mp2 {
-            (result << 1) - modulus
+            (result << one) - modulus
         } else {
-            result << 1
+            result << one
         };
-        if a & 0x8000_0000_0000_0000_u64 != 0 {
+        if a & magic != zero {
             result += b;
         }
         if result > modulus {
             result -= modulus;
         }
-        a <<= 1;
+        a <<= one;
     }
     result
 }
@@ -105,10 +162,23 @@ mod tests {
     mod mul_mod {
         use super::*;
 
+        // TODO: Implement for u32
+        // #[test]
+        // fn test_mul_mod_u32() {
+        //     assert_eq!(mul_mod::<u32>(10, 10, 7), 2);
+        //     assert_eq!(mul_mod(u32::MAX, 2, 7), 2);
+        // }
+
         #[test]
-        fn test_mul_mod() {
-            assert_eq!(mul_mod(10, 10, 7), 2);
+        fn test_mul_mod_u64() {
+            assert_eq!(mul_mod::<u64>(10, 10, 7), 2);
             assert_eq!(mul_mod(u64::MAX, 2, 7), 2);
+        }
+
+        #[test]
+        fn test_mul_mod_usize() {
+            assert_eq!(mul_mod::<usize>(10, 10, 7), 2);
+            assert_eq!(mul_mod(usize::MAX, 2, 7), 2);
         }
     }
 
