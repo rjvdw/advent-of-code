@@ -45,18 +45,23 @@ where
 pub trait AStar {
     /// The representation of a point, usually some coordinates.
     type Point;
+    type EndPoint;
 
     /// A heuristic estimate for the distance between two points.
     /// Should always return a value that is no larger than the actual distance.
-    fn distance_score(&self, a: &Self::Point, b: &Self::Point) -> u64;
+    fn distance_score(&self, a: &Self::Point, b: &Self::EndPoint) -> u64;
 
     /// Returns the points that can be reached directly from `point`, together with the distance.
     fn get_neighbours(&self, point: &Self::Point) -> Vec<(u64, Self::Point)>;
 
     /// Find the shortest path between two points.
-    fn find_shortest_path(&self, start: &Self::Point, end: &Self::Point) -> Option<Vec<Self::Point>>
+    fn find_shortest_path(
+        &self,
+        start: &Self::Point,
+        end: &Self::EndPoint,
+    ) -> Option<Vec<Self::Point>>
     where
-        Self::Point: Hash + PartialEq + Eq + Clone,
+        Self::Point: Hash + PartialEq + Eq + PartialEq<Self::EndPoint> + Clone,
     {
         let mut open_set: BinaryHeap<SortablePoint<Self::Point>> = BinaryHeap::new();
         open_set.push(SortablePoint {
@@ -294,6 +299,7 @@ mod tests {
 
         impl AStar for TestNav {
             type Point = (u64, u64);
+            type EndPoint = (u64, u64);
 
             fn distance_score(&self, a: &Self::Point, b: &Self::Point) -> u64 {
                 taxi_cab_2d(*a, *b)

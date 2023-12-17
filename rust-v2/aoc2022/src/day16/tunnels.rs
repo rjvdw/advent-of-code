@@ -17,6 +17,7 @@ impl Tunnels {
 
 impl AStar for Tunnels {
     type Point = Label;
+    type EndPoint = Label;
 
     fn distance_score(&self, _: &Self::Point, _: &Self::Point) -> u64 {
         1 // TODO: Just use Dijkstra...

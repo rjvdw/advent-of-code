@@ -76,6 +76,7 @@ impl FromInput for Heightmap {
 
 impl AStar for Heightmap {
     type Point = (usize, usize);
+    type EndPoint = (usize, usize);
 
     fn distance_score(&self, a: &Self::Point, b: &Self::Point) -> u64 {
         let a = (a.0 as u64, a.1 as u64);
