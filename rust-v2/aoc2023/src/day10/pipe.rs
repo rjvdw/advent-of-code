@@ -2,6 +2,7 @@ use std::collections::{HashMap, HashSet, VecDeque};
 use std::fmt;
 
 use grid::Grid;
+use rdcl_aoc2023::Enclosure;
 
 use rdcl_aoc_core::input::FromInput;
 use rdcl_aoc_core::{err_parse_error, ParseResult};
@@ -64,28 +65,7 @@ impl PipeMap {
     /// Count the number of points inside the loop. This method assumes
     /// that the `find_loop` method was previously called.
     pub fn count_points_inside_loop(&self) -> usize {
-        let mut count = 0;
-
-        for row in 0..self.pipes.rows() {
-            let mut count_south = 0usize;
-            let mut count_north = 0usize;
-            for col in 0..self.pipes.cols() {
-                let point = (row, col);
-                if self.points_in_loop.contains(&point) {
-                    let pipe = self.pipes[point];
-                    if pipe.connects_south() {
-                        count_south += 1;
-                    }
-                    if pipe.connects_north() {
-                        count_north += 1;
-                    }
-                } else if count_south % 2 == 1 && count_north % 2 == 1 {
-                    count += 1;
-                }
-            }
-        }
-
-        count
+        self.compute_enclosure_size(false)
     }
 
     /// Find all points that can be reached from a given point. The
@@ -176,6 +156,36 @@ impl PipeMap {
         };
 
         self.pipes[self.start] = pipe;
+    }
+}
+
+impl Enclosure for PipeMap {
+    type Index = usize;
+    type IsEdgeResult = (usize, usize);
+
+    fn row_indices(&self) -> Box<dyn Iterator<Item = usize>> {
+        Box::new(0..self.pipes.rows())
+    }
+
+    fn col_indices(&self) -> Box<dyn Iterator<Item = usize>> {
+        Box::new(0..self.pipes.cols())
+    }
+
+    fn is_edge(&self, row: usize, col: usize) -> Option<Self::IsEdgeResult> {
+        let point = (row, col);
+        if self.points_in_loop.contains(&point) {
+            Some(point)
+        } else {
+            None
+        }
+    }
+
+    fn edge_goes_down(&self, point: Self::IsEdgeResult) -> bool {
+        self.pipes[point].connects_south()
+    }
+
+    fn edge_goes_up(&self, point: Self::IsEdgeResult) -> bool {
+        self.pipes[point].connects_north()
     }
 }
 
