@@ -9,7 +9,7 @@ use rdcl_aoc_core::{err_parse_error, ParseResult};
 const BROADCASTER_LABEL: u32 = 0;
 const BROADCASTER_STR: &str = "broadcaster";
 const BUTTON_LABEL: u32 = 1;
-const SEPARATOR: &str = " -> ";
+pub const SEPARATOR: &str = " -> ";
 
 pub type ModuleMap = HashMap<u32, Module>;
 pub type ModuleStates = HashMap<u32, ModuleState>;
@@ -224,6 +224,7 @@ impl ModuleState {
 
 pub trait ButtonModule {
     fn push_button(&self, states: &mut ModuleStates) -> (usize, usize);
+    fn push_button_with_target(&self, states: &mut ModuleStates, sand_module: &str) -> bool;
 }
 
 impl ButtonModule for ModuleMap {
@@ -248,5 +249,26 @@ impl ButtonModule for ModuleMap {
         }
 
         pulse_count
+    }
+
+    fn push_button_with_target(&self, states: &mut ModuleStates, sand_module: &str) -> bool {
+        let sand_module = encode_str(sand_module);
+        let mut signals: VecDeque<(Pulse, u32, u32)> = VecDeque::new();
+        signals.push_back((Pulse::Low, BUTTON_LABEL, BROADCASTER_LABEL));
+
+        while let Some((pulse, input, label)) = signals.pop_front() {
+            if let Some(module) = self.get(&label) {
+                if let Some((pulse, targets)) = module.receive(input, pulse, states) {
+                    for target in targets {
+                        if target == sand_module && pulse.is_low() {
+                            return true;
+                        }
+                        signals.push_back((pulse, label, target));
+                    }
+                }
+            }
+        }
+
+        false
     }
 }
