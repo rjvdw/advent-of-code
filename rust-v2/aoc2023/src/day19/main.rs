@@ -13,7 +13,6 @@ use crate::parts::Part;
 use crate::workflow::{Label, Workflow};
 
 mod parts;
-mod str_encoder;
 mod workflow;
 
 const START_LABEL: &str = "in";

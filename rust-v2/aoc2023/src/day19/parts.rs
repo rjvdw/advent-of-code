@@ -1,9 +1,9 @@
 use std::fmt;
 use std::str::FromStr;
 
+use rdcl_aoc2023::str_encoder::{decode_str, encode_str};
 use rdcl_aoc_core::error::ParseError;
 
-use crate::str_encoder::{decode_str, encode_str};
 use crate::workflow::Label;
 
 #[derive(Debug, Clone, Default)]

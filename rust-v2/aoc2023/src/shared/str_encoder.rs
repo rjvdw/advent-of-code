@@ -1,3 +1,5 @@
+//! Encode strings to values that have a Size, so they are easier to work with.
+
 /// Encode a string of at most four ascii characters to its binary representation.
 pub fn encode_str(s: &str) -> u32 {
     let mut encoded = 0;

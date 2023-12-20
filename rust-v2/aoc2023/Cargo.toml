@@ -80,6 +80,10 @@ path = "src/day18/main.rs"
 name = "rdcl_aoc2023_day19"
 path = "src/day19/main.rs"
 
+[[bin]]
+name = "rdcl_aoc2023_day20"
+path = "src/day20/main.rs"
+
 [lib]
 name = "rdcl_aoc2023"
 path = "src/shared/lib.rs"

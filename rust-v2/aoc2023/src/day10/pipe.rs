@@ -2,8 +2,8 @@ use std::collections::{HashMap, HashSet, VecDeque};
 use std::fmt;
 
 use grid::Grid;
-use rdcl_aoc2023::Enclosure;
 
+use rdcl_aoc2023::enclosure::Enclosure;
 use rdcl_aoc_core::input::FromInput;
 use rdcl_aoc_core::{err_parse_error, ParseResult};
 

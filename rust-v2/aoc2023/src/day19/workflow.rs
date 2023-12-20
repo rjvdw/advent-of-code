@@ -1,11 +1,11 @@
 use std::fmt;
 use std::str::FromStr;
 
+use rdcl_aoc2023::str_encoder::{decode_str, encode_str};
 use rdcl_aoc_core::err_parse_error;
 use rdcl_aoc_core::error::ParseError;
 
 use crate::parts::Part;
-use crate::str_encoder::{decode_str, encode_str};
 
 #[derive(Debug, Clone)]
 pub struct Workflow {
