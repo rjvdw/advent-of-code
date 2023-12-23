@@ -1,0 +1,72 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@300');
+
+:root {
+  font-family: 'Source Code Pro', monospace;
+  font-weight: 300;
+  font-size: 14pt;
+  background-color: #0f0f23;
+  color: #ccc;
+}
+
+h1,
+h2 {
+  font-size: 1rem;
+  font-weight: normal;
+  margin-block: 1lh;
+  margin-inline: 0;
+  padding: 0;
+  color: #fff;
+}
+
+h1::before {
+  content: '--- ';
+}
+
+h1::after {
+  content: ' ---';
+}
+
+.input-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: start;
+  margin-block-end: 2ch;
+}
+
+.input-form textarea {
+  inline-size: 25ch;
+  block-size: 25lh;
+  background-color: #10101a;
+  color: #ccc;
+  border: 1px solid #333340;
+}
+
+.input-grid {
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  width: min-content;
+  border: 1px solid #333340;
+  font-size: 5pt;
+}
+
+.input-row {
+  display: flex;
+  flex-direction: row;
+  block-size: 1lh;
+  overflow: hidden;
+}
+
+.input-cell {
+  inline-size: 1lh;
+  overflow: hidden;
+  text-align: center;
+  background-color: #ccc;
+  color: #10101a;
+}
+
+.input-cell.blocked {
+  background-color: #10101a;
+  color: #ccc;
+}

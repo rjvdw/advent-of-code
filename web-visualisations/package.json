@@ -1,0 +1,7 @@
+{
+  "name": "@rdcl/aoc-visualisations",
+  "private": true,
+  "workspaces": [
+    "grid-visualiser"
+  ]
+}
