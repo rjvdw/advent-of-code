@@ -30,6 +30,12 @@ impl From<std::num::ParseIntError> for ParseError {
     }
 }
 
+impl From<std::num::ParseFloatError> for ParseError {
+    fn from(err: std::num::ParseFloatError) -> Self {
+        ParseError(format!("{:?}", err))
+    }
+}
+
 impl From<std::char::ParseCharError> for ParseError {
     fn from(err: std::char::ParseCharError) -> Self {
         ParseError(format!("{:?}", err))

@@ -96,11 +96,16 @@ path = "src/day22/main.rs"
 name = "rdcl_aoc2023_day23"
 path = "src/day23/main.rs"
 
+[[bin]]
+name = "rdcl_aoc2023_day24"
+path = "src/day24/main.rs"
+
 [lib]
 name = "rdcl_aoc2023"
 path = "src/shared/lib.rs"
 
 [dependencies]
+rdcl_aoc_algebra = { path = "../lib/algebra" }
 rdcl_aoc_core = { path = "../lib/core" }
 rdcl_aoc_math = { path = "../lib/math" }
 rdcl_aoc_pathfinding = { path = "../lib/pathfinding" }
