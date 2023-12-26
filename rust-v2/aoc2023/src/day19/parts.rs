@@ -1,93 +1,78 @@
 use std::fmt;
+use std::ops::{Index, IndexMut};
 use std::str::FromStr;
 
-use rdcl_aoc2023::str_encoder::{decode_str, encode_str};
 use rdcl_aoc_core::error::ParseError;
+use rdcl_aoc_core::{err_parse_error, ParseResult};
 
-use crate::workflow::Label;
+pub const NR_RATINGS: usize = 4;
 
-#[derive(Debug, Clone, Default)]
-pub struct Part {
-    ratings: Vec<(u32, u32)>,
+#[derive(Debug, Copy, Clone, Eq, PartialEq)]
+#[repr(u8)]
+pub enum Rating {
+    X = 0,
+    M = 1,
+    A = 2,
+    S = 3,
 }
 
-impl Part {
-    pub fn value(&self, label: Label) -> Option<u32> {
-        match label {
-            Label::Workflow(label) => self
-                .ratings
-                .iter()
-                .find(|rating| rating.0 == label)
-                .map(|rating| rating.1),
-            Label::Accepted => None,
-            Label::Rejected => None,
-        }
-    }
-
-    pub fn score(&self) -> u32 {
-        self.ratings.iter().map(|rating| rating.1).sum()
-    }
-}
-
-impl FromStr for Part {
+impl FromStr for Rating {
     type Err = ParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let mut part = Part::default();
-
-        for rating in s[1..s.len() - 1].split(',') {
-            let idx = rating.find('=').ok_or(())?;
-            let label = encode_str(&rating[..idx]);
-            let value = rating[idx + 1..].parse()?;
-
-            part.ratings.push((label, value));
+        match s {
+            "x" => Ok(Rating::X),
+            "m" => Ok(Rating::M),
+            "a" => Ok(Rating::A),
+            "s" => Ok(Rating::S),
+            _ => err_parse_error!("Invalid rating: {}", s),
         }
-
-        Ok(part)
     }
 }
 
-impl fmt::Display for Part {
+impl fmt::Display for Rating {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{{")?;
-        let mut first = true;
-        for &(label, value) in &self.ratings {
-            if !first {
-                write!(f, ",")?;
-            }
-            let label = decode_str(label);
-            write!(f, "{label}={value}")?;
-            first = false;
+        match self {
+            Rating::X => write!(f, "x"),
+            Rating::M => write!(f, "m"),
+            Rating::A => write!(f, "a"),
+            Rating::S => write!(f, "s"),
         }
-        write!(f, "}}")
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+pub type Part = [usize; NR_RATINGS];
 
-    #[test]
-    fn test_from_string() {
-        let p1 = part("{x=787,m=2655,a=1222,s=2876}");
-        assert_eq!(
-            p1.ratings,
-            vec![
-                (b'x' as u32, 787),
-                (b'm' as u32, 2655),
-                (b'a' as u32, 1222),
-                (b's' as u32, 2876),
-            ]
-        );
-    }
+pub trait HasRatings {
+    fn sum_ratings(&self) -> usize;
+}
 
-    #[test]
-    fn test_to_string() {
-        let p1 = part("{x=787,m=2655,a=1222,s=2876}");
-        assert_eq!(format!("{p1}"), "{x=787,m=2655,a=1222,s=2876}");
+impl HasRatings for Part {
+    fn sum_ratings(&self) -> usize {
+        self.iter().sum()
     }
+}
 
-    fn part(s: &str) -> Part {
-        Part::from_str(s).unwrap()
+impl Index<Rating> for Part {
+    type Output = usize;
+
+    fn index(&self, index: Rating) -> &Self::Output {
+        &self[index as usize]
     }
+}
+
+impl IndexMut<Rating> for Part {
+    fn index_mut(&mut self, index: Rating) -> &mut Self::Output {
+        &mut self[index as usize]
+    }
+}
+
+pub fn parse_part(s: &str) -> ParseResult<Part> {
+    let mut part = [0usize; NR_RATINGS];
+    for sub in s[1..s.len() - 1].split(',') {
+        let rating = sub[0..1].parse::<Rating>()?;
+        let value = sub[2..].parse::<usize>()?;
+        part[rating] = value;
+    }
+    Ok(part)
 }

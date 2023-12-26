@@ -1,133 +1,98 @@
 //! The solution for [advent of code 2023, day 19](https://adventofcode.com/2023/day/19)
 
-use std::collections::{HashMap, HashSet};
 use std::path::PathBuf;
 
 use clap::Parser;
 
-use rdcl_aoc_core::error::ParseError;
 use rdcl_aoc_core::input::InputReader;
-use rdcl_aoc_core::MainResult;
+use rdcl_aoc_core::{MainResult, ParseResult};
 
-use crate::parts::Part;
-use crate::workflow::{Label, Workflow};
+use crate::parts::{parse_part, HasRatings, Part};
+use crate::workflows::{Acceptable, Workflow, Workflows};
 
 mod parts;
-mod workflow;
-
-const START_LABEL: &str = "in";
+mod workflows;
 
 #[derive(Parser, Debug)]
 #[clap(about = "The solution for advent of code 2023, day 19")]
 struct Args {
     /// The file which contains the puzzle input.
     input: PathBuf,
+
+    /// The lower bound to use for ratings.
+    #[clap(long, short, value_parser, default_value_t = 1)]
+    lower_bound: usize,
+
+    /// The upper bound to use for ratings.
+    #[clap(long, short, value_parser, default_value_t = 4000)]
+    upper_bound: usize,
 }
 
 fn main() -> MainResult {
     let args: Args = Args::parse();
-    let input = InputReader::from(args.input).read_lines();
+    let (workflows, parts) = parse_input(&mut InputReader::from(args.input).read_lines())?;
+    let bounds = (args.lower_bound, args.upper_bound);
 
-    let (workflows, part_list) = parse_input(input)?;
     println!(
-        "The sum of the scores is {}",
-        workflows.eval_part_list(&part_list, START_LABEL)
+        "The sum of all ratings of all accepted parts is {}",
+        parts
+            .iter()
+            .filter(|p| workflows.accepts(p))
+            .map(|p| p.sum_ratings())
+            .sum::<usize>()
+    );
+    println!(
+        "The total number of parts that will be accepted is {}",
+        workflows.count_acceptable(bounds)
     );
 
     Ok(())
 }
 
-type Workflows = HashMap<Label, Workflow>;
+type ParsedInput = (Workflows, Vec<Part>);
+type ParseInputResult = ParseResult<ParsedInput>;
 
-trait WorkflowMap {
-    fn eval_part_list(&self, part_list: &Vec<Part>, start: &str) -> u32 {
-        let mut scores = 0;
-        for part in part_list {
-            if self.accepts_part(part, start) {
-                scores += part.score();
-            }
-        }
-        scores
-    }
-
-    fn accepts_part(&self, part: &Part, start: &str) -> bool;
-}
-
-impl WorkflowMap for Workflows {
-    fn accepts_part(&self, part: &Part, start: &str) -> bool {
-        let mut seen: HashSet<Label> = HashSet::new();
-        let mut current = start
-            .parse::<Label>()
-            .expect("Invalid starting label provided");
-        seen.insert(current);
-
-        while let Some(workflow) = self.get(&current) {
-            match workflow.eval(part) {
-                Label::Accepted => {
-                    return true;
-                }
-                Label::Rejected => {
-                    return false;
-                }
-                label => {
-                    if seen.contains(&label) {
-                        panic!("an infinite loop was encountered");
-                    }
-                    seen.insert(label);
-                    current = label;
-                }
-            }
-        }
-
-        unreachable!("an invalid label was encountered: {}", current)
-    }
-}
-
-fn parse_input<T>(input: T) -> Result<(Workflows, Vec<Part>), ParseError>
+fn parse_input<T>(input: &mut T) -> ParseInputResult
 where
     T: Iterator<Item = String>,
 {
-    let mut parsing_workflows = true;
     let mut workflows = Workflows::new();
-    let mut part_list = vec![];
-
-    for line in input {
-        if line.is_empty() {
-            parsing_workflows = false;
-        } else if parsing_workflows {
-            let workflow = line.parse::<Workflow>()?;
-            workflows.insert(workflow.label(), workflow);
-        } else {
-            part_list.push(line.parse()?);
-        }
+    for workflow in input.take_while(|line| !line.is_empty()) {
+        let workflow = workflow.parse::<Workflow>()?;
+        workflows.insert(workflow.name(), workflow);
     }
 
-    Ok((workflows, part_list))
+    let mut parts = vec![];
+    for part in input {
+        parts.push(parse_part(&part)?);
+    }
+
+    Ok((workflows, parts))
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
-    fn test_data() -> (Workflows, Vec<Part>) {
-        parse_input(InputReader::from("./src/day19/test.txt").read_lines()).unwrap()
+    fn test_data() -> ParsedInput {
+        parse_input(&mut InputReader::from("./src/day19/test.txt").read_lines()).unwrap()
     }
 
     #[test]
-    fn test_accepts_part() {
-        let (workflows, part_list) = test_data();
+    fn test_workflows_accepts() {
+        let (workflows, parts) = test_data();
+        let results = parts
+            .iter()
+            .map(|part| workflows.accepts(part))
+            .collect::<Vec<_>>();
 
-        assert!(workflows.accepts_part(&part_list[0], START_LABEL));
-        assert!(!workflows.accepts_part(&part_list[1], START_LABEL));
-        assert!(workflows.accepts_part(&part_list[2], START_LABEL));
-        assert!(!workflows.accepts_part(&part_list[3], START_LABEL));
-        assert!(workflows.accepts_part(&part_list[4], START_LABEL));
+        assert_eq!(results, vec![true, false, true, false, true]);
     }
 
     #[test]
-    fn test_eval_part_list() {
-        let (workflows, part_list) = test_data();
+    fn test_workflows_count_acceptable() {
+        let (workflows, _) = test_data();
 
-        assert_eq!(workflows.eval_part_list(&part_list, START_LABEL), 19114);
+        assert_eq!(workflows.count_acceptable((1, 4000)), 167_409_079_868_000);
     }
 }
